@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { contextApi } from "./ContextApi/Context";
 import { db } from "../index";
@@ -12,8 +12,12 @@ emailjs.init("9FpibhxUX2G99xT68LUtD");
 
 const QuantityBirthday = () => {
   const navigate = useNavigate();
-  const { date, cartData } = useContext(contextApi);
-
+  const { date, cartData ,setDate} = useContext(contextApi);
+  useEffect(() => {
+    // Load date from localStorage when Quantity mounts
+    const savedDate = localStorage.getItem("date");
+    if (savedDate) setDate(savedDate);
+  }, []);
   const [people, setPeople] = useState(1);
   const [whatsapp, setWhatsapp] = useState("");
   const [decoration, setDecoration] = useState(false);
@@ -307,17 +311,17 @@ const QuantityBirthday = () => {
   };
 
   return (
-    <div className="relative w-full h-full min-h-screen flex flex-col justify-center items-center p-3 bg-gray-100">
-      <h1 className="text-2xl text-center font-serif text-blue-700 mb-6 animate-fade-in">
+    <div className=" relative w-full h-full min-h-screen flex flex-col justify-center items-center p-3 bg-gray-100">
+      <h1 className=" fontCursive text-2xl text-center text-blue-700 mb-6 animate-fade-in">
         Rotexe Theater TI
       </h1>
        
-      <div className="bg-white rounded-lg shadow-lg  w-[35%] px-4 py-4">
+      <div className="fontPoppin bg-white rounded-lg shadow-lg  w-[35%] px-4 py-4">
         <div className="text-center mb-4">
-          <h2 className="text-xl font-medium">Overview</h2>
+          <h2 className="text-2xl text-[#024D87] font-medium">Overview</h2>
         </div>
         
-        <div className="bg-blue-50 rounded-lg p-3 mb-6 flex justify-between">
+        <div className="bg-blue-100 rounded-lg p-3 mb-6 flex justify-between">
           <div className="flex items-center">
             <svg 
               xmlns="http://www.w3.org/2000/svg" width="20" height="20" 
@@ -330,7 +334,7 @@ const QuantityBirthday = () => {
               <path d="M8 2v4"/>
               <path d="M3 10h18"/>
             </svg>
-            <span className="text-sm">{date || "14 Feb, 2025"}</span>
+            <span className="text-sm">{date}</span>
           </div>
           
           <div className="flex items-center">
@@ -646,11 +650,11 @@ const QuantityBirthday = () => {
         </div>
         {/* -------------------------------------------------------------- */}
 
-        <div className="mt-6">
+        <div className="mt-6 flex justify-center items-center">
           <button 
             onClick={bookSlot}
             disabled={isProcessing}
-            className="w-full bg-red-700 hover:bg-red-800 text-white rounded-md py-3 font-medium transition-colors"
+            className="w-full button-name hover:bg-pink-600  text-white rounded-md py-3 font-medium transition-colors"
           >
             {isProcessing ? 'Processing...' : `Pay ₹ ${calculateTotal()}`}
           </button>

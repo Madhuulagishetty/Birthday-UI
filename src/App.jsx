@@ -10,6 +10,8 @@ import Packages from "./Components/Package";
 import Footer from './Components/Footer';
 import Rolexe from "./Components/Rolexe/Rolexe";
 import Deluxe from "./Components/Deluxe/Deluxe";
+import Navbar from "./Components/Navbar";
+import ServicesSection from './Components/ServicesSection'
 
 
 const App = () => {
@@ -18,7 +20,7 @@ const App = () => {
    
     <Context>
      <BrowserRouter>
-        {/* <Navbar/> */}
+        <Navbar/>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="BookingCard" element={<BookingCard />} />
@@ -28,6 +30,7 @@ const App = () => {
         <Route path="Packages" element={<Packages/>}/>
         <Route path="Rolexe" element={<Rolexe/>}/>
         <Route path="Deluxe" element={<Deluxe/>}/>
+        <Route path="ServicesSection" element={<ServicesSection/>}/>
       </Routes>
       <Footer/>
      </BrowserRouter>

@@ -1,19 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Cookie&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cookie&family=Poppins:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* body {
-    font-family: 'Roboto', sans-serif;
-  } */
-/* From Uiverse.io by barisdogansutcu */ 
-/* From Uiverse.io by elijahgummer */ 
+.fontCursive {
+  font-family: 'Cookie', cursive;
+}
+
+.fontPoppin{
+   font-family: 'Poppins', sans-serif;
+}
+
 .button-main{display: flex;justify-content: center;}
 .button-name {
   margin-top: 10px;
   margin-bottom: 10px;
   width: 70%;
   font: inherit;
-  background-color:#5D0072 ;
+  background-color:#B1153C ;
   border: 0;
   color: #fff;
   border-radius: 20.5em;

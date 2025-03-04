@@ -1,18 +1,20 @@
 import React, { createContext, useState, useEffect } from "react";
 
-export const contextApi = createContext(); // Create Context
+export const contextApi = createContext();
 
 const Context = ({ children }) => {
-  // Initialize date from localStorage or empty string
-  const [date, setDate] = useState(() => {
-    return localStorage.getItem("selectedDate") || '';
-  });
-  
-  // Initialize cartData from localStorage or empty array
+  // Initialize cartData from localStorage
   const [cartData, setCartData] = useState(() => {
     const savedCartData = localStorage.getItem("cartData");
     return savedCartData ? JSON.parse(savedCartData) : [];
   });
+
+  // Store date separately so it persists only in Quantity.jsx
+  const [date, setDate] = useState(() => localStorage.getItem("date") || "");
+
+  useEffect(() => {
+    localStorage.setItem("date", date);
+  }, [date]); // Update localStorage whenever date changes
 
   const AddtoCart = (items) => {
     const updatedCart = [...cartData, items];
@@ -21,16 +23,9 @@ const Context = ({ children }) => {
   };
 
   const AddtoSlot = (slot) => {
-    setCartData([slot]); // Replace the previous slot instead of adding a new one
+    setCartData([slot]);
     localStorage.setItem("cartData", JSON.stringify([slot]));
   };
-
-  // Save date when updated
-  useEffect(() => {
-    if (date) {
-      localStorage.setItem("selectedDate", date);
-    }
-  }, [date]);
 
   return (
     <contextApi.Provider value={{ date, setDate, cartData, AddtoCart, AddtoSlot }}>

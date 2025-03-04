@@ -1,0 +1,138 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
+
+const ServicesSection = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const sliderRef = useRef(null);
+
+  const serviceImages = [
+    "https://t4.ftcdn.net/jpg/11/99/83/57/360_F_1199835732_evIkgrKAtpSUUCHg4XDWqOEW5SFk2ULI.jpg",
+    "https://i.pinimg.com/originals/52/07/cf/5207cfb3fd0f613551e4f24b50315378.jpg",
+    "https://cdn.cherishx.com/uploads/1686727757_webp_original.webp"
+  ];
+
+  const servicePoints = [
+    'Professional Event Photography',
+    'Creative Wedding Cinematography',
+    'Corporate Event Coverage',
+    'Candid Moments Capturing'
+  ];
+
+  useEffect(() => {
+    const slideInterval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % serviceImages.length);
+    }, 3000);
+
+    return () => clearInterval(slideInterval);
+  }, [serviceImages.length]);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % serviceImages.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + serviceImages.length) % serviceImages.length);
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-12 flex flex-col md:flex-row  justify-center items-center space-y-8 md:space-y-0 md:space-x-12">
+      {/* Image Slider Section */}
+      <div className="w-full md:w-1/3 relative group mt-[5%] mb-[3%]">
+        <div className="overflow-hidden rounded-2xl shadow-lg relative">
+          <div 
+            ref={sliderRef}
+            className="relative w-full h-[500px] overflow-hidden"
+          >
+            {serviceImages.map((img, index) => (
+              <div 
+                key={index} 
+                className={`
+                  absolute top-0 left-0 w-full h-full transition-all duration-700 ease-in-out
+                  ${currentSlide === index 
+                    ? 'opacity-100 scale-100 z-10' 
+                    : 'opacity-0 scale-95 z-0'
+                  }
+                `}
+              >
+                <img 
+                  src={img} 
+                  alt={`Service ${index + 1}`} 
+                  className="w-full h-full object-cover rounded-2xl"
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Slider Navigation */}
+          <div className="absolute top-1/2 transform -translate-y-1/2 w-full flex justify-between px-4">
+            <button 
+              onClick={prevSlide}
+              className="bg-black/50 text-white p-3 rounded-full hover:bg-black/75 transform hover:scale-110 transition-transform z-20"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <button 
+              onClick={nextSlide}
+              className="bg-black/50 text-white p-3 rounded-full hover:bg-black/75 transform hover:scale-110 transition-transform z-20"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+
+          {/* Slider Progress Indicator */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
+            {serviceImages.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`
+                  w-3 h-3 rounded-full transition-all duration-300
+                  ${currentSlide === index 
+                    ? 'bg-blue-600 w-8' 
+                    : 'bg-white/50 hover:bg-white/75'}
+                `}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Services Content Section */}
+      <div className="w-full md:w-[30%]">
+        <h2 className="fontCursive text-5xl font-bold text-blue-800 mb-6">
+          Our Services
+        </h2>
+        <p className="fontPoppin text-gray-600 mb-6">
+          Capturing moments that last a lifetime. Our professional photography services blend creativity, technical expertise, and a passion for storytelling to preserve your most cherished memories.
+        </p>
+
+        {/* Service Points */}
+        <div className="space-y-4 mb-8">
+          {servicePoints.map((point, index) => (
+            <div 
+              key={index} 
+              className={`
+                flex items-center space-x-3 
+                transform transition-all duration-300
+                ${currentSlide === index 
+                  ? 'translate-x-2 text-blue-600' 
+                  : 'text-gray-700'}
+              `}
+            >
+              <ChevronRight className="text-blue-600" />
+              <span className='fontPoppin'>{point}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* View All Button */}
+        <button className="bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition-all duration-300 flex items-center space-x-2 transform hover:scale-105 hover:shadow-lg">
+          <span>View All Services</span>
+          <ChevronRight size={20} />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default ServicesSection;
