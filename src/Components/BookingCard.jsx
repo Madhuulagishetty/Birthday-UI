@@ -207,18 +207,7 @@ const BookingCard = () => {
               <span>{timeSlots.length - bookedSlots.length} Slots Available</span>
             </div>
           </div>
-          <div className="flex items-center gap-1  text-gray-600">
-            <Users className="w-4 h-4 text-[#5D0072]" />
-            <span className="md:text-sm text-[13px] text-[#5D0072]">Max 4 People</span>
-            <Wine className="w-4 h-4 text-[#5D0072]" />
-            <span className="md:text-sm text-[13px] text-[#5D0072]">Food & Drinks available</span>
-          </div>
-          <div className="flex items-center gap-1 text-gray-600">
-            <TicketX className="w-4 h-4 text-[#5D0072]" />
-            <span className="md:text-sm text-[13px] text-[#5D0072]">Free Cancellation</span>
-            <LoaderPinwheel className="w-4 h-4 text-[#5D0072]" />
-            <span className="md:text-sm text-[13px] text-[#5D0072]">Decoration Included</span>
-          </div>
+         
           <h3 className="text-[16px] font-semibold text-gray-800">
             Select Time Slot
           </h3>

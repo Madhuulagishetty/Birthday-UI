@@ -5,7 +5,7 @@ import "slick-carousel/slick/slick-theme.css";
 const ImageSlider = () => {
     const images = [
         "https://t4.ftcdn.net/jpg/11/99/83/57/360_F_1199835732_evIkgrKAtpSUUCHg4XDWqOEW5SFk2ULI.jpg",
-        "https://i.pinimg.com/originals/52/07/cf/5207cfb3fd0f613551e4f24b50315378.jpg",
+        "blob:https://web.whatsapp.com/08545c68-3f8e-4617-b1aa-f2f92780c3cb",
         "https://cdn.cherishx.com/uploads/1686727757_webp_original.webp"
       ];
   return (

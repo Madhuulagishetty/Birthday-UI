@@ -5,6 +5,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { contextApi } from './ContextApi/Context';
 
+
 const Home = () => {
   const { date, setDate } = useContext(contextApi);
   const navigate = useNavigate();
@@ -46,11 +47,12 @@ const Home = () => {
     if (!date) {
       alert("Please select a date");
     } else {
-      navigate('/BookingCard');
+      navigate('/Packages');
     }
   };
 
   return (
+    <>
     <div className="relative w-full h-screen flex justify-center items-center p-4 bg-cover bg-center" 
          style={{ backgroundImage: "url('https://plus.unsplash.com/premium_photo-1661726486910-7cfff916caad?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmlydGhkYXklMjBjZWxlYnJhdGlvbnxlbnwwfHwwfHx8MA%3D%3D')" }}>
       <div className="absolute inset-0 bg-black/60"></div>
@@ -100,6 +102,9 @@ const Home = () => {
         </form>
       </div>
     </div>
+  
+
+   </> 
   );
 };
 
