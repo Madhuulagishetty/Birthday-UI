@@ -117,7 +117,7 @@ const QuantityBirthday = () => {
       
       console.log('Sending WhatsApp to:', formattedNumber, 'with date:', date, 'and time:', time);
       
-      const response = await fetch('http://localhost:3000/send-whatsapp', {
+      const response = await fetch('https://backend-kf6u.onrender.com/send-whatsapp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -156,7 +156,7 @@ const QuantityBirthday = () => {
 
   const createOrder = async () => {
     try {
-      const response = await fetch('http://localhost:3000/create-order', {
+      const response = await fetch('https://backend-kf6u.onrender.com/create-order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -249,7 +249,7 @@ const QuantityBirthday = () => {
         order_id: order.id,
         handler: async function (response) {
           try {
-            const verifyResponse = await fetch('http://localhost:3000/verify-payment', {
+            const verifyResponse = await fetch('https://backend-kf6u.onrender.com/verify-payment', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
