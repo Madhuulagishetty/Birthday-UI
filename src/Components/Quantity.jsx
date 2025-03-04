@@ -316,13 +316,13 @@ const QuantityBirthday = () => {
         Rotexe Theater TI
       </h1>
        
-      <div className="fontPoppin bg-white rounded-lg shadow-lg  w-[35%] px-4 py-4">
+      <div className="fontPoppin bg-white rounded-lg shadow-lg  md:w-[35%] px-4 py-4">
         <div className="text-center mb-4">
           <h2 className="text-2xl text-[#024D87] font-medium">Overview</h2>
         </div>
         
-        <div className="bg-blue-100 rounded-lg p-3 mb-6 flex justify-between">
-          <div className="flex items-center">
+        <div className="bg-blue-100 rounded-lg p-3 mb-6 flex flex-col gap-3 justify-between md:flex-row">
+          <div className="flex  items-center">
             <svg 
               xmlns="http://www.w3.org/2000/svg" width="20" height="20" 
               viewBox="0 0 24 24" fill="none" stroke="currentColor" 
@@ -544,7 +544,7 @@ const QuantityBirthday = () => {
             */}
 
             {/* NEW multiple-checkbox logic */}
-            <div className="gap-3 flex items-center">
+            <div className="gap-3 flex md:items-center flex-col md:flex-row ">
               <label className="flex items-center">
                 <input 
                   type="checkbox"

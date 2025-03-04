@@ -36,7 +36,7 @@ const Packages = () => {
 
   return (
     <div className="bg-gradient-to-r from-blue-700 to-pink-700 py-14 px-5 w-full min-h-[95vh] flex justify-center items-center flex-col pt-[7%]">
-      <h2 className="fontCursive text-white text-3xl md:text-5xl font-semibold text-center mb-10 animate-fade-in">
+      <h2 className="fontCursive text-white text-3xl md:text-5xl  text-center mb-10 animate-fade-in">
         Our Packages
       </h2>
       <div className="flex flex-col md:flex-row justify-center gap-4 md:gap-8 items-center w-full md:w-[100%]">
@@ -86,7 +86,7 @@ const Packages = () => {
           onClick={handleBookNow} 
           className="bg-black text-white px-4 md:px-6 py-2 md:py-3 rounded-full hover:bg-gray-800 transition-all duration-300 flex items-center space-x-2 transform hover:scale-105 hover:shadow-lg text-sm md:text-base"
         >
-          <span>View All Services</span>
+          <span>Book Now</span>
           <ChevronRight size={20} />
         </button>
       </div>

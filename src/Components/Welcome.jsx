@@ -3,7 +3,7 @@ import React from 'react';
 const WelcomeSection = () => {
   return (
     <div className="flex flex-col items-center justify-center text-center px-4 py-10 bg-white">
-      <h1 className="fontCursive text-[#1E3A8A] font-bold mb-6 text-5xl">
+      <h1 className="fontCursive text-[#1E3A8A]  mb-6 text-5xl">
         Welcome to Akaay Studio
       </h1>
       <p className="fontPoppin text-gray-600 max-w-5xl mx-auto mb-8 ">

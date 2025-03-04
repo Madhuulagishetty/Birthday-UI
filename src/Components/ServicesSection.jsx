@@ -99,7 +99,7 @@ const ServicesSection = () => {
 
       {/* Services Content Section */}
       <div className="w-full md:w-[30%]">
-        <h2 className="fontCursive text-5xl font-bold text-blue-800 mb-6">
+        <h2 className="fontCursive text-5xl  text-blue-800 mb-6">
           Our Services
         </h2>
         <p className="fontPoppin text-gray-600 mb-6">
