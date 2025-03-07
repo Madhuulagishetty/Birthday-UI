@@ -11,11 +11,15 @@ const Context = ({ children }) => {
 
   // Store date separately so it persists only in Quantity.jsx
   const [date, setDate] = useState(() => localStorage.getItem("date") || "");
+  // Store slotType in localStorage
+  const [slotType, setSlotType] = useState(() => localStorage.getItem("slotType") || "");
 
   useEffect(() => {
     localStorage.setItem("date", date);
   }, [date]); // Update localStorage whenever date changes
-
+  useEffect(() => {
+    localStorage.setItem("slotType", slotType);
+  }, [slotType]); // Update localStorage whenever slotType changes
   const AddtoCart = (items) => {
     const updatedCart = [...cartData, items];
     setCartData(updatedCart);
@@ -28,8 +32,8 @@ const Context = ({ children }) => {
   };
 
   return (
-    <contextApi.Provider value={{ date, setDate, cartData, AddtoCart, AddtoSlot }}>
-      {children}
+    <contextApi.Provider value={{ date, setDate, slotType, setSlotType, cartData, AddtoCart, AddtoSlot }}>
+            {children}
     </contextApi.Provider>
   );
 };

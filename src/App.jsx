@@ -6,12 +6,17 @@ import QuantityBirthday from "./Components/Quantity";
 import ThankYouPage from "./Components/Thankyou";
 import Context from "./Components/ContextApi/Context";
 import Menu from "./Components/Menu";
-import Packages from "./Components/Package";
+import Packages from "./Components/Package/Package";
+import Package from "./Components/Package/PackDum";
 import Footer from './Components/Footer';
 import Rolexe from "./Components/Rolexe/Rolexe";
 import Deluxe from "./Components/Deluxe/Deluxe";
 import Navbar from "./Components/Navbar";
-import ServicesSection from './Components/ServicesSection'
+import ServicesSection from './Components/Services/ServicesSection'
+import ContactUs from './Components/ContactUs/Contact'
+import TermsAndConditions from './Components/Terms&Condition/TermAndCondition'
+import BirthdayGallery from './Components/BirthdayGallery'
+import TermsMain from './Components/Terms&Condition/Terms'
 
 
 const App = () => {
@@ -31,6 +36,15 @@ const App = () => {
         <Route path="Rolexe" element={<Rolexe/>}/>
         <Route path="Deluxe" element={<Deluxe/>}/>
         <Route path="ServicesSection" element={<ServicesSection/>}/>
+        <Route path="ContactUs" element={<ContactUs/>}/>
+        <Route path="TermsAndConditions" element={<TermsAndConditions/>}/>
+        <Route path="TermsMain" element={<TermsMain/>}/>
+        <Route path="Package" element={<Package/>}/>
+        <Route path="BirthdayGallery" element={<BirthdayGallery/>}/>
+
+
+
+        
       </Routes>
       <Footer/>
      </BrowserRouter>

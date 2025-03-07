@@ -12,6 +12,7 @@
 .fontPoppin{
    font-family: 'Poppins', sans-serif;
 }
+body{ font-family: 'Poppins', sans-serif;}
 
 .button-main{display: flex;justify-content: center;}
 .button-name {

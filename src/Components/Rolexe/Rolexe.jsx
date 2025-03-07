@@ -14,7 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 
 const Rolexe = () => {
-  const { AddtoSlot, cartData, date } = useContext(contextApi);
+  const { AddtoSlot, cartData, date, setSlotType } = useContext(contextApi);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
   const [bookedSlots, setBookedSlots] = useState([]);
   const navigate = useNavigate();
@@ -58,7 +58,8 @@ const Rolexe = () => {
   };
 
   const handleRazorpayScreen = async (amount) => {
-    const res = await loadScript("https:/checkout.razorpay.com/v1/checkout.js");
+    const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+
 
     if (!res) {
       alert("Some error at razorpay screen loading");
@@ -139,7 +140,7 @@ const Rolexe = () => {
   useEffect(() => {
     const fetchBookedSlots = async () => {
       try {
-        const bookingsRef = collection(db, "bookings");
+        const bookingsRef = collection(db, "rolexe");
         const q = query(bookingsRef, where("date", "==", date));
         const querySnapshot = await getDocs(q);
 
@@ -165,8 +166,15 @@ const Rolexe = () => {
       toast.error("Please select a time slot before proceeding.");
       return;
     }
+    localStorage.removeItem("people");
+    localStorage.removeItem("whatsapp");
+    localStorage.removeItem("bookingName");
+    localStorage.removeItem("email");
+    localStorage.removeItem("wantDecoration");
+    localStorage.removeItem("occasion");
+    localStorage.removeItem("extraDecorations");
     toast.success("Booking successful!");
-
+    setSlotType('rolexe');
     navigate("/QuantityBirthday", {
       state: {
         timeSlot: selectedTimeSlot,

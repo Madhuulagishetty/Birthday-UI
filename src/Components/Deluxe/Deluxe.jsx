@@ -14,7 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 
 const Rolexe = () => {
-  const { AddtoSlot, cartData, date } = useContext(contextApi);
+  const { AddtoSlot, cartData, date, setSlotType } = useContext(contextApi);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
   const [bookedSlots, setBookedSlots] = useState([]);
   const navigate = useNavigate();
@@ -139,7 +139,7 @@ const Rolexe = () => {
   useEffect(() => {
     const fetchBookedSlots = async () => {
       try {
-        const bookingsRef = collection(db, "bookings");
+        const bookingsRef = collection(db, "deluxe");
         const q = query(bookingsRef, where("date", "==", date));
         const querySnapshot = await getDocs(q);
 
@@ -166,7 +166,7 @@ const Rolexe = () => {
       return;
     }
     toast.success("Booking successful!");
-
+    setSlotType('deluxe');
     navigate("/QuantityBirthday", {
       state: {
         timeSlot: selectedTimeSlot,

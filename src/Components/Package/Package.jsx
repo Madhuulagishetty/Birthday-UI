@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import DelaxImg from "../assets/Delax.jpg";
-import RelaxImg from "../assets/Relax.jpg";
+import DelaxImg from "../../assets/Delax.jpg";
+import RelaxImg from "../../assets/Relax.jpg";
 import { ChevronRight} from 'lucide-react';
 
 const Packages = () => {

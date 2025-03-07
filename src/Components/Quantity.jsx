@@ -1,4 +1,4 @@
-import React, { useContext, useState,useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { contextApi } from "./ContextApi/Context";
 import { db } from "../index";
@@ -7,52 +7,90 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import emailjs from '@emailjs/browser';
 
-// Initialize EmailJS with your private key
 emailjs.init("9FpibhxUX2G99xT68LUtD");
 
 const QuantityBirthday = () => {
   const navigate = useNavigate();
-  const { date, cartData ,setDate} = useContext(contextApi);
+  const { date, cartData ,setDate, slotType} = useContext(contextApi);
+    
+  // Reset all form fields
+  const resetFormFields = () => {
+    setPeople(1);
+    setWhatsapp("");
+    setDecoration(false);
+    setBookingName("");
+    setEmail("");
+    setWantDecoration("Yes");
+    setOccasion("Anniversary");
+    setExtraDecorations([]);
+  };
+
+  // Load all form data from localStorage when component mounts
   useEffect(() => {
-    // Load date from localStorage when Quantity mounts
     const savedDate = localStorage.getItem("date");
+    const savedPeople = localStorage.getItem("people");
+    const savedWhatsapp = localStorage.getItem("whatsapp");
+    const savedBookingName = localStorage.getItem("bookingName");
+    const savedEmail = localStorage.getItem("email");
+    const savedWantDecoration = localStorage.getItem("wantDecoration");
+    const savedOccasion = localStorage.getItem("occasion");
+    const savedExtraDecorations = localStorage.getItem("extraDecorations");
+
     if (savedDate) setDate(savedDate);
+    if (savedPeople) setPeople(parseInt(savedPeople));
+    if (savedWhatsapp) setWhatsapp(savedWhatsapp);
+    if (savedBookingName) setBookingName(savedBookingName);
+    if (savedEmail) setEmail(savedEmail);
+    if (savedWantDecoration) setWantDecoration(savedWantDecoration);
+    if (savedOccasion) setOccasion(savedOccasion);
+    if (savedExtraDecorations) setExtraDecorations(JSON.parse(savedExtraDecorations));
   }, []);
+
   const [people, setPeople] = useState(1);
   const [whatsapp, setWhatsapp] = useState("");
   const [decoration, setDecoration] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [bookingName, setBookingName] = useState("");
   const [email, setEmail] = useState("");
-  const [wantDecoration, setWantDecoration] = useState("Yes");
+  const [wantDecoration, setWantDecoration] = useState("");
   const [occasion, setOccasion] = useState("Anniversary");
-  // const [extrapopl,SetExtraPeople]=useState(0)
-
-  // -------------------------------------------------------------------
-  // ORIGINAL single-radio approach (commented out, but not removed):
-  // const [extraDecor, setExtraDecor] = useState("candle");
-  // -------------------------------------------------------------------
-
-  // NEW: multiple checkboxes approach
   const [extraDecorations, setExtraDecorations] = useState([]);
+
+  // Save form data to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("people", people.toString());
+    localStorage.setItem("whatsapp", whatsapp);
+    localStorage.setItem("bookingName", bookingName);
+    localStorage.setItem("email", email);
+    localStorage.setItem("wantDecoration", wantDecoration);
+    localStorage.setItem("occasion", occasion);
+    localStorage.setItem("extraDecorations", JSON.stringify(extraDecorations));
+  }, [people, whatsapp, bookingName, email, wantDecoration, occasion, extraDecorations]);
+
+  // Clear localStorage and reset form
+  const clearStoredData = () => {
+    localStorage.removeItem("people");
+    localStorage.removeItem("whatsapp");
+    localStorage.removeItem("bookingName");
+    localStorage.removeItem("email");
+    localStorage.removeItem("wantDecoration");
+    localStorage.removeItem("occasion");
+    localStorage.removeItem("extraDecorations");
+    localStorage.removeItem("date");
+    resetFormFields();
+  };
 
   const basePrice = 2000;
   const decorationPrice = 300;
   const lastItem = cartData.length > 0 ? cartData[cartData.length - 1] : null;
 
-  // -------------------------------------------------------------------
-  // Expanded logic: charge ₹500 per person for decoration + sum of all
-  // selected extra decorations from the new `extraDecorations` array
-  // -------------------------------------------------------------------
   const calculateTotal = () => {
     let total = basePrice;
 
-    // If user selected "Yes" for decoration, charge ₹500 × number of people
     if (wantDecoration === "Yes") {
       total += decorationPrice;
     }
 
-    // For each selected item in extraDecorations, add its cost
     if (extraDecorations.includes("rose")) {
       total += 150;
     }
@@ -65,11 +103,10 @@ const QuantityBirthday = () => {
     if (people > 6) {
       total += (people - 6) * 150;
     }
-    
 
     return total;
   };
- 
+
   const increment = () => {
     if (people < 12) {
       setPeople(people + 1);
@@ -93,27 +130,26 @@ const QuantityBirthday = () => {
         booking_time: bookingTime,
         whatsapp_number: whatsapp,
         num_people: people,
-        decoration: decoration ? 'Yes' : 'No',
+        decoration: wantDecoration ? 'Yes' : 'No',
         total_amount: calculateTotal(),
         payment_id: bookingData.paymentId,
       };
-  
+
       console.log('Sending Email with Data:', templateParams);
-  
+
       await emailjs.send(
         'service_codgdqj',
         'template_g2368km',
         templateParams,
         '6qCccpL5QSAWvn5AJ'
       );
-  
+
       console.log('Email sent successfully');
     } catch (error) {
       console.error('Error sending email:', error);
     }
-  };  
+  };
 
-  // Function to send WhatsApp reminder
   const sendWhatsAppReminder = async (params) => {
     try {
       const { to, date, time } = params;
@@ -204,7 +240,7 @@ const QuantityBirthday = () => {
       orderId: paymentDetails.razorpay_order_id
     };
 
-    const docRef = await addDoc(collection(db, "bookings"), bookingData);
+    const docRef = await addDoc(collection(db, slotType), bookingData);
     return { ...bookingData, id: docRef.id };
   };
 
@@ -279,6 +315,9 @@ const QuantityBirthday = () => {
               time: bookingTime
             });
 
+            // Clear stored data and reset form after successful booking
+            clearStoredData();
+            
             toast.success("Booking confirmed! Check your email and WhatsApp for details.");
             navigate("/ThankYouPage");
           } catch (error) {
@@ -306,28 +345,23 @@ const QuantityBirthday = () => {
       toast.error("Failed to book slot. Please try again.");
       setIsProcessing(false);
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
   };
 
   return (
-    <div className=" relative w-full h-full min-h-screen flex flex-col justify-center items-center p-3 bg-gray-100">
-      <h1 className=" fontCursive text-2xl text-center text-blue-700 mb-6 animate-fade-in">
-        Rotexe Theater TI
-      </h1>
+    <div className=" fontPoppin relative w-full p-4 flex items-center z-10 justify-center bg-cover bg-center bg-[url('https://plus.unsplash.com/premium_photo-1661726486910-7cfff916caad?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmlydGhkYXklMjBjZWxlYnJhdGlvbnxlbnwwfHwwfHx8MA%3D%3D')]">
+      <div className="absolute inset-0 bg-black/60"></div>
+        
        
-      <div className="fontPoppin bg-white rounded-lg shadow-lg  md:w-[35%] px-4 py-4">
-        <div className="text-center mb-4">
-          <h2 className="text-2xl text-[#024D87] font-medium">Overview</h2>
+      <div className="fontPoppin bg-white rounded-lg shadow-lg md:w-[35%] px-4 py-4  z-10">
+        <div className="text-center mb-4 ">
+          <h2 className="text-2xl text-[#024D87] font-medium ">Overview</h2>
         </div>
         
         <div className="bg-blue-100 rounded-lg p-3 mb-6 flex flex-col gap-3 justify-between md:flex-row">
-          <div className="flex  items-center">
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" width="20" height="20" 
-              viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-              strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-              className="mr-2 text-blue-700"
+          <div className="flex items-center">
+            <svg   xmlns="http://www.w3.org/2000/svg"   width="20"   height="20"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   strokeWidth="2"   strokeLinecap="round"   strokeLinejoin="round"   className="mr-2 text-blue-700"
             >
               <rect width="18" height="18" x="3" y="4" rx="2"/>
               <path d="M16 2v4"/>
@@ -338,11 +372,7 @@ const QuantityBirthday = () => {
           </div>
           
           <div className="flex items-center">
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" width="20" height="20" 
-              viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-              strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-              className="mr-2 text-blue-700"
+            <svg   xmlns="http://www.w3.org/2000/svg"   width="20"   height="20"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   strokeWidth="2"   strokeLinecap="round"   strokeLinejoin="round"   className="mr-2 text-blue-700"
             >
               <circle cx="12" cy="12" r="10"/>
               <polyline points="12 6 12 12 16 14"/>
@@ -353,8 +383,8 @@ const QuantityBirthday = () => {
           </div>
         </div>
         
-        <div className="text-center mb-6">
-          <h3 className="text-lg font-medium border-b pb-2">Booking Details</h3>
+        <div className="text-center mb-6 w-[100%] flex justify-center">
+          <h3 className="text-lg font-medium border-b border-black pb-2 w-[50%]">Booking Details</h3>
         </div>
         
         <div className="space-y-4">
@@ -377,12 +407,9 @@ const QuantityBirthday = () => {
                 onClick={decrement}
                 className="p-1 border rounded-full hover:bg-gray-100"
               >
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" width="20" height="20" 
-                  viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-                  strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                <svg   xmlns="http://www.w3.org/2000/svg"   width="20"   height="20"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   strokeWidth="2"   strokeLinecap="round"   strokeLinejoin="round"
                 >
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
               </button>
               <input 
@@ -395,13 +422,10 @@ const QuantityBirthday = () => {
                 onClick={increment}
                 className="p-1 border rounded-full hover:bg-gray-100"
               >
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" width="20" height="20" 
-                  viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-                  strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                <svg   xmlns="http://www.w3.org/2000/svg"   width="20"   height="20"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   strokeWidth="2"   strokeLinecap="round"   strokeLinejoin="round"
                 >
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
               </button>
               
@@ -447,19 +471,16 @@ const QuantityBirthday = () => {
                 onChange={(e) => setWantDecoration(e.target.value)}
                 className="w-full appearance-none border rounded-md p-2 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
+                
                 <option>Yes</option>
                 <option>No</option>
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                <svg 
-                  className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" 
-                  viewBox="0 0 20 20" fill="currentColor"
+                <svg   className="h-5 w-5 text-gray-400"   xmlns="http://www.w3.org/2000/svg"   viewBox="0 0 20 20"   fill="currentColor"
                 >
                   <path 
                     fillRule="evenodd" 
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 
-                       111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 
-                       010-1.414z" 
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" 
                     clipRule="evenodd" 
                   />
                 </svg>
@@ -481,17 +502,11 @@ const QuantityBirthday = () => {
                 <option>Proposal</option>
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                <svg 
-                  className="h-5 w-5 text-gray-400" 
-                  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" 
-                  fill="currentColor"
+                <svg   className="h-5 w-5 text-gray-400"   xmlns="http://www.w3.org/2000/svg"   viewBox="0 0 20 20"   fill="currentColor"
                 >
                   <path 
                     fillRule="evenodd" 
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 
-                       111.414 1.414l-4 4a1 1 0 
-                       01-1.414 0l-4-4a1 1 0 
-                       010-1.414z" 
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" 
                     clipRule="evenodd" 
                   />
                 </svg>
@@ -501,50 +516,7 @@ const QuantityBirthday = () => {
           
           <div>
             <label className="block text-sm mb-2">Extra Decoration</label>
-
-            {/* OLD single-radio logic (commented out, but kept) */}
-            {/*
-            <div className="gap-3 flex items-center">
-              <label className="flex items-center">
-                <input 
-                  type="radio" 
-                  name="extraDecor" 
-                  value="rose"
-                  checked={extraDecor === "rose"}
-                  onChange={() => setExtraDecor("rose")}
-                  className="mr-[2px]" 
-                />
-                <span className="text-[14px]">₹ 150 Rose Heart</span>
-              </label>
-              
-              <label className="flex items-center">
-                <input 
-                  type="radio" 
-                  name="extraDecor" 
-                  value="candle"
-                  checked={extraDecor === "candle"}
-                  onChange={() => setExtraDecor("candle")}
-                  className="mr-[2px]" 
-                />
-                <span className="text-[14px]">₹ 300 Candle Path</span>
-              </label>
-              
-              <label className="flex items-center">
-                <input 
-                  type="radio" 
-                  name="extraDecor" 
-                  value="led"
-                  checked={extraDecor === "led"}
-                  onChange={() => setExtraDecor("led")}
-                  className="mr-[2px]" 
-                />
-                <span className="text-[14px]">₹ 100 LED Numbers</span>
-              </label>
-            </div>
-            */}
-
-            {/* NEW multiple-checkbox logic */}
-            <div className="gap-3 flex md:items-center flex-col md:flex-row ">
+            <div className="gap-3 flex md:items-center flex-col md:flex-row">
               <label className="flex items-center">
                 <input 
                   type="checkbox"
@@ -608,7 +580,6 @@ const QuantityBirthday = () => {
           </div>
         </div>
 
-        {/* ---------------- Price Breakdown Section ---------------- */}
         <div className="mt-4 p-4 bg-gray-50 rounded">
           <h4 className="text-lg font-semibold mb-2">Price Breakdown</h4>
           <div className="flex justify-between">
@@ -617,12 +588,14 @@ const QuantityBirthday = () => {
           </div>
           {wantDecoration === "Yes" && (
             <div className="flex justify-between">
-              <span>Decoration (₹300 persons)</span>
+              <span>Decoration (₹300)</span>
               <span>₹{decorationPrice}</span>
             </div>
           )}
+          {
+            
+          }
 
-          {/* Show each chosen item from `extraDecorations` */}
           {extraDecorations.includes("rose") && (
             <div className="flex justify-between">
               <span>Rose Heart</span>
@@ -641,6 +614,8 @@ const QuantityBirthday = () => {
               <span>₹100</span>
             </div>
           )}
+          {/* <div> */}
+          {/* {people > 6 ? <> {people-people.length}</>:''}</div> */}
 
           <hr className="my-2" />
           <div className="flex justify-between font-bold text-purple-700">
@@ -648,13 +623,12 @@ const QuantityBirthday = () => {
             <span>₹{calculateTotal()}</span>
           </div>
         </div>
-        {/* -------------------------------------------------------------- */}
 
         <div className="mt-6 flex justify-center items-center">
           <button 
             onClick={bookSlot}
             disabled={isProcessing}
-            className="w-full button-name hover:bg-pink-600  text-white rounded-md py-3 font-medium transition-colors"
+            className="w-full button-name hover:bg-pink-600 text-white rounded-md py-3 font-medium transition-colors"
           >
             {isProcessing ? 'Processing...' : `Pay ₹ ${calculateTotal()}`}
           </button>

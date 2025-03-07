@@ -1,14 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
+import PrivateTheatreExperience from './EventCard'
+
+import DelaxImg from "../../assets/Delax.jpg";
+import RelaxImg from "../../assets/Relax.jpg";
 
 const ServicesSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const sliderRef = useRef(null);
 
   const serviceImages = [
-    "https://t4.ftcdn.net/jpg/11/99/83/57/360_F_1199835732_evIkgrKAtpSUUCHg4XDWqOEW5SFk2ULI.jpg",
+    RelaxImg,
     "https://i.pinimg.com/originals/52/07/cf/5207cfb3fd0f613551e4f24b50315378.jpg",
-    "https://cdn.cherishx.com/uploads/1686727757_webp_original.webp"
+    "https://cdn.cherishx.com/uploads/1686727757_webp_original.webp",
+    DelaxImg
   ];
 
   const servicePoints = [
@@ -35,9 +40,10 @@ const ServicesSection = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-12 flex flex-col md:flex-row  justify-center items-center space-y-8 md:space-y-0 md:space-x-12">
+    <>
+    <div className="container mx-auto px-4 py-4 flex flex-col md:flex-row  justify-center items-center space-y-8 md:space-y-0 md:space-x-12">
       {/* Image Slider Section */}
-      <div className="w-full md:w-1/3 relative group mt-[5%] mb-[3%]">
+      <div className="w-full md:w-1/3 relative group mt-[5%] ">
         <div className="overflow-hidden rounded-2xl shadow-lg relative">
           <div 
             ref={sliderRef}
@@ -131,7 +137,11 @@ const ServicesSection = () => {
           <ChevronRight size={20} />
         </button>
       </div>
+      
     </div>
+    <PrivateTheatreExperience/>
+    
+    </> 
   );
 };
 
