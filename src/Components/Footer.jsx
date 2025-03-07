@@ -2,12 +2,13 @@ import React from 'react';
 import { MapPin, Phone, Mail } from 'lucide-react';
 import { FaWhatsapp } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
-
+import ScrollToTop from './ScrollTop'
 
 const Footer = () => {
   return (
     <footer className="w-[100%] fontPoppin">
       {/* Main Footer */}
+      <ScrollToTop />
       <div className="bg-gray-100 py-8 px-4 md:px-8 lg:px-16">
         <div className="flex flex-col md:flex-row justify-between max-w-4xl mx-auto">
           {/* Navigation Section */}
@@ -17,7 +18,7 @@ const Footer = () => {
                 <NavLink to="#" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Home</NavLink>
               </li>
               <li>
-                <NavLink to="#" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">About Us</NavLink>
+                <NavLink to="/ContactUs" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Contact Us</NavLink>
               </li>
               <li>
                 <NavLink to="/ServicesSection" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Our Services</NavLink>
@@ -132,17 +133,15 @@ const Footer = () => {
             Copyright ©2025
           </p>
           <div className="flex flex-wrap justify-center md:justify-end space-x-2 text-sm">
-            <NavLink to="/TermsAndConditions" className="hover:text-red-400 transition-colors">
+            <NavLink to="/RefundPolicy" className="hover:text-red-400 transition-colors">
               Refund Policy
             </NavLink>
             <span className="mx-2 text-gray-500">|</span>
             <NavLink to="/TermsAndConditions" className="hover:text-red-400 transition-colors">
               Terms and Conditions
             </NavLink>
-            <span className="mx-2 text-gray-500">|</span>
-            <NavLink to="#" className="hover:text-red-400 transition-colors">
-              Privacy Policy
-            </NavLink>
+            
+           
           </div>
         </div>
       </div>

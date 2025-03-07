@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import DelaxImg from "../../assets/Delax.jpg";
 import RelaxImg from "../../assets/Relax.jpg";
 import { ChevronRight} from 'lucide-react';
+import ScrollToTop from '../ScrollTop'
 
 const Package = () => {
   
@@ -18,6 +19,7 @@ const Package = () => {
 
   return (
     <div className="bg-gradient-to-r from-blue-700 to-pink-700 py-14 px-5 w-full min-h-[85vh] flex justify-center items-center flex-col pt-[6%]">
+      <ScrollToTop/>
       <h2 className="fontCursive text-white text-3xl md:text-5xl  text-center mb-10 animate-fade-in">
         Our Packages
       </h2>

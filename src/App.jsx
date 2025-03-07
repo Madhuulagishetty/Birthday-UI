@@ -17,7 +17,9 @@ import ContactUs from './Components/ContactUs/Contact'
 import TermsAndConditions from './Components/Terms&Condition/TermAndCondition'
 import BirthdayGallery from './Components/BirthdayGallery'
 import TermsMain from './Components/Terms&Condition/Terms'
-
+import ScrollToTop from './Components/ScrollTop'
+// import Privacy from './Components/Privacy'
+import RefundPolicy from './Components/Privacy'
 
 const App = () => {
   
@@ -25,6 +27,7 @@ const App = () => {
    
     <Context>
      <BrowserRouter>
+     <ScrollToTop />
         <Navbar/>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -41,6 +44,9 @@ const App = () => {
         <Route path="TermsMain" element={<TermsMain/>}/>
         <Route path="Package" element={<Package/>}/>
         <Route path="BirthdayGallery" element={<BirthdayGallery/>}/>
+        {/* <Route path="Privacy" element={<Privacy/>}/> */}
+        <Route path="RefundPolicy" element={<RefundPolicy/>}/>
+
 
 
 

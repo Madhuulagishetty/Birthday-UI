@@ -11,6 +11,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+// import ScrollToTop from '../ScrollTop';
 
 const BookingCard = () => {
   const { AddtoSlot, cartData, date } = useContext(contextApi);
@@ -176,6 +177,7 @@ const BookingCard = () => {
   return (
     <div className="relative min-h-screen p-4 flex items-center justify-center bg-cover bg-center bg-[url('https://plus.unsplash.com/premium_photo-1661726486910-7cfff916caad?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmlydGhkYXklMjBjZWxlYnJhdGlvbnxlbnwwfHwwfHx8MA%3D%3D')]">
       <div className="absolute inset-0 bg-black/60"></div>
+
 
       <div className="relative md:max-w-[30rem] w-full bg-white rounded-2xl shadow-xl overflow-hidden p-3 z-10">
         <div className="relative rounded-xl overflow-hidden">

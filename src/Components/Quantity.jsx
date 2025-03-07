@@ -1,19 +1,13 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { contextApi } from "./ContextApi/Context";
-import { db } from "../index";
-import { collection, addDoc } from "firebase/firestore";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import emailjs from '@emailjs/browser';
-
-emailjs.init("9FpibhxUX2G99xT68LUtD");
 
 const QuantityBirthday = () => {
   const navigate = useNavigate();
-  const { date, cartData ,setDate, slotType} = useContext(contextApi);
+  const { date, cartData, setDate, slotType } = useContext(contextApi);
     
-  // Reset all form fields
   const resetFormFields = () => {
     setPeople(1);
     setWhatsapp("");
@@ -25,7 +19,6 @@ const QuantityBirthday = () => {
     setExtraDecorations([]);
   };
 
-  // Load all form data from localStorage when component mounts
   useEffect(() => {
     const savedDate = localStorage.getItem("date");
     const savedPeople = localStorage.getItem("people");
@@ -49,14 +42,12 @@ const QuantityBirthday = () => {
   const [people, setPeople] = useState(1);
   const [whatsapp, setWhatsapp] = useState("");
   const [decoration, setDecoration] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
   const [bookingName, setBookingName] = useState("");
   const [email, setEmail] = useState("");
-  const [wantDecoration, setWantDecoration] = useState("");
+  const [wantDecoration, setWantDecoration] = useState("Yes");
   const [occasion, setOccasion] = useState("Anniversary");
   const [extraDecorations, setExtraDecorations] = useState([]);
 
-  // Save form data to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("people", people.toString());
     localStorage.setItem("whatsapp", whatsapp);
@@ -66,19 +57,6 @@ const QuantityBirthday = () => {
     localStorage.setItem("occasion", occasion);
     localStorage.setItem("extraDecorations", JSON.stringify(extraDecorations));
   }, [people, whatsapp, bookingName, email, wantDecoration, occasion, extraDecorations]);
-
-  // Clear localStorage and reset form
-  const clearStoredData = () => {
-    localStorage.removeItem("people");
-    localStorage.removeItem("whatsapp");
-    localStorage.removeItem("bookingName");
-    localStorage.removeItem("email");
-    localStorage.removeItem("wantDecoration");
-    localStorage.removeItem("occasion");
-    localStorage.removeItem("extraDecorations");
-    localStorage.removeItem("date");
-    resetFormFields();
-  };
 
   const basePrice = 2000;
   const decorationPrice = 300;
@@ -121,130 +99,7 @@ const QuantityBirthday = () => {
     }
   };
 
-  const sendEmail = async (bookingData) => {
-    try {
-      const bookingTime = lastItem ? `${lastItem.start} - ${lastItem.end}` : "Not Available";
-      const templateParams = {
-        to_email: 'lagishettymadhu05@gmail.com',
-        booking_date: date,
-        booking_time: bookingTime,
-        whatsapp_number: whatsapp,
-        num_people: people,
-        decoration: wantDecoration ? 'Yes' : 'No',
-        total_amount: calculateTotal(),
-        payment_id: bookingData.paymentId,
-      };
-
-      console.log('Sending Email with Data:', templateParams);
-
-      await emailjs.send(
-        'service_codgdqj',
-        'template_g2368km',
-        templateParams,
-        '6qCccpL5QSAWvn5AJ'
-      );
-
-      console.log('Email sent successfully');
-    } catch (error) {
-      console.error('Error sending email:', error);
-    }
-  };
-
-  const sendWhatsAppReminder = async (params) => {
-    try {
-      const { to, date, time } = params;
-      const formattedNumber = to.startsWith('+') ? to : `+${to}`;
-      
-      console.log('Sending WhatsApp to:', formattedNumber, 'with date:', date, 'and time:', time);
-      
-      const response = await fetch('https://backend-kf6u.onrender.com/send-whatsapp', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ to: formattedNumber, date, time }),
-      });
-      
-      const responseText = await response.text();
-      console.log('WhatsApp API response:', response.status, responseText);
-      
-      if (!response.ok) {
-        throw new Error(`Failed to send WhatsApp reminder: ${response.status} ${responseText}`);
-      }
-      
-      try {
-        const result = JSON.parse(responseText);
-        console.log('WhatsApp reminder sent successfully:', result);
-      } catch (e) {
-        console.log('Could not parse response as JSON:', responseText);
-      }
-      
-    } catch (error) {
-      console.error('Error sending WhatsApp reminder:', error);
-    }
-  };
-
-  const initializeRazorpay = () => {
-    return new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  };
-
-  const createOrder = async () => {
-    try {
-      const response = await fetch('https://backend-kf6u.onrender.com/create-order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: calculateTotal(),
-        }),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to create order');
-      }
-      
-      const order = await response.json();
-      return order;
-    } catch (error) {
-      console.error('Error creating order:', error);
-      throw error;
-    }
-  };
-
-  const saveToFirebase = async (paymentDetails) => {
-    const bookingData = {
-      bookingName,
-      email,
-      date,
-      people,
-      whatsapp,
-      decoration,
-      cartData,
-      status: "booked",
-      paymentId: paymentDetails.razorpay_payment_id,
-      timestamp: new Date(),
-      amount: calculateTotal(),
-      bookingTime: lastItem ? `${lastItem.start} - ${lastItem.end}` : "Not Available",
-      decorationPackage: decoration ? 'Yes' : 'No',
-      basePrice,
-      decorationPrice: decoration ? decorationPrice : 0,
-      totalAmount: calculateTotal(),
-      paymentStatus: 'completed',
-      orderId: paymentDetails.razorpay_order_id
-    };
-
-    const docRef = await addDoc(collection(db, slotType), bookingData);
-    return { ...bookingData, id: docRef.id };
-  };
-
-  const bookSlot = async () => {
+  const handleProceed = () => {
     if (!bookingName.trim()) {
       toast.error("Please enter your booking name.");
       return;
@@ -270,99 +125,38 @@ const QuantityBirthday = () => {
       return;
     }
 
-    try {
-      setIsProcessing(true);
-      const res = await initializeRazorpay();
-      if (!res) {
-        toast.error("Razorpay SDK failed to load");
-        return;
-      }
-
-      const order = await createOrder();
-      
-      const options = {
-        key: 'rzp_test_MAK9N9Rei9tuH6',
-        amount: order.amount,
-        currency: "INR",
-        name: "Birthday Booking",
-        description: "Birthday Celebration Booking",
-        order_id: order.id,
-        handler: async function (response) {
-          try {
-            const verifyResponse = await fetch('https://backend-kf6u.onrender.com/verify-payment', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-              }),
-            });
-
-            if (!verifyResponse.ok) {
-              throw new Error('Payment verification failed');
-            }
-
-            const bookingData = await saveToFirebase(response);
-            await sendEmail(bookingData);
-            
-            const bookingTime = lastItem ? `${lastItem.start} - ${lastItem.end}` : "Not Available";
-            await sendWhatsAppReminder({
-              to: `+91${whatsapp}`,
-              date: date,
-              time: bookingTime
-            });
-
-            // Clear stored data and reset form after successful booking
-            clearStoredData();
-            
-            toast.success("Booking confirmed! Check your email and WhatsApp for details.");
-            navigate("/ThankYouPage");
-          } catch (error) {
-            console.error("Error processing payment:", error);
-            toast.error("Payment verification failed. Please contact support.");
-          }
-        },
-        prefill: {
-          contact: whatsapp,
-        },
-        theme: {
-          color: "#5D0072",
-        },
-        modal: {
-          ondismiss: function() {
-            setIsProcessing(false);
-          }
-        }
-      };
-
-      const paymentObject = new window.Razorpay(options);
-      paymentObject.open();
-    } catch (error) {
-      console.error("Error booking slot:", error);
-      toast.error("Failed to book slot. Please try again.");
-      setIsProcessing(false);
-    } finally {
-      setIsProcessing(false);
-    }
+    const bookingData = {
+      bookingName,
+      email,
+      date,
+      people,
+      whatsapp,
+      decoration,
+      wantDecoration,
+      occasion,
+      extraDecorations,
+      totalAmount: calculateTotal(),
+      cartData,
+      slotType,
+      lastItem
+    };
+    
+    localStorage.setItem('bookingData', JSON.stringify(bookingData));
+    navigate('/TermsMain');
   };
 
   return (
-    <div className=" fontPoppin relative w-full p-4 flex items-center z-10 justify-center bg-cover bg-center bg-[url('https://plus.unsplash.com/premium_photo-1661726486910-7cfff916caad?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmlydGhkYXklMjBjZWxlYnJhdGlvbnxlbnwwfHwwfHx8MA%3D%3D')]">
+    <div className="fontPoppin relative w-full p-4 flex items-center z-10 justify-center bg-cover bg-center bg-[url('https://plus.unsplash.com/premium_photo-1661726486910-7cfff916caad?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmlydGhkYXklMjBjZWxlYnJhdGlvbnxlbnwwfHwwfHx8MA%3D%3D')]">
       <div className="absolute inset-0 bg-black/60"></div>
-        
-       
-      <div className="fontPoppin bg-white rounded-lg shadow-lg md:w-[35%] px-4 py-4  z-10">
-        <div className="text-center mb-4 ">
-          <h2 className="text-2xl text-[#024D87] font-medium ">Overview</h2>
+      
+      <div className="fontPoppin bg-white rounded-lg shadow-lg md:w-[35%] px-4 py-4 z-10">
+        <div className="text-center mb-4">
+          <h2 className="text-2xl text-[#024D87] font-medium">Overview</h2>
         </div>
         
         <div className="bg-blue-100 rounded-lg p-3 mb-6 flex flex-col gap-3 justify-between md:flex-row">
           <div className="flex items-center">
-            <svg   xmlns="http://www.w3.org/2000/svg"   width="20"   height="20"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   strokeWidth="2"   strokeLinecap="round"   strokeLinejoin="round"   className="mr-2 text-blue-700"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 text-blue-700">
               <rect width="18" height="18" x="3" y="4" rx="2"/>
               <path d="M16 2v4"/>
               <path d="M8 2v4"/>
@@ -372,8 +166,7 @@ const QuantityBirthday = () => {
           </div>
           
           <div className="flex items-center">
-            <svg   xmlns="http://www.w3.org/2000/svg"   width="20"   height="20"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   strokeWidth="2"   strokeLinecap="round"   strokeLinejoin="round"   className="mr-2 text-blue-700"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 text-blue-700">
               <circle cx="12" cy="12" r="10"/>
               <polyline points="12 6 12 12 16 14"/>
             </svg>
@@ -407,8 +200,7 @@ const QuantityBirthday = () => {
                 onClick={decrement}
                 className="p-1 border rounded-full hover:bg-gray-100"
               >
-                <svg   xmlns="http://www.w3.org/2000/svg"   width="20"   height="20"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   strokeWidth="2"   strokeLinecap="round"   strokeLinejoin="round"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
               </button>
@@ -422,8 +214,7 @@ const QuantityBirthday = () => {
                 onClick={increment}
                 className="p-1 border rounded-full hover:bg-gray-100"
               >
-                <svg   xmlns="http://www.w3.org/2000/svg"   width="20"   height="20"   viewBox="0 0 24 24"   fill="none"   stroke="currentColor"   strokeWidth="2"   strokeLinecap="round"   strokeLinejoin="round"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19" />
                   <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
@@ -471,13 +262,11 @@ const QuantityBirthday = () => {
                 onChange={(e) => setWantDecoration(e.target.value)}
                 className="w-full appearance-none border rounded-md p-2 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                
                 <option>Yes</option>
                 <option>No</option>
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                <svg   className="h-5 w-5 text-gray-400"   xmlns="http://www.w3.org/2000/svg"   viewBox="0 0 20 20"   fill="currentColor"
-                >
+                <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                   <path 
                     fillRule="evenodd" 
                     d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" 
@@ -502,8 +291,7 @@ const QuantityBirthday = () => {
                 <option>Proposal</option>
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                <svg   className="h-5 w-5 text-gray-400"   xmlns="http://www.w3.org/2000/svg"   viewBox="0 0 20 20"   fill="currentColor"
-                >
+                <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                   <path 
                     fillRule="evenodd" 
                     d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" 
@@ -592,9 +380,6 @@ const QuantityBirthday = () => {
               <span>₹{decorationPrice}</span>
             </div>
           )}
-          {
-            
-          }
 
           {extraDecorations.includes("rose") && (
             <div className="flex justify-between">
@@ -614,8 +399,6 @@ const QuantityBirthday = () => {
               <span>₹100</span>
             </div>
           )}
-          {/* <div> */}
-          {/* {people > 6 ? <> {people-people.length}</>:''}</div> */}
 
           <hr className="my-2" />
           <div className="flex justify-between font-bold text-purple-700">
@@ -626,11 +409,10 @@ const QuantityBirthday = () => {
 
         <div className="mt-6 flex justify-center items-center">
           <button 
-            onClick={bookSlot}
-            disabled={isProcessing}
+            onClick={handleProceed}
             className="w-full button-name hover:bg-pink-600 text-white rounded-md py-3 font-medium transition-colors"
           >
-            {isProcessing ? 'Processing...' : `Pay ₹ ${calculateTotal()}`}
+            Proceed to Terms & Conditions
           </button>
         </div>
 

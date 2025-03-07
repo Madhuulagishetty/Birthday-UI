@@ -134,14 +134,42 @@ const ServicesSection = () => {
         {/* View All Button */}
         <button className="bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition-all duration-300 flex items-center space-x-2 transform hover:scale-105 hover:shadow-lg">
           <span>View All Services</span>
-          <ChevronRight size={20} />
+          <ChevronRight 
+          size={20} 
+          className="animate-slide-left" 
+        />
         </button>
+        <style jsx>{`
+        @keyframes slide-left {
+          0% {
+            transform: translateX(20px);
+            opacity: 0;
+          }
+          20% {
+            transform: translateX(0);
+            opacity: 1;
+          }
+          80% {
+            transform: translateX(0);
+            opacity: 1;
+          }
+          100% {
+            transform: translateX(-20px);
+            opacity: 0;
+          }
+        }
+        
+        .animate-slide-left {
+          animation: slide-left 2s ease-in-out infinite;
+        }
+      `}</style>
       </div>
       
     </div>
     <PrivateTheatreExperience/>
     
     </> 
+    
   );
 };
 

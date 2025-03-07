@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import FsLightbox from 'fslightbox-react';
+// import ScrollToTop from '../ScrollTop';
 
 const BirthdayGallery = () => {
   const [toggler, setToggler] = useState(false);
@@ -23,6 +24,7 @@ const BirthdayGallery = () => {
 
   return (
     <>
+
       <div className="w-full flex justify-center flex-col items-center h-full py-4 md:pt-12 md:pb-16">
         <div className="fontCursive text-3xl md:text-5xl text-pink-700 p-4 md:p-6">BirthdayGallery</div>
         <div className="w-full md:w-11/12 lg:w-4/5 xl:w-3/4 bg-white flex">

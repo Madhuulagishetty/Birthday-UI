@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { Link } from "react-router-dom";
 import {HousePlus, MoveRight, Headphones, Send, User, Mail, MessageSquare} from 'lucide-react'
-
+import ScrollToTop from '../ScrollTop';
 const Contact = () => {
     
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -55,6 +55,7 @@ const Contact = () => {
     <>
     <div className="relative w-full h-96 overflow-hidden">
       {/* Background image */}
+       <ScrollToTop />
       <div 
         className="absolute inset-0 bg-cover bg-center"
         style={{
@@ -252,6 +253,7 @@ const Contact = () => {
                     SEND MESSAGE
                 </button>
                 </form>
+                <p className='pt-3'>We'll get back to you within 24 hours. Your inquiry is important to us!</p>
             </div>
             </div>
       </div>
