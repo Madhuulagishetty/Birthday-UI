@@ -56,9 +56,13 @@ const QuantityBirthday = () => {
     localStorage.setItem("wantDecoration", wantDecoration);
     localStorage.setItem("occasion", occasion);
     localStorage.setItem("extraDecorations", JSON.stringify(extraDecorations));
-  }, [people, whatsapp, bookingName, email, wantDecoration, occasion, extraDecorations]);
-
-  const basePrice = 2000;
+    localStorage.setItem("date", date); 
+    localStorage.setItem("cartData", JSON.stringify(cartData)); 
+    localStorage.setItem("slotType", slotType);
+  }, [  people,  whatsapp,  bookingName,  email,  wantDecoration,  occasion,  extraDecorations,  date,  cartData,  slotType
+  ]);
+  
+  const basePrice = 2000; 
   const decorationPrice = 300;
   const lastItem = cartData.length > 0 ? cartData[cartData.length - 1] : null;
 
