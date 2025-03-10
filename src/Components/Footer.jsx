@@ -15,19 +15,19 @@ const Footer = () => {
           <div className="mb-8 md:mb-0 md:w-[30%]">
             <ul className="space-y-4">
               <li>
-                <NavLink to="#" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Home</NavLink>
+                <NavLink to="/" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Home</NavLink>
               </li>
               <li>
                 <NavLink to="/ContactUs" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Contact Us</NavLink>
               </li>
               <li>
-                <NavLink to="/ServicesSection" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Our Services</NavLink>
+                <NavLink to="/ServicesMain" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Our Services</NavLink>
               </li>
               <li>
-                <NavLink to="/BirthdayGallery" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Gallery</NavLink>
+                <NavLink to="/GalleryMain" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Gallery</NavLink>
               </li>
               <li>
-                <NavLink to="/packages" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Packages</NavLink>
+                <NavLink to="/Package" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Packages</NavLink>
               </li>
             </ul>
           </div>

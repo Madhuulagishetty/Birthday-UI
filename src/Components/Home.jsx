@@ -13,7 +13,7 @@ import Package from "./Package/PackDum";
 import WelcomeSection from "./Welcome";
 import ServicesSection from "./Services/ServicesSection";
 import { motion } from "framer-motion";
-import Birthday from "./BirthdayGallery";
+import Birthday from "./BirthdayGallery/BirthdayGallery";
 
 // Animation variants for scroll animations
 const fadeInUp = {
@@ -40,6 +40,13 @@ const Home = () => {
   useEffect(() => {
     // Reset date only in Home component when it mounts
     setDate("");
+    
+    // Smooth scroll to top when component mounts
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth"
+    });
   }, []);
 
   const images = [
@@ -103,7 +110,7 @@ const Home = () => {
         <div className="absolute inset-0 bg-black/60"></div>
 
         <motion.div
-          className="bg-white rounded-lg shadow-lg z-10 w-full max-w-lg sm:max-w-md px-3 py-3 mt-[7%] md:mt-[3%]"
+          className="bg-white rounded-lg shadow-lg z-10 w-full max-w-lg sm:max-w-md px-3 py-3 mt-[20%] md:mt-[3%]"
           variants={fadeInUp}
         >
           <div className="mb-4">

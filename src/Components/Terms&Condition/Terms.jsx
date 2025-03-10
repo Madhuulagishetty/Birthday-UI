@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import { collection, addDoc } from 'firebase/firestore';
@@ -10,6 +10,8 @@ const TermsMain = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [bookingData, setBookingData] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [animateIn, setAnimateIn] = useState(false);
+  const payButtonRef = useRef(null);
 
   useEffect(() => {
     const data = localStorage.getItem('bookingData');
@@ -18,6 +20,11 @@ const TermsMain = () => {
     } else {
       navigate('/');
     }
+    
+    // Trigger animations after component mounts
+    setTimeout(() => {
+      setAnimateIn(true);
+    }, 100);
   }, [navigate]);
 
   const termsItems = [
@@ -72,7 +79,11 @@ const TermsMain = () => {
 
   const sendEmail = async (bookingData) => {
     try {
-      const bookingTime = bookingData.lastItem ? `${bookingData.lastItem.start} - ${bookingData.lastItem.end}` : "Not Available";
+      const bookingTime = bookingData.lastItem
+        ? `${bookingData.lastItem.start} - ${bookingData.lastItem.end}`
+        : "Not Available";
+  
+      // Sending email using EmailJS
       const templateParams = {
         to_email: 'lagishettymadhu05@gmail.com',
         booking_date: bookingData.date,
@@ -83,18 +94,37 @@ const TermsMain = () => {
         total_amount: bookingData.totalAmount,
         payment_id: bookingData.paymentId,
       };
-
+  
       await emailjs.send(
         'service_codgdqj',
         'template_g2368km',
         templateParams,
         '6qCccpL5QSAWvn5AJ'
       );
+  
+      // Sending data to Formspree
+      const formspreeEndpoint = "https://formspree.io/f/xldjejzn"; // Replace with your Formspree ID
+      await fetch(formspreeEndpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: bookingData.email, // If you have an email field
+          booking_date: bookingData.date,
+          booking_time: bookingTime,
+          whatsapp_number: bookingData.whatsapp,
+          num_people: bookingData.people,
+          decoration: bookingData.wantDecoration ? "Yes" : "No",
+          total_amount: bookingData.totalAmount,
+          payment_id: bookingData.paymentId,
+        }),
+      });
+  
     } catch (error) {
-      console.error('Error sending email:', error);
+      console.error('Error sending email or Formspree request:', error);
     }
   };
-
   const sendWhatsAppReminder = async (params) => {
     try {
       const { to, date, time } = params;
@@ -214,69 +244,150 @@ const TermsMain = () => {
     }
   };
 
+  useEffect(() => {
+    if (isChecked && payButtonRef.current) {
+      payButtonRef.current.classList.add('button-pulse');
+    } else if (payButtonRef.current) {
+      payButtonRef.current.classList.remove('button-pulse');
+    }
+  }, [isChecked]);
+
   return (
-    <div className="w-[100%] bg-white shadow-md rounded-lg pt-[7%] pb-[9%]">
-      <div className="flex items-center pl-4">
-        <button 
-          onClick={() => navigate('/')}
-          className="flex items-center text-gray-600 hover:text-gray-900"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-          </svg>
-          <span className="ml-2 text-lg">Back</span>
-        </button>
-      </div>
-      
-      <div className='w-[100%] flex justify-center flex-col items-center'>
-        <div className='w-[50%]'>
-          <h1 className="text-2xl font-bold text-center mb-8">Terms & Conditions</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-400 to-pink-50 pt-16 pb-16 px-4 sm:px-6 md:px-8">
+      <div className="max-w-4xl mx-auto pt-[3%]">
+        <div className={`transition-all duration-500 transform ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
+          {/* <div className="flex items-center mb-6">
+            <button 
+              onClick={() => navigate('/')}
+              className="flex items-center text-gray-600 hover:text-pink-600 transition-colors duration-300 bg-white p-2 rounded-md mt-2  shadow-md hover:shadow-lg"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+              </svg>
+              <span className="ml-2 text-lg font-medium">Back</span>
+            </button>
+          </div> */}
           
-          <ol className="list-decimal pl-6 space-y-4">
-            {termsItems.map((item, index) => (
-              <li key={index} className="text-gray-800">{item}</li>
-            ))}
-          </ol>
-          
-          <div className="mt-10">
-            <h2 className="text-xl font-bold mb-4">Refund policy</h2>
-            <p>{Refund}</p>
-          </div>
-
-          <div className="mt-8">
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={isChecked}
-                onChange={(e) => setIsChecked(e.target.checked)}
-                className="form-checkbox h-5 w-5 text-purple-600"
-              />
-              <span className="text-gray-700">I have read and agree to the terms and conditions</span>
-            </label>
-          </div>
-
-          {isChecked && bookingData && (
-            <div className="mt-6">
-              <div className="bg-gray-50 p-4 rounded mb-4">
-                <h3 className="font-semibold mb-2">Booking Summary</h3>
-                <p>Total Amount: ₹{bookingData.totalAmount}</p>
-              </div>
-              
-              <button
-                             onClick={handlePayment}
-                             disabled={!isChecked || isProcessing}
-                              className={`w-full button-name text-white rounded-md py-3 font-medium transition-colors ${
-                               isChecked ? 'hover:bg-pink-600 bg-pink-500' : 'bg-gray-400 cursor-not-allowed'      
-                               }`}
-                               >
-                          {isProcessing ? 'Processing...' : `Pay ₹${bookingData?.totalAmount || 0}`}
-                      </button>
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="bg-gradient-to-r from-purple-600 to-pink-500 py-4 px-6">
+              <h1 className="text-2xl md:text-3xl font-bold text-white text-center">Terms & Conditions</h1>
             </div>
-          )}
+            
+            <div className="p-6 md:p-8">
+              <div className={`space-y-6 transition-all duration-700 delay-300 ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                <ol className="list-decimal pl-6 space-y-4">
+                  {termsItems.map((item, index) => (
+                    <li 
+                      key={index} 
+                      className="text-gray-800 pb-3 border-b border-gray-100 last:border-0 transition-all duration-300"
+                      style={{ 
+                        transitionDelay: `${300 + (index * 50)}ms`,
+                        opacity: animateIn ? 1 : 0,
+                        transform: animateIn ? 'translateX(0)' : 'translateX(-20px)'
+                      }}
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ol>
+                
+                <div 
+                  className="mt-8 p-4 bg-purple-50 rounded-lg border-l-4 border-purple-500"
+                  style={{ 
+                    transitionDelay: '800ms',
+                    opacity: animateIn ? 1 : 0,
+                    transform: animateIn ? 'translateY(0)' : 'translateY(20px)'
+                  }}
+                >
+                  <h2 className="text-xl font-bold mb-3 text-purple-800 flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Refund Policy
+                  </h2>
+                  <p className="text-gray-700">{Refund}</p>
+                </div>
+
+                <div 
+                  className="mt-8"
+                  style={{ 
+                    transitionDelay: '900ms',
+                    opacity: animateIn ? 1 : 0,
+                    transform: animateIn ? 'translateY(0)' : 'translateY(20px)'
+                  }}
+                >
+                  <label className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={(e) => setIsChecked(e.target.checked)}
+                      className="form-checkbox h-5 w-5 text-pink-600 rounded focus:ring-pink-500"
+                    />
+                    <span className="text-gray-700 font-medium">I have read and agree to the terms and conditions</span>
+                  </label>
+                </div>
+
+                {bookingData && (
+                  <div 
+                    className="mt-6"
+                    style={{ 
+                      transitionDelay: '1000ms',
+                      opacity: animateIn ? 1 : 0,
+                      transform: animateIn ? 'translateY(0)' : 'translateY(20px)'
+                    }}
+                  >
+                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-5 rounded-lg shadow-inner mb-6">
+                      <h3 className="font-semibold text-lg mb-3 text-purple-800">Booking Summary</h3>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-700">Total Amount:</span>
+                        <span className="text-2xl font-bold text-pink-600">₹{bookingData.totalAmount}</span>
+                      </div>
+                    </div>
+                    
+                    <button
+                      ref={payButtonRef}
+                      onClick={handlePayment}
+                      disabled={!isChecked || isProcessing}
+                      className={`w-full rounded-lg py-4 font-medium text-lg transition-all duration-300 transform ${
+                        isChecked ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:shadow-lg hover:-translate-y-1' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      }`}
+                    >
+                      {isProcessing ? (
+                        <span className="flex items-center justify-center">
+                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Processing...
+                        </span>
+                      ) : (
+                        `Pay ₹${bookingData?.totalAmount || 0}`
+                      )}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       
       <ToastContainer position="top-center" autoClose={5000} hideProgressBar={false} />
+
+      <style jsx>{`
+        @keyframes pulse {
+          0%, 100% {
+            box-shadow: 0 0 0 0 rgba(237, 100, 166, 0.7);
+          }
+          50% {
+            box-shadow: 0 0 0 15px rgba(237, 100, 166, 0);
+          }
+        }
+        
+        .button-pulse {
+          animation: pulse 2s infinite;
+        }
+      `}</style>
     </div>
   );
 };

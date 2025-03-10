@@ -149,7 +149,7 @@ const QuantityBirthday = () => {
     <div className="fontPoppin relative w-full p-4 flex items-center z-10 justify-center bg-cover bg-center bg-[url('https://plus.unsplash.com/premium_photo-1661726486910-7cfff916caad?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmlydGhkYXklMjBjZWxlYnJhdGlvbnxlbnwwfHwwfHx8MA%3D%3D')]">
       <div className="absolute inset-0 bg-black/60"></div>
       
-      <div className="fontPoppin bg-white rounded-lg shadow-lg md:w-[35%] px-4 py-4 z-10">
+      <div className="fontPoppin bg-white rounded-lg shadow-lg md:w-[35%] px-4 py-4 z-10 mt-[20%] md:mt-[4%]">
         <div className="text-center mb-4">
           <h2 className="text-2xl text-[#024D87] font-medium">Overview</h2>
         </div>
@@ -171,13 +171,13 @@ const QuantityBirthday = () => {
               <polyline points="12 6 12 12 16 14"/>
             </svg>
             <span className="text-sm">
-              {lastItem ? `${lastItem.start} - ${lastItem.end}` : "04:00 PM TO 06:30 PM"}
+              {lastItem ? `${lastItem.start} - ${lastItem.end}`:" "}
             </span>
           </div>
         </div>
         
         <div className="text-center mb-6 w-[100%] flex justify-center">
-          <h3 className="text-lg font-medium border-b border-black pb-2 w-[50%]">Booking Details</h3>
+          <h3 className="text-lg font-medium border-b border-black pb-2 md:w-[50%] w-[100%]">Booking Details</h3>
         </div>
         
         <div className="space-y-4">
@@ -408,15 +408,17 @@ const QuantityBirthday = () => {
         </div>
 
         <div className="mt-6 flex justify-center items-center">
-          <button 
-            onClick={handleProceed}
-            className="w-full button-name hover:bg-pink-600 text-white rounded-md py-3 font-medium transition-colors"
-          >
-            Proceed to Terms & Conditions
-          </button>
-        </div>
+      <button 
+        onClick={handleProceed}
+        className="w-full sm:w-auto px-6 text-[15px] rounded-3xl sm:px-8 utton-name bg-pink-500 hover:bg-pink-600 text-white  py-3 font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-opacity-50"
+         >
+           Proceed to Terms & Conditions
+        </button>
+          </div>
 
-        <ToastContainer position="top-center" autoClose={5000} hideProgressBar={false} />
+        <ToastContainer position="top-center" autoClose={5000} hideProgressBar={false}      toastStyle={{
+            marginTop: window.innerWidth < 768 ? "15%" : "10%",
+          }}/>
       </div>
     </div>
   );

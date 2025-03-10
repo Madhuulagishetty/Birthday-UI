@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from "react";
-// import { Star, Users, TicketX, Wine, LoaderPinwheel } from "lucide-react";
 import { FaUtensils } from "react-icons/fa";
 import { Users, PartyPopper } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
@@ -12,11 +11,13 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import { motion } from "framer-motion"; // Added for animations
 
 const Rolexe = () => {
   const { AddtoSlot, cartData, date, setSlotType } = useContext(contextApi);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
   const [bookedSlots, setBookedSlots] = useState([]);
+  const [loading, setLoading] = useState(true); // Added for loading animation
   const navigate = useNavigate();
   const [responseId, setResponseId] = useState("");
   const [responseState, setResponseState] = useState([]);
@@ -59,7 +60,6 @@ const Rolexe = () => {
 
   const handleRazorpayScreen = async (amount) => {
     const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
-
 
     if (!res) {
       alert("Some error at razorpay screen loading");
@@ -140,6 +140,7 @@ const Rolexe = () => {
   useEffect(() => {
     const fetchBookedSlots = async () => {
       try {
+        setLoading(true);
         const bookingsRef = collection(db, "rolexe");
         const q = query(bookingsRef, where("date", "==", date));
         const querySnapshot = await getDocs(q);
@@ -153,8 +154,10 @@ const Rolexe = () => {
 
         console.log('booked slots', booked);
         setBookedSlots(booked);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching booked slots:", error);
+        setLoading(false);
       }
     };
     fetchBookedSlots();
@@ -182,12 +185,54 @@ const Rolexe = () => {
     });
   };
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        duration: 0.5,
+        when: "beforeChildren",
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: { duration: 0.3 }
+    }
+  };
+
+  const buttonVariants = {
+    initial: { scale: 1 },
+    hover: { 
+      scale: 1.05,
+      boxShadow: "0px 5px 15px rgba(177, 21, 60, 0.4)",
+      transition: { duration: 0.2 }
+    },
+    tap: { scale: 0.95 }
+  };
+
   return (
-    <div className=" fontPoppin relative w-full p-4 flex items-center justify-center bg-cover bg-center bg-[url('https://plus.unsplash.com/premium_photo-1661726486910-7cfff916caad?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmlydGhkYXklMjBjZWxlYnJhdGlvbnxlbnwwfHwwfHx8MA%3D%3D')]">
+    <div className="fontPoppin relative w-full min-h-screen p-4 flex items-center justify-center bg-cover bg-center bg-[url('https://plus.unsplash.com/premium_photo-1661726486910-7cfff916caad?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmlydGhkYXklMjBjZWxlYnJhdGlvbnxlbnwwfHwwfHx8MA%3D%3D')]">
       <div className="absolute inset-0 bg-black/60"></div>
 
-      <div className="relative md:max-w-[30rem] w-full bg-white rounded-2xl shadow-xl overflow-hidden p-3 z-10 md:mt-[7%] md:mb-[3%]">
-        <div className="relative rounded-xl overflow-hidden">
+      <motion.div 
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="relative md:max-w-[30rem] w-full bg-white rounded-2xl shadow-xl overflow-hidden p-3 z-10 md:mt-[7%] md:mb-[3%] mt-[26%]"
+      >
+        <motion.div 
+          className="relative rounded-xl overflow-hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+        >
           <Slider {...sliderSettings} className="theater-slider">
             {images.map((img, index) => (
               <div key={index} className="aspect-video w-full overflow-hidden">
@@ -199,75 +244,114 @@ const Rolexe = () => {
               </div>
             ))}
           </Slider>
-        </div>
+        </motion.div>
 
-        
-        <div className="space-y-2">
-          <h4 className=" text-[1.2rem] font-semibold text-[#B3153D]">Rolexe Theater T2</h4>
-          <div className="inline-flex items-center">
+        <motion.div 
+          className="space-y-2 mt-3"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.h4 variants={itemVariants} className="text-[1.2rem] font-semibold text-[#B3153D]">
+            Rolexe Theater T2
+          </motion.h4>
+          
+          <motion.div variants={itemVariants} className="inline-flex items-center">
             <div className="px-3 py-1 bg-green-50 text-green-500 rounded-full border border-green-500 text-sm">
               <span>{timeSlots.length - bookedSlots.length} Slots Available</span>
             </div>
-          </div>
-          <div className="flex items-center gap-3 text-gray-700 font-medium py-2 px-2 max-w-sm">
-                <div className="flex items-center space-x-2">
-               <Users size={25} className="text-gray-600" />
-            <span className="text-sm text-gray-600">Max 6 People</span>
-           </div>
-      
+          </motion.div>
+          
+          <motion.div 
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row items-start sm:items-center gap-3 text-gray-700 font-medium py-2 px-2 max-w-sm"
+          >
             <div className="flex items-center space-x-2">
+              <Users size={25} className="text-gray-600" />
+              <span className="text-sm text-gray-600">Max 6 People</span>
+            </div>
+      
+            <div className="flex items-center space-x-2 mt-2 sm:mt-0">
               <PartyPopper size={25} className="text-gray-600" />
-               <span className="text-sm text-gray-600">Decoration Included</span>
-          </div>
-       </div>
-          <h3 className="text-[16px] font-semibold text-[#055085]">
+              <span className="text-sm text-gray-600">Decoration Included</span>
+            </div>
+          </motion.div>
+          
+          <motion.h3 variants={itemVariants} className="text-[16px] font-semibold text-[#055085] mt-2">
             Select Time Slot
-          </h3>
+          </motion.h3>
 
-          <div className="flex flex-wrap">
-            {timeSlots.map((slot) => (
-              <button
-                key={slot.id}
-                onClick={() => {
-                  setSelectedTimeSlot(slot);
-                  AddtoSlot(slot);
-                }}
-                disabled={bookedSlots.some((booked) => booked.id === slot.id)}
-                className={`rounded-xl border text-sm transition-all ml-1 px-[7px] pt-1 pb-1 mt-1 md:mt-0 ${
-                  selectedTimeSlot && selectedTimeSlot.id === slot.id
-                    ? "border-[#055085] bg-blue-50 text-[#055085]"
-                    : bookedSlots.some((booked) => booked.id === slot.id)
-                    ? "bg-gray-300 cursor-not-allowed text-gray-500"
-                    : "border-gray-200 hover:border-purple-200"
-                }`}
-              >
-                <div className="font-medium text-[12px] w-15 text-center">
-                  <p>{slot.start} To</p>
-                  <p>{slot.end}</p>
-                </div>
-              </button>
-            ))}
-          </div>
-          <div className="pt-1">
+          {loading ? (
+            <motion.div 
+              variants={itemVariants}
+              className="flex justify-center py-4"
+            >
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#B1153C]"></div>
+            </motion.div>
+          ) : (
+            <motion.div 
+              variants={itemVariants}
+              className="flex flex-wrap gap-2"
+            >
+              {timeSlots.map((slot, index) => (
+                <motion.button
+                  key={slot.id}
+                  onClick={() => {
+                    setSelectedTimeSlot(slot);
+                    AddtoSlot(slot);
+                  }}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 + (index * 0.1), duration: 0.3 }}
+                  whileHover={{ 
+                    scale: !bookedSlots.some((booked) => booked.id === slot.id) ? 1.05 : 1,
+                    transition: { duration: 0.2 } 
+                  }}
+                  disabled={bookedSlots.some((booked) => booked.id === slot.id)}
+                  className={`rounded-xl border text-sm transition-all px-[7px] pt-1 pb-1 ${
+                    selectedTimeSlot && selectedTimeSlot.id === slot.id
+                      ? "border-[#055085] bg-blue-50 text-[#055085] shadow-md"
+                      : bookedSlots.some((booked) => booked.id === slot.id)
+                      ? "bg-gray-300 cursor-not-allowed text-gray-500"
+                      : "border-gray-200 hover:border-purple-200 hover:shadow-sm"
+                  }`}
+                >
+                  <div className="font-medium text-[12px] w-15 text-center">
+                    <p>{slot.start} To</p>
+                    <p>{slot.end}</p>
+                  </div>
+                </motion.button>
+              ))}
+            </motion.div>
+          )}
+          
+          <motion.div 
+            variants={itemVariants}
+            className="pt-3"
+          >
             <div className="flex items-baseline gap-1">
               <span className="text-1xl font-semibold">₹2000</span>
               <span className="text-sm">for up to 2 people with decoration</span>
             </div>
             <p className="text-sm text-gray-500 pb-4">More than 6 people not allowed</p>
 
-            <button
+            <motion.button
               onClick={handleBooking}
-              className={`button-main button-name bg-[#B1153C] text-white px-6 mx-auto  py-2 rounded-md hover:bg-pink-600 transition-all ${
+              variants={buttonVariants}
+              initial="initial"
+              whileHover="hover"
+              whileTap="tap"
+              className={`w-full md:w-auto button-main button-name bg-[#B1153C] text-white px-6 py-2.5 rounded-md transition-all ${
                 selectedTimeSlot && cartData.length < 2
-                  ? "bg-[#B1153C] text-white"
-                  : "bg-[#B1153C] cursor-not-allowed text-white"
+                  ? "bg-[#B1153C] text-white hover:bg-[#d81a49]"
+                  : "bg-[#B1153C] opacity-80 cursor-not-allowed text-white"
               }`}
             >
-              Booking Now
-            </button>
-          </div>
-        </div>
-      </div>
+              Book Now
+            </motion.button>
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
       <ToastContainer
         position="top-center"

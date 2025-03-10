@@ -61,8 +61,8 @@ const PrivateTheatreExperience = () => {
   return (
     <div className="bg-white">
       {/* Event Types Section */}
-      <div className="container mx-auto px-4 py-16">
-       <div className='w-full text-center p-8'>
+      <div className="container mx-auto px-4 md:py-16 py-5">
+       <div className='w-full text-center pt-3 pb-6 md:pb-10'>
          <h1 className='text-5xl fontCursive text-pink-600'> Celebration Types</h1>
          </div>
         <div className="flex flex-wrap gap-8 justify-center items-stretch">

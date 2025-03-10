@@ -12,14 +12,16 @@ import Footer from './Components/Footer';
 import Rolexe from "./Components/Rolexe/Rolexe";
 import Deluxe from "./Components/Deluxe/Deluxe";
 import Navbar from "./Components/Navbar";
-import ServicesSection from './Components/Services/ServicesSection'
+import ServicesMain from './Components/Services/ServicesMain'
 import ContactUs from './Components/ContactUs/Contact'
 import TermsAndConditions from './Components/Terms&Condition/TermAndCondition'
-import BirthdayGallery from './Components/BirthdayGallery'
+import GalleryMain from './Components/BirthdayGallery/GalleryMain'
+
 import TermsMain from './Components/Terms&Condition/Terms'
 import ScrollToTop from './Components/ScrollTop'
 // import Privacy from './Components/Privacy'
-import RefundPolicy from './Components/Privacy'
+import RefundPolicy from './Components/Refund'
+import AboutUs from './Components/AboutUs/AboutUs'
 
 const App = () => {
   
@@ -27,8 +29,9 @@ const App = () => {
    
     <Context>
      <BrowserRouter>
-     <ScrollToTop />
+     
         <Navbar/>
+        <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="BookingCard" element={<BookingCard />} />
@@ -38,14 +41,17 @@ const App = () => {
         <Route path="Packages" element={<Packages/>}/>
         <Route path="Rolexe" element={<Rolexe/>}/>
         <Route path="Deluxe" element={<Deluxe/>}/>
-        <Route path="ServicesSection" element={<ServicesSection/>}/>
-        <Route path="ContactUs" element={<ContactUs/>}/>
-        <Route path="TermsAndConditions" element={<TermsAndConditions/>}/>
+        <Route path="ServicesMain" element={<ServicesMain/>}/>
+        <Route path="Contactus" element={<ContactUs/>}/>
+        
         <Route path="TermsMain" element={<TermsMain/>}/>
         <Route path="Package" element={<Package/>}/>
-        <Route path="BirthdayGallery" element={<BirthdayGallery/>}/>
+        <Route path="GalleryMain" element={<GalleryMain/>}/>
         {/* <Route path="Privacy" element={<Privacy/>}/> */}
         <Route path="RefundPolicy" element={<RefundPolicy/>}/>
+        <Route path="TermsAndConditions" element={<TermsAndConditions/>}/>
+        <Route path="AboutUs" element={<AboutUs/>}/>
+
 
 
 

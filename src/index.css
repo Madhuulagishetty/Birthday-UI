@@ -8,6 +8,10 @@
 .fontCursive {
   font-family: 'Cookie', cursive;
 }
+.Toastify__toast-container {
+  margin-top: 0% !important;
+}
+
 
 .fontPoppin{
    font-family: 'Poppins', sans-serif;

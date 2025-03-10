@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import PrivateTheatreExperience from './EventCard'
+import { HousePlus, MoveRight } from 'lucide-react';
+import {Link} from "react-router-dom";
+
 
 import DelaxImg from "../../assets/Delax.jpg";
 import RelaxImg from "../../assets/Relax.jpg";
@@ -23,6 +26,14 @@ const ServicesSection = () => {
     'Candid Moments Capturing'
   ];
 
+  // Smooth scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }, []);
+
   useEffect(() => {
     const slideInterval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % serviceImages.length);
@@ -41,13 +52,16 @@ const ServicesSection = () => {
 
   return (
     <>
-    <div className="container mx-auto px-4 py-4 flex flex-col md:flex-row  justify-center items-center space-y-8 md:space-y-0 md:space-x-12">
+    <div className="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-center items-center space-y-8 md:space-y-0 md:space-x-12">
+     
       {/* Image Slider Section */}
-      <div className="w-full md:w-1/3 relative group mt-[5%] ">
-        <div className="overflow-hidden rounded-2xl shadow-lg relative">
+      
+      <div className="w-full md:w-1/3 relative group md:mt-[5%]">
+     
+        <div className="overflow-hidden rounded-2xl shadow-lg relative mt-[10%] md:mt-[0%] ">
           <div 
             ref={sliderRef}
-            className="relative w-full h-[500px] overflow-hidden"
+            className="relative w-full h-[400px] md:h-[500px] overflow-hidden mt-[10%] md:mt-[0%]"
           >
             {serviceImages.map((img, index) => (
               <div 
@@ -105,10 +119,10 @@ const ServicesSection = () => {
 
       {/* Services Content Section */}
       <div className="w-full md:w-[30%]">
-        <h2 className="fontCursive text-5xl  text-blue-800 mb-6">
+        <h2 className="fontCursive text-5xl text-blue-800 mb-6 animate-fade-in">
           Our Services
         </h2>
-        <p className="fontPoppin text-gray-600 mb-6">
+        <p className="fontPoppin text-gray-600 mb-6 animate-fade-in-delay">
           Capturing moments that last a lifetime. Our professional photography services blend creativity, technical expertise, and a passion for storytelling to preserve your most cherished memories.
         </p>
 
@@ -119,11 +133,12 @@ const ServicesSection = () => {
               key={index} 
               className={`
                 flex items-center space-x-3 
-                transform transition-all duration-300
+                transform transition-all duration-300 animate-fade-in-slide
                 ${currentSlide === index 
                   ? 'translate-x-2 text-blue-600' 
                   : 'text-gray-700'}
               `}
+              style={{ animationDelay: `${index * 0.2}s` }}
             >
               <ChevronRight className="text-blue-600" />
               <span className='fontPoppin'>{point}</span>
@@ -132,7 +147,7 @@ const ServicesSection = () => {
         </div>
 
         {/* View All Button */}
-        <button className="bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition-all duration-300 flex items-center space-x-2 transform hover:scale-105 hover:shadow-lg">
+        <button className="bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition-all duration-300 flex items-center space-x-2 transform hover:scale-105 hover:shadow-lg animate-fade-in-up">
           <span>View All Services</span>
           <ChevronRight 
           size={20} 
@@ -161,6 +176,58 @@ const ServicesSection = () => {
         
         .animate-slide-left {
           animation: slide-left 2s ease-in-out infinite;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fadeInSlide {
+          from {
+            opacity: 0;
+            transform: translateX(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fadeIn 0.8s ease-out forwards;
+        }
+        
+        .animate-fade-in-delay {
+          animation: fadeIn 0.8s ease-out forwards;
+          animation-delay: 0.3s;
+          opacity: 0;
+        }
+        
+        .animate-fade-in-up {
+          animation: fadeInUp 0.8s ease-out forwards;
+          animation-delay: 0.6s;
+          opacity: 0;
+        }
+
+        .animate-fade-in-slide {
+          animation: fadeInSlide 0.6s ease-out forwards;
+          opacity: 0;
         }
       `}</style>
       </div>
