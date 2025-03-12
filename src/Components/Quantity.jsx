@@ -4,9 +4,43 @@ import { contextApi } from "./ContextApi/Context";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const QuantityBirthday = () => {
+const QuantityBirthday = () => { 
   const navigate = useNavigate();
   const { date, cartData, setDate, slotType } = useContext(contextApi);
+  
+  // Initialize state with default values
+  const [people, setPeople] = useState(1);
+  const [whatsapp, setWhatsapp] = useState("");
+  const [decoration, setDecoration] = useState(false);
+  const [bookingName, setBookingName] = useState("");
+  const [email, setEmail] = useState("");
+  const [wantDecoration, setWantDecoration] = useState("Yes");
+  const [occasion, setOccasion] = useState("Anniversary");
+  const [extraDecorations, setExtraDecorations] = useState([]);
+
+  // Add a session identifier to track if this is a fresh page load or refresh
+  useEffect(() => {
+    // Check for a session ID in sessionStorage (will be lost on refresh)
+    const sessionId = sessionStorage.getItem('formSessionId');
+    
+    if (!sessionId) {
+      // This is a new session (page was refreshed or newly opened)
+      // Generate a new session ID
+      const newSessionId = Date.now().toString();
+      sessionStorage.setItem('formSessionId', newSessionId);
+      
+      // Clear related localStorage data
+      localStorage.removeItem("people");
+      localStorage.removeItem("whatsapp");
+      localStorage.removeItem("bookingName");
+      localStorage.removeItem("email");
+      localStorage.removeItem("wantDecoration");
+      localStorage.removeItem("occasion");
+      localStorage.removeItem("extraDecorations");
+      
+      // We keep the default state values set above
+    }
+  }, []);
     
   const resetFormFields = () => {
     setPeople(1);
@@ -19,35 +53,7 @@ const QuantityBirthday = () => {
     setExtraDecorations([]);
   };
 
-  useEffect(() => {
-    const savedDate = localStorage.getItem("date");
-    const savedPeople = localStorage.getItem("people");
-    const savedWhatsapp = localStorage.getItem("whatsapp");
-    const savedBookingName = localStorage.getItem("bookingName");
-    const savedEmail = localStorage.getItem("email");
-    const savedWantDecoration = localStorage.getItem("wantDecoration");
-    const savedOccasion = localStorage.getItem("occasion");
-    const savedExtraDecorations = localStorage.getItem("extraDecorations");
-
-    if (savedDate) setDate(savedDate);
-    if (savedPeople) setPeople(parseInt(savedPeople));
-    if (savedWhatsapp) setWhatsapp(savedWhatsapp);
-    if (savedBookingName) setBookingName(savedBookingName);
-    if (savedEmail) setEmail(savedEmail);
-    if (savedWantDecoration) setWantDecoration(savedWantDecoration);
-    if (savedOccasion) setOccasion(savedOccasion);
-    if (savedExtraDecorations) setExtraDecorations(JSON.parse(savedExtraDecorations));
-  }, []);
-
-  const [people, setPeople] = useState(1);
-  const [whatsapp, setWhatsapp] = useState("");
-  const [decoration, setDecoration] = useState(false);
-  const [bookingName, setBookingName] = useState("");
-  const [email, setEmail] = useState("");
-  const [wantDecoration, setWantDecoration] = useState("Yes");
-  const [occasion, setOccasion] = useState("Anniversary");
-  const [extraDecorations, setExtraDecorations] = useState([]);
-
+  // Save to localStorage when values change
   useEffect(() => {
     localStorage.setItem("people", people.toString());
     localStorage.setItem("whatsapp", whatsapp);
@@ -59,11 +65,22 @@ const QuantityBirthday = () => {
     localStorage.setItem("date", date); 
     localStorage.setItem("cartData", JSON.stringify(cartData)); 
     localStorage.setItem("slotType", slotType);
-  }, [  people,  whatsapp,  bookingName,  email,  wantDecoration,  occasion,  extraDecorations,  date,  cartData,  slotType
+  }, [
+    people,
+    whatsapp,
+    bookingName,
+    email,
+    wantDecoration,
+    occasion,
+    extraDecorations,
+    date,
+    cartData,
+    slotType
   ]);
   
   const basePrice = 2000; 
-  const decorationPrice = 300;
+    
+  const decorationPrice = 500;
   const lastItem = cartData.length > 0 ? cartData[cartData.length - 1] : null;
 
   const calculateTotal = () => {
@@ -175,7 +192,7 @@ const QuantityBirthday = () => {
               <polyline points="12 6 12 12 16 14"/>
             </svg>
             <span className="text-sm">
-              {lastItem ? `${lastItem.start} - ${lastItem.end}`:" "}
+              {lastItem ? `${lastItem.start} - ${lastItem.end}` : ""}
             </span>
           </div>
         </div>
@@ -372,7 +389,7 @@ const QuantityBirthday = () => {
           </div>
         </div>
 
-        <div className="mt-4 p-4 bg-gray-50 rounded">
+        <div className="mt-4 p-4 bg-pink-100 rounded">
           <h4 className="text-lg font-semibold mb-2">Price Breakdown</h4>
           <div className="flex justify-between">
             <span>Base price</span>
@@ -403,6 +420,12 @@ const QuantityBirthday = () => {
               <span>₹100</span>
             </div>
           )}
+           {people > 6 && (
+    <div className="flex justify-between">
+      <span>Extra People ({people - 6} × ₹150)</span>
+      <span>₹{(people - 6) * 150}</span>
+    </div>
+  )}
 
           <hr className="my-2" />
           <div className="flex justify-between font-bold text-purple-700">

@@ -291,7 +291,7 @@ const Rolexe = () => {
           ) : (
             <motion.div 
               variants={itemVariants}
-              className="flex flex-wrap gap-2"
+              className="flex flex-wrap gap-1"
             >
               {timeSlots.map((slot, index) => (
                 <motion.button
@@ -334,21 +334,22 @@ const Rolexe = () => {
               <span className="text-sm">for up to 2 people with decoration</span>
             </div>
             <p className="text-sm text-gray-500 pb-4">More than 6 people not allowed</p>
-
-            <motion.button
-              onClick={handleBooking}
+            <div className="w-[100%] flex justify-center">
+             <motion.button
+               onClick={handleBooking}
               variants={buttonVariants}
               initial="initial"
               whileHover="hover"
               whileTap="tap"
-              className={`w-full md:w-auto button-main button-name bg-[#B1153C] text-white px-6 py-2.5 rounded-md transition-all ${
+              className={` md:w-[80%] button-main button-name bg-[#B1153C] text-white px-6 py-2.5 rounded-md transition-all ${
                 selectedTimeSlot && cartData.length < 2
                   ? "bg-[#B1153C] text-white hover:bg-[#d81a49]"
                   : "bg-[#B1153C] opacity-80 cursor-not-allowed text-white"
               }`}
-            >
+             >
               Book Now
-            </motion.button>
+             </motion.button>
+            </div>
           </motion.div>
         </motion.div>
       </motion.div>

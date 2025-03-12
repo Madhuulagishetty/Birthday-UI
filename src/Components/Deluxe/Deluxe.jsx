@@ -407,35 +407,36 @@ const Deluxe = () => {
             >
               More than 6 people not allowed
             </p>
-
+            <div className="w-[100%] flex justify-center ">
             <motion.button
-              onClick={handleBooking}
-              variants={buttonAnimation}
-              initial="initial"
-              whileHover="hover"
-              whileTap="tap"
-              className={`w-full sm:w-auto button-main button-name bg-[#B1153C] text-white px-6 py-3 rounded-md transition-all ${
-                selectedTimeSlot && cartData.length < 2
-                  ? "bg-[#B1153C] text-white"
-                  : "bg-[#B1153C] opacity-80 cursor-not-allowed text-white"
-              }`}
-            >
-              <motion.span 
-                initial={{ opacity: 1 }}
-                animate={{ 
-                  opacity: [1, 0.8, 1],
-                  scale: [1, 1.03, 1]
-                }}
-                transition={{ 
-                  duration: 2,
-                  repeat: Infinity,
-                  repeatType: "reverse"
-                }}
-                className="inline-block"
-              >
-                Book Now
-              </motion.span>
-            </motion.button>
+  onClick={handleBooking}
+  variants={buttonAnimation}
+  initial="initial"
+  whileHover="hover"
+  whileTap="tap"
+  className={`w-[90%] sm:w-[90%] button-name bg-[#B1153C] text-white px-6 py-3 rounded-md transition-all ${
+    selectedTimeSlot && cartData.length < 2
+      ? "bg-[#B1153C] text-white"
+      : "bg-[#B1153C] opacity-80 cursor-not-allowed text-white"
+  }`}
+>
+  <motion.span
+    initial={{ opacity: 1 }}
+    animate={{
+      opacity: [1, 0.8, 1],
+      scale: [1, 1.03, 1]
+    }}
+    transition={{
+      duration: 2,
+      repeat: Infinity,
+      repeatType: "reverse"
+    }}
+    className="inline-block"
+  >
+    Book Now
+  </motion.span>
+</motion.button>
+            </div>
           </motion.div>
         </motion.div>
       </motion.div>

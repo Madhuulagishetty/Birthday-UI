@@ -1,22 +1,105 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import DeluxeImg from '../../assets/Delax.jpg';
-import { Link } from "react-router-dom";
-import { HousePlus, MoveRight, Headphones, Send, User, Mail, MessageSquare } from 'lucide-react';
+import { Link, useNavigate } from "react-router-dom";
+import { HousePlus, MoveRight } from 'lucide-react';
+
+// Service data for reusability
+const serviceData = [
+  {
+    id: 1,
+    title: "Private movie screening",
+    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+    image: DeluxeImg,
+    alt: "Private movie screening setup",
+    buttonText: "Book Now"
+  },
+  {
+    id: 2,
+    title: "Private movie screening",
+    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+    image: DeluxeImg,
+    alt: "Private movie screening setup",
+    buttonText: "Book Now"
+  },
+  {
+    id: 3,
+    title: "Private movie screening",
+    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+    image: DeluxeImg,
+    alt: "Private movie screening setup",
+    buttonText: "Book Now"
+  },
+  {
+    id: 4,
+    title: "Private movie screening",
+    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+    image: DeluxeImg,
+    alt: "Private movie screening setup",
+    buttonText: "Book Now"
+  }
+];
+
+// Button component for reusability
+const AnimatedButton = ({ text, onClick }) => (
+  <motion.button
+    whileHover={{ scale: 1.05, backgroundColor: '#db2777' }}
+    whileTap={{ scale: 0.95 }}
+    transition={{ duration: 0.2 }}
+    onClick={onClick}
+    className="mt-4 sm:mt-6 px-4 sm:px-6 py-2 bg-pink-500 text-white text-sm sm:text-base rounded-full font-medium hover:bg-pink-600 transition duration-300 w-[90%] sm:w-auto"
+  >
+    {text}
+  </motion.button>
+);
+
+// Service content component
+const ServiceContent = ({ title, description, buttonText, onClick }) => (
+  <motion.div 
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.5, delay: 0.4 }}
+    className="w-full md:w-1/2 px-0 md:px-4 mt-6 md:mt-0"
+  >
+    <h3 className="text-xl sm:text-2xl font-bold text-pink-600 mb-3 md:mb-4">{title}</h3>
+    <p className="text-gray-700 text-sm sm:text-base leading-relaxed">
+      {description}
+    </p>
+    <AnimatedButton text={buttonText} onClick={onClick} />
+  </motion.div>
+);
+
+// Service image component
+const ServiceImage = ({ image, alt }) => (
+  <motion.div 
+    whileHover={{ scale: 1.03 }} 
+    transition={{ duration: 0.3 }}
+    className="w-full md:w-5/12 lg:w-1/3"
+  >
+    <img
+      src={image}
+      alt={alt}
+      className="rounded-lg shadow-xl w-full h-64 sm:h-72 md:h-80 object-cover hover:shadow-2xl transition-shadow duration-300"
+    />
+  </motion.div>
+);
 
 const ServicesMain = () => {
-  // Add a mount state to track initial render only
+  const navigate = useNavigate();
   const [hasScrolled, setHasScrolled] = useState(false);
   
   // Animation controls
   const controlsTitle = useAnimation();
-  const controlsFirstRow = useAnimation();
-  const controlsSecondRow = useAnimation();
+  const controlsServices = useAnimation();
   
   // Refs for sections
   const titleRef = useRef(null);
-  const firstRowRef = useRef(null);
-  const secondRowRef = useRef(null);
+  const serviceRefs = useRef([]);
+  
+  // Initialize serviceRefs with an array of the correct length
+  useEffect(() => {
+    serviceRefs.current = serviceRefs.current.slice(0, serviceData.length);
+  }, []);
   
   // Function to check if element is in viewport
   const isInViewport = (element) => {
@@ -35,13 +118,15 @@ const ServicesMain = () => {
         controlsTitle.start({ opacity: 1, y: 0, transition: { duration: 0.8 } });
       }
       
-      if (isInViewport(firstRowRef.current)) {
-        controlsFirstRow.start({ opacity: 1, x: 0, transition: { duration: 0.8 } });
-      }
-      
-      if (isInViewport(secondRowRef.current)) {
-        controlsSecondRow.start({ opacity: 1, x: 0, transition: { duration: 0.8 } });
-      }
+      serviceRefs.current.forEach((ref, index) => {
+        if (ref && isInViewport(ref)) {
+          controlsServices.start(index.toString(), { 
+            opacity: 1, 
+            x: 0, 
+            transition: { duration: 0.8, delay: index * 0.2 } 
+          });
+        }
+      });
     };
     
     // Initial check
@@ -52,22 +137,11 @@ const ServicesMain = () => {
     
     // Cleanup
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [controlsTitle, controlsFirstRow, controlsSecondRow]);
-  
-  // Smooth scroll to section on load - only once
-//   useEffect(() => {
-//     // Only scroll if we haven't scrolled yet
-//     if (!hasScrolled) {
-//       window.scrollTo({
-//         top: 0,
-//         behavior: 'smooth'
-//       });
-//       setHasScrolled(true);
-//     }
-//   }, [hasScrolled]);
+  }, [controlsTitle, controlsServices]);
+
   return (
     <section id="services-section" className="bg-gray-200 py-12 md:py-16 min-h-screen scroll-mt-16">
-          {/* Hero Section with Proper Overlapping */}
+      {/* Hero Section with Proper Overlapping */}
       <div className="relative">
         {/* Background Image */}
         <div 
@@ -82,7 +156,7 @@ const ServicesMain = () => {
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <div className="container mx-auto px-4 py-4 sm:py-6 md:py-8 text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white relative inline-block mb-4 sm:mb-6">
-            Our Services
+              Our Services
               <div className="absolute bottom-[-10px] left-0 w-full h-1 bg-pink-500"></div>
             </h1>
           </div>
@@ -92,99 +166,60 @@ const ServicesMain = () => {
                 <HousePlus className="w-4 h-4 sm:w-5 sm:h-5" />Home
               </Link>
               <div className="flex gap-1 sm:gap-2 text-base sm:text-lg md:text-xl font-semibold items-center text-white">
-                <MoveRight className="w-4 h-4 sm:w-5 sm:h-5 animate-move-left"/>Our Services
+                <MoveRight className="w-4 h-4 sm:w-5 sm:h-5 animate-pulse"/>Our Services
               </div>
             </div>
           </div>
         </div>
       </div>
+      
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.h2 
           ref={titleRef}
           initial={{ opacity: 0, y: -20 }}
           animate={controlsTitle}
-          className="text-3xl sm:text-4xl text-center pt-8 pb-3 fontCursive md:text-5xl  text-blue-800  "
+          className="text-5xl sm:text-5xl text-center pt-8 pb-3  text-blue-800 fontCursive md:text-5xl" 
         >
           Our Services
         </motion.h2>
         
-        {/* First Row */}
-        <motion.div 
-          ref={firstRowRef}
-          initial={{ opacity: 0, x: -50 }}
-          animate={controlsFirstRow}
-          className="flex flex-col md:flex-row items-center justify-center mb-12 md:mb-20 gap-6 md:gap-8"
-        >
-          <motion.div 
-            whileHover={{ scale: 1.03 }} 
-            transition={{ duration: 0.3 }}
-            className="w-full md:w-5/12 lg:w-1/3 mb-6 md:mb-0"
-          >
-            <img
-              src={DeluxeImg}
-              alt="Private movie screening setup"
-              className="rounded-lg shadow-xl w-full h-64 sm:h-72 md:h-80 object-cover hover:shadow-2xl transition-shadow duration-300"
-            />
-          </motion.div>
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="w-full md:w-1/2 px-0 md:px-4"
-          >
-            <h3 className="text-xl sm:text-2xl font-bold text-pink-600 mb-3 md:mb-4">Private movie screening</h3>
-            <p className="text-gray-700 text-sm sm:text-base leading-relaxed">
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-            </p>
-            <motion.button
-              whileHover={{ scale: 1.05, backgroundColor: '#db2777' }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ duration: 0.2 }}
-              className="mt-4 sm:mt-6 px-4 sm:px-6 py-2 bg-pink-500 text-white text-sm sm:text-base rounded-full font-medium hover:bg-pink-600 transition duration-300"
+        {/* Services List */}
+        <div className="space-y-12 md:space-y-20">
+          {serviceData.map((service, index) => (
+            <motion.div
+              key={service.id}
+              ref={el => serviceRefs.current[index] = el}
+              initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+              animate={controlsServices}
+              variants={{
+                [index.toString()]: { opacity: 1, x: 0 }
+              }}
+              className={`flex flex-col ${index % 2 === 0 ? '' : '-reverse'} md:flex-row items-center justify-center gap-6 md:gap-8 ${index > 0 ? 'mt-12 md:mt-20' : ''}`}
             >
-              Learn More
-            </motion.button>
-          </motion.div>
-        </motion.div>
-        
-        {/* Second Row */}
-        <motion.div 
-          ref={secondRowRef}
-          initial={{ opacity: 0, x: 50 }}
-          animate={controlsSecondRow}
-          className="flex flex-col-reverse md:flex-row items-center justify-center gap-6 md:gap-8"
-        >
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
-            className="w-full md:w-1/2 px-0 md:px-4 mt-6 md:mt-0"
-          >
-            <h3 className="text-xl sm:text-2xl font-bold text-pink-600 mb-3 md:mb-4">Private movie screening</h3>
-            <p className="text-gray-700 text-sm sm:text-base leading-relaxed">
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-            </p>
-            <motion.button
-              whileHover={{ scale: 1.05, backgroundColor: '#db2777' }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ duration: 0.2 }}
-              className="mt-4 sm:mt-6 px-4 sm:px-6 py-2 bg-pink-500 text-white text-sm sm:text-base rounded-full font-medium hover:bg-pink-600 transition duration-300"
-            >
-              Book Now
-            </motion.button>
-          </motion.div>
-          <motion.div 
-            whileHover={{ scale: 1.03 }} 
-            transition={{ duration: 0.3 }}
-            className="w-full md:w-5/12 lg:w-1/3"
-          >
-            <img
-              src={DeluxeImg}
-              alt="Private movie screening setup"
-              className="rounded-lg shadow-xl w-full h-64 sm:h-72 md:h-80 object-cover hover:shadow-2xl transition-shadow duration-300"
-            />
-          </motion.div>
-        </motion.div>
+              {index % 2 === 0 ? (
+                <>
+                  <ServiceImage image={service.image} alt={service.alt} />
+                  <ServiceContent 
+                    title={service.title} 
+                    description={service.description} 
+                    buttonText={service.buttonText} 
+                    onClick={() => navigate("/")} 
+                  />
+                </>
+              ) : (
+                <>
+                  <ServiceContent 
+                    title={service.title} 
+                    description={service.description} 
+                    buttonText={service.buttonText} 
+                    onClick={() => navigate("/")} 
+                  />
+                  <ServiceImage image={service.image} alt={service.alt} />
+                </>
+              )}
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );

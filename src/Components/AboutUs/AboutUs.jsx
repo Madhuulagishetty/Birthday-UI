@@ -39,6 +39,10 @@ const AboutUs = () => {
 
     window.addEventListener('scroll', handleScroll);
     handleScroll(); // Initial check
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
     
    
   }, []);
@@ -176,9 +180,8 @@ const AboutUs = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {/* Service 1 */}
             <div 
-              className="bg-gray-100 rounded-xl p-4 sm:p-6 shadow-lg transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
-              data-aos="fade-up"
-              data-aos-delay="100"
+              className="bg-gray-200 rounded-xl p-4 sm:p-6 shadow-lg transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
+             
             >
               <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center mb-3 sm:mb-4 mx-auto">
                 <Calendar size={20} className="text-white sm:w-6 sm:h-6" />
@@ -191,9 +194,8 @@ const AboutUs = () => {
             
             {/* Service 2 */}
             <div 
-              className="bg-gray-100 rounded-xl p-4 sm:p-6 shadow-lg transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
-              data-aos="fade-up"
-              data-aos-delay="200"
+              className="bg-gray-200 rounded-xl p-4 sm:p-6 shadow-lg transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
+             
             >
               <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center mb-3 sm:mb-4 mx-auto">
                 <Sparkles size={20} className="text-white sm:w-6 sm:h-6" />
@@ -206,9 +208,8 @@ const AboutUs = () => {
             
             {/* Service 3 */}
             <div 
-              className="bg-gray-100 rounded-xl p-4 sm:p-6 shadow-lg transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2 sm:col-span-2 lg:col-span-1 sm:max-w-md mx-auto sm:w-full"
-              data-aos="fade-up"
-              data-aos-delay="300"
+              className="bg-gray-200 rounded-xl p-4 sm:p-6 shadow-lg transform transition-all duration-300 hover:shadow-xl hover:-translate-y-2 sm:col-span-2 lg:col-span-1 sm:max-w-md mx-auto sm:w-full"
+            
             >
               <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-r from-blue-500 to-pink-500 flex items-center justify-center mb-3 sm:mb-4 mx-auto">
                 <PhoneCall size={20} className="text-white sm:w-6 sm:h-6" />
@@ -226,11 +227,11 @@ const AboutUs = () => {
       <section className="py-8 sm:py-12 md:py-16 relative w-full" ref={statsRef}>
         <div className="absolute top-0 left-0 right-0 h-6 sm:h-10 bg-white" style={{borderRadius: '0 0 50% 50% / 0 0 100% 100%'}}></div>
         <div className="bg-gradient-to-r from-teal-600 via-purple-600 to-pink-600 text-white py-6 sm:py-8 md:py-10">
-          <div className="container mx-auto px-4 w-full">
+          <div className="container mx-auto px-4 w-[80%]">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
               {/* Stat 1 */}
               <div 
-                className="flex flex-col items-center text-center opacity-0 translate-y-[20px] gap-2 sm:gap-3"
+                className="flex  items-center text-center opacity-0 translate-y-[20px] gap-2 sm:gap-3"
                 data-aos="fade-up"
                 data-aos-delay="100"
                 style={{animation: isVisible ? 'fadeInUp 0.5s 0.3s forwards' : 'none'}}
@@ -239,14 +240,14 @@ const AboutUs = () => {
                   <Sparkles size={24} className="text-white sm:w-6 sm:h-6" />
                 </div>
                 <div>
-                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-1 md:mb-2">{partyCount}+</h3>
+                  <h3 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2 text-start">{partyCount}+</h3>
                   <p className="text-base sm:text-lg md:text-xl">Party Completed</p>
                 </div>
               </div>
 
               {/* Stat 2 */}
               <div 
-                className="flex flex-col items-center gap-2 sm:gap-3 text-center opacity-0 translate-y-[20px]"
+                className="flex  items-center gap-2 sm:gap-3 text-center opacity-0 translate-y-[20px]"
                 data-aos="fade-up"
                 data-aos-delay="200"
                 style={{animation: isVisible ? 'fadeInUp 0.5s 0.5s forwards' : 'none'}}
@@ -255,14 +256,14 @@ const AboutUs = () => {
                   <Heart size={24} className="text-white sm:w-6 sm:h-6" />
                 </div>
                 <div>
-                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-1 md:mb-2">{clientCount}+</h3>
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-bold mb-1 md:mb-2">{clientCount}+</h3>
                   <p className="text-base sm:text-lg md:text-xl">Clients Happy</p>
                 </div>
               </div>
 
               {/* Stat 3 */}
               <div 
-                className="flex flex-col items-center gap-2 sm:gap-3 text-center opacity-0 translate-y-[20px]"
+                className="flex  items-center gap-2 sm:gap-3 text-center opacity-0 translate-y-[20px]"
                 data-aos="fade-up"
                 data-aos-delay="300"
                 style={{animation: isVisible ? 'fadeInUp 0.5s 0.7s forwards' : 'none'}}
@@ -271,7 +272,7 @@ const AboutUs = () => {
                   <CheckCircle size={24} className="text-white sm:w-6 sm:h-6" />
                 </div>
                 <div>
-                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-1 md:mb-2">{qualityCount}%</h3>
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-bold mb-1 md:mb-2">{qualityCount}%</h3>
                   <p className="text-base sm:text-lg md:text-xl">Quality Guarantee</p>
                 </div>
               </div>

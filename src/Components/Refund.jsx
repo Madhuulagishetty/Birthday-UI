@@ -10,7 +10,7 @@ const RefundPolicy = () => {
        top: 0,
        behavior: 'smooth'
      });
-   }, []);
+   });
  
 
   return (

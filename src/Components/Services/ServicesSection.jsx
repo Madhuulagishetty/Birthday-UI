@@ -4,14 +4,14 @@ import PrivateTheatreExperience from './EventCard'
 import { HousePlus, MoveRight } from 'lucide-react';
 import {Link} from "react-router-dom";
 
-
+import { useNavigate } from "react-router-dom";
 import DelaxImg from "../../assets/Delax.jpg";
 import RelaxImg from "../../assets/Relax.jpg";
 
 const ServicesSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const sliderRef = useRef(null);
-
+  const navigate = useNavigate();
   const serviceImages = [
     RelaxImg,
     "https://i.pinimg.com/originals/52/07/cf/5207cfb3fd0f613551e4f24b50315378.jpg",
@@ -49,7 +49,9 @@ const ServicesSection = () => {
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + serviceImages.length) % serviceImages.length);
   };
-
+  const HandleBooking=()=>{
+       navigate("/ServicesMain")
+  }
   return (
     <>
     <div className="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-center items-center space-y-8 md:space-y-0 md:space-x-12">
@@ -147,7 +149,7 @@ const ServicesSection = () => {
         </div>
 
         {/* View All Button */}
-        <button className="bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition-all duration-300 flex items-center space-x-2 transform hover:scale-105 hover:shadow-lg animate-fade-in-up">
+        <button className="bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition-all duration-300 flex items-center space-x-2 transform hover:scale-105 hover:shadow-lg animate-fade-in-up" onClick={HandleBooking}>
           <span>View All Services</span>
           <ChevronRight 
           size={20} 

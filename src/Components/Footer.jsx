@@ -10,15 +10,15 @@ const Footer = () => {
       {/* Main Footer */}
       <ScrollToTop />
       <div className="bg-gray-100 py-8 px-4 md:px-8 lg:px-16">
-        <div className="flex flex-col md:flex-row justify-between max-w-4xl mx-auto">
+        <div className="flex flex-col md:flex-row justify-between max-w-5xl mx-auto">
           {/* Navigation Section */}
-          <div className="mb-8 md:mb-0 md:w-[30%]">
+          <div className="mb-8 md:mb-0 md:w-[35%]">
             <ul className="space-y-4">
               <li>
                 <NavLink to="/" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Home</NavLink>
               </li>
               <li>
-                <NavLink to="/ContactUs" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Contact Us</NavLink>
+                <NavLink to="/AboutUs" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">About Us</NavLink>
               </li>
               <li>
                 <NavLink to="/ServicesMain" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Our Services</NavLink>
@@ -137,7 +137,7 @@ const Footer = () => {
               Refund Policy
             </NavLink>
             <span className="mx-2 text-gray-500">|</span>
-            <NavLink to="/TermsAndConditions" className="hover:text-red-400 transition-colors">
+            <NavLink to="/TermsAndCondition" className="hover:text-red-400 transition-colors">
               Terms and Conditions
             </NavLink>
             

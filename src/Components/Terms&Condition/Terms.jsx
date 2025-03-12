@@ -93,8 +93,27 @@ const TermsMain = () => {
         decoration: bookingData.wantDecoration,
         total_amount: bookingData.totalAmount,
         payment_id: bookingData.paymentId,
+        extraDecorations:bookingData.extraDecorations,
+        bookingName:bookingData.bookingName,
+        slotType:bookingData.slotType,
+        email:bookingData.email
       };
-  
+      
+      fetch('https://sheetdb.io/api/v1/dqqdhuekivsab', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ data: [templateParams] }),
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      
       await emailjs.send(
         'service_codgdqj',
         'template_g2368km',

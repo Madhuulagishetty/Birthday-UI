@@ -4,12 +4,13 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import DelaxImg from "../../assets/Delax.jpg";
 import RelaxImg from "../../assets/Relax.jpg";
-import { ChevronRight, Star } from 'lucide-react';
+import { ChevronRight, Star, ArrowUp } from 'lucide-react';
 import ScrollToTop from '../ScrollTop';
 
 const Package = () => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
+  const [showMore, setShowMore] = useState(false);
 
   // Smooth scroll to top when component mounts and trigger animations
   useEffect(() => {
@@ -24,21 +25,28 @@ const Package = () => {
     }, 100);
     
     return () => clearTimeout(timer);
-  }, []);
+  });
 
-  // Handler for the Book Now button
-  const handleBookNow = () => {
-    // Add a notification effect before navigation
-    toast.success("Preparing your booking experience!", {
-      position: "top-center",
-      autoClose: 1500,
+  // Handler for Read More button
+  const handleReadMore = () => {
+    // Scroll to top smoothly
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
     });
     
-    // Delay navigation for toast to show
-    setTimeout(() => {
-      navigate("/");
-    }, 1600);
+    // Toggle show more state
+   
   };
+
+  const handleshowmore=()=>{
+    setShowMore(!showMore);
+  }
+
+  // Handler for the Book Now button
+ const HandleBookNow=()=>{
+  navigate("/")
+ }
 
   return (
     <div className="bg-gradient-to-r from-blue-700 via-purple-600 to-pink-700 py-14 px-5 w-full flex justify-center items-center flex-col pt-[5%] pb-[3%] overflow-hidden">
@@ -95,9 +103,34 @@ const Package = () => {
             For 6 or less: Rs 2000 with decoration for 2.30 hrs
           </p>
           
-          <div className="flex justify-center">
+          {showMore && (
+            <div className="text-gray-700 text-sm md:text-base px-3 mb-4 animate-fade-in">
+              <p className="mb-2">
+                Enjoy our most popular theater experience, perfect for intimate gatherings. 
+                This package includes:
+              </p>
+              <ul className="list-disc list-inside space-y-1 text-gray-600">
+                <li>Comfortable seating for up to 6 people</li>
+                <li>Premium sound system</li>
+                <li>Customizable lighting</li>
+                <li>Complimentary popcorn</li>
+                <li>One round of soft drinks</li>
+                <li>Themed decoration of your choice</li>
+              </ul>
+            </div>
+          )}
+          
+          <div className="flex justify-between flex-wrap gap-2 mt-3">
             <button 
-              onClick={handleBookNow}
+              onClick={handleshowmore}
+              className="bg-transparent text-red-500 px-3 py-1 rounded-lg text-sm hover:bg-red-50 transition-colors duration-300 flex items-center"
+            >
+              {showMore ? "Show Less" : "Read More"}
+              <ArrowUp size={16} className={`ml-1 transition-transform duration-300 ${showMore ? "rotate-180" : ""}`} />
+            </button>
+            
+            <button 
+              onClick={handleReadMore}
               className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600 transition-colors duration-300"
             >
               Select Package
@@ -132,9 +165,36 @@ const Package = () => {
             For 10 or less: Rs 2500 with decoration for 2.30 hrs
           </p>
           
-          <div className="flex justify-center">
+          {showMore && (
+            <div className="text-gray-700 text-sm md:text-base px-3 mb-4 animate-fade-in">
+              <p className="mb-2">
+                Experience our premium theater setup, perfect for larger groups and special occasions. 
+                This package includes:
+              </p>
+              <ul className="list-disc list-inside space-y-1 text-gray-600">
+                <li>Luxury seating for up to 10 people</li>
+                <li>4K ultra-HD projector</li>
+                <li>Surround sound system</li>
+                <li>Interactive lighting control</li>
+                <li>Premium snack platter</li>
+               
+              </ul>
+            </div>
+          )}
+          
+          <div className="flex justify-between flex-wrap gap-2 mt-3">
             <button 
-              onClick={handleBookNow}
+              onClick={handleshowmore}
+              
+              className="bg-transparent text-blue-500 px-3 py-1 rounded-lg text-sm hover:bg-blue-50 transition-colors duration-300 flex items-center"
+            >
+              
+              {showMore ? "Show Less" : "Read More"}
+              <ArrowUp size={16} className={`ml-1 transition-transform duration-300 ${showMore ? "rotate-180" : ""}`} />
+            </button>
+            
+            <button 
+             onClick={handleReadMore}
               className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition-colors duration-300"
             >
               Select Package
@@ -146,7 +206,7 @@ const Package = () => {
       <div className={`flex justify-center mt-8 md:mt-12 transform transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
         style={{ transitionDelay: "0.6s" }}>
         <button 
-          onClick={handleBookNow} 
+          onClick={HandleBookNow} 
           className="bg-black text-white px-6 md:px-8 py-3 md:py-4 rounded-full hover:bg-gray-800 transition-all duration-500 flex items-center space-x-2 transform hover:scale-105 hover:shadow-xl text-sm md:text-base group"
         >
           <span>Book Now</span>

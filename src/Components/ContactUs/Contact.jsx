@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import {HousePlus, MoveRight, Headphones, Send, User, Mail, MessageSquare} from 'lucide-react'
 import ScrollToTop from '../ScrollTop';
 import { db } from '../../index';
+import { collection, addDoc } from 'firebase/firestore'; // Added missing import
 
 const Contact = () => {
   // Add useEffect for smooth scroll to top
@@ -12,7 +13,7 @@ const Contact = () => {
         top: 0,
         behavior: 'smooth'
       });
-    }, []);
+    });
     
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [formData, setFormData] = useState({
@@ -99,7 +100,7 @@ const Contact = () => {
         <div className="flex items-center space-x-2 text-sm">
             <div className='flex gap-5'>
              <Link to="/" className='flex gap-2 text-xl font-semibold items-center'><HousePlus />Home</Link>
-             <div className='flex gap-2 text-xl font-semibold items-center'><MoveRight className='animate-move-left'/>AboutUs</div>
+             <div className='flex gap-2 text-xl font-semibold items-center'><MoveRight className='animate-move-left'/>Contact Us</div>
             </div>
         </div>
       </div>
@@ -122,7 +123,7 @@ const Contact = () => {
             >
               {/* Background animation */}
               <div 
-                className="absolute inset-0 bg-gradient-to-r from-lime-400/10 to-lime-500/10 opacity-0 transition-opacity duration-700"
+                className="absolute inset-0 bg-gradient-to-r from-pink-400/10 to-pink-500/10 opacity-0 transition-opacity duration-700"
                 style={{ 
                   opacity: hoveredIndex === index ? 1 : 0,
                   transform: hoveredIndex === index ? 'scale(1)' : 'scale(0.8)',
@@ -132,12 +133,12 @@ const Contact = () => {
               
               {/* Icon container with pulse effect */}
               <div 
-                className={`relative bg-lime-400 rounded-full w-16 h-16 flex items-center justify-center mb-4 z-10
+                className={`relative bg-pink-400 rounded-full w-16 h-16 flex items-center justify-center mb-4 z-10
                            ${hoveredIndex === index ? 'animate-pulse' : ''}`}
               >
                 {/* Ripple effect */}
                 <div 
-                  className="absolute inset-0 rounded-full bg-lime-400 opacity-70"
+                  className="absolute inset-0 rounded-full opacity-70 bg-pink-400"
                   style={{ 
                     animation: hoveredIndex === index ? 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite' : 'none',
                     animationDelay: '0.5s'
@@ -155,11 +156,11 @@ const Contact = () => {
               
               {/* Title with slide-up animation */}
               <h3 
-                className="text-2xl font-bold mb-4 text-gray-800 relative z-10"
+                className="text-2xl font-bold mb-4 text-gray-800 relative z-10 hover:text-pink-600"
                 style={{
                   transform: hoveredIndex === index ? 'translateY(-5px)' : 'translateY(0)',
                   transition: 'transform 0.5s ease, color 0.5s ease',
-                  color: hoveredIndex === index ? '#65a30d' : ''
+                  color: hoveredIndex === index ? '#db2777' : '' // Changed hover:text-pink-600 to actual hex color
                 }}
               >
                 {item.title}
@@ -190,20 +191,20 @@ const Contact = () => {
             {/* Google Map - 60% width */}
              
             <div className="w-full md:w-3/5 h-96 md:h-auto bg-gray-200 relative">
-    <iframe
-      title="Google Map"
-      src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d23146.35898287471!2d73.04194790652772!3d19.27422269998436!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sNaka%2C%20Bhadwad%20Gaon%2C%20Themghar%2C%20Bhiwandi%2C%20Maharashtra%20421305!5e1!3m2!1sen!2sin!4v1741630485801!5m2!1sen!2sin"
-      width="100%"
-      height="100%"
-      style={{ border: 0 }}
-      allowFullScreen=""
-      loading="lazy"
-      referrerPolicy="no-referrer-when-downgrade"
-    ></iframe>
-  </div>
+              <iframe
+                title="Google Map"
+                src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d23146.35898287471!2d73.04194790652772!3d19.27422269998436!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sNaka%2C%20Bhadwad%20Gaon%2C%20Themghar%2C%20Bhiwandi%2C%20Maharashtra%20421305!5e1!3m2!1sen!2sin!4v1741630485801!5m2!1sen!2sin"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
             
             {/* Contact Form - 40% width */}
-            <div className="w-full md:w-2/5 bg-teal-900 text-white p-8">
+            <div className="w-full md:w-2/5 bg-pink-900 text-white p-8">
                 <h2 className="text-4xl font-bold mb-8">Contact Us.</h2>
                 
                 <form onSubmit={handleSubmit}>
@@ -215,7 +216,7 @@ const Contact = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full bg-transparent border-b border-white/30 pb-2 outline-none focus:border-lime-400 transition-colors" 
+                    className="w-full bg-transparent border-b border-white/30 pb-2 outline-none focus:border-pink-400 transition-colors" 
                     required
                     />
                 </div>
@@ -228,7 +229,7 @@ const Contact = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full bg-transparent border-b border-white/30 pb-2 outline-none focus:border-lime-400 transition-colors" 
+                    className="w-full bg-transparent border-b border-white/30 pb-2 outline-none focus:border-pink-400 transition-colors" 
                     required
                     />
                 </div>
@@ -241,14 +242,14 @@ const Contact = () => {
                     value={formData.message}
                     onChange={handleChange}
                     rows="3"
-                    className="w-full bg-transparent border-b border-white/30 pb-2 outline-none focus:border-lime-400 transition-colors" 
+                    className="w-full bg-transparent border-b border-white/30 pb-2 outline-none focus:border-pink-400 transition-colors" 
                     required
                     ></textarea>
                 </div>
                 
                 <button 
                     type="submit"
-                    className="w-full bg-lime-400 hover:bg-lime-500 text-black font-bold py-4 px-4 rounded-full transition-colors duration-300"
+                    className="w-full bg-pink-400 hover:bg-pink-500 text-black font-bold py-4 px-4 rounded-full transition-colors duration-300"
                 >
                     SEND MESSAGE
                 </button>

@@ -14,7 +14,7 @@ import Deluxe from "./Components/Deluxe/Deluxe";
 import Navbar from "./Components/Navbar";
 import ServicesMain from './Components/Services/ServicesMain'
 import ContactUs from './Components/ContactUs/Contact'
-import TermsAndConditions from './Components/Terms&Condition/TermAndCondition'
+import TermsAndCondition from './Components/Terms&Condition/TermsAndCondition'
 import GalleryMain from './Components/BirthdayGallery/GalleryMain'
 
 import TermsMain from './Components/Terms&Condition/Terms'
@@ -49,7 +49,7 @@ const App = () => {
         <Route path="GalleryMain" element={<GalleryMain/>}/>
         {/* <Route path="Privacy" element={<Privacy/>}/> */}
         <Route path="RefundPolicy" element={<RefundPolicy/>}/>
-        <Route path="TermsAndConditions" element={<TermsAndConditions/>}/>
+        <Route path="TermsAndCondition" element={<TermsAndCondition/>}/>
         <Route path="AboutUs" element={<AboutUs/>}/>
 
 
