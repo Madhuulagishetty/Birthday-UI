@@ -1,9 +1,7 @@
 import React, { useContext, useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
+
 import "react-toastify/dist/ReactToastify.css";
-import DelaxImg from "../assets/Delax-04.jpg";
-import Relaxsecond from "../assets/relax-05.jpg";
-import RelaxThird from "../assets/relax-04.jpg";
+
 import HomeBgImg from "../assets/Delax-07.jpg";
 // import RelaxImg from "../assets/Relax-04.jpg";
 import { ChevronRight } from "lucide-react";
@@ -53,9 +51,9 @@ const Home = () => {
   }, []);
 
   const images = [
-    DelaxImg,
-    Relaxsecond,
-    RelaxThird,
+    "/assets/Delax-04.jpg",
+    "/assets/relax-05.jpg",
+    "/assets/relax-04.jpg",
   ];
 
   const sliderSettings = {
