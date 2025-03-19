@@ -2,9 +2,9 @@ import React, { useContext, useEffect } from "react";
 
 import "react-toastify/dist/ReactToastify.css";
 
-import HomeBgImg from "../assets/Delax-07.jpg";
-// import RelaxImg from "../assets/Relax-04.jpg";
-import { ChevronRight } from "lucide-react";
+
+
+
 import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -102,7 +102,7 @@ const Home = () => {
         className="relative w-full h-screen flex justify-center items-center p-4 bg-cover bg-center"
         style={{
           backgroundImage:
-           `url(${HomeBgImg})`,
+           `url('src/assets/Delax-07.jpg')`,
         }}
         initial="hidden"
         animate="visible"
