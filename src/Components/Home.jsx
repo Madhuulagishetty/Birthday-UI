@@ -51,9 +51,9 @@ const Home = () => {
   }, []);
 
   const images = [
-    "/assets/Delax-04.jpg",
-    "/assets/relax-05.jpg",
-    "/assets/relax-04.jpg",
+    "src/assets/Delax-04.jpg",
+    "src/assets/relax-05.jpg",
+    "src/assets/relax-04.jpg",
   ];
 
   const sliderSettings = {
