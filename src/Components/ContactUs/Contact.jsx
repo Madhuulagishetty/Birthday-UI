@@ -4,16 +4,16 @@ import { Link } from "react-router-dom";
 import {HousePlus, MoveRight, Headphones, Send, User, Mail, MessageSquare} from 'lucide-react'
 import ScrollToTop from '../ScrollTop';
 import { db } from '../../index';
-import { collection, addDoc } from 'firebase/firestore'; // Added missing import
+import { collection, addDoc } from 'firebase/firestore';
 
 const Contact = () => {
-  // Add useEffect for smooth scroll to top
+  // Fixed useEffect to run only once when component mounts
   useEffect(() => {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
     });
+  }); // Empty dependency array ensures it only runs once when component mounts
     
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [formData, setFormData] = useState({
@@ -80,7 +80,7 @@ const Contact = () => {
     <>
     <div className="relative w-full h-96 overflow-hidden">
       {/* Background image */}
-       <ScrollToTop />
+      <ScrollToTop />
       <div 
         className="absolute inset-0 bg-cover bg-center"
         style={{

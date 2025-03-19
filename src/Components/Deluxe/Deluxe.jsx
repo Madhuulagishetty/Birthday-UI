@@ -109,11 +109,11 @@ const Deluxe = () => {
   console.log(cartData, 'cartData');
 
   const timeSlots = [
-    { id: 1, start: "9:00 AM", end: "12:00 PM" },
-    { id: 2, start: "12:30 PM", end: "3:30 PM" },
-    { id: 3, start: "4:00 PM", end: "5:30 PM" },
-    { id: 4, start: "4:40 PM", end: "6:00 PM" },
-    { id: 5, start: "6:00 PM", end: "7:00 PM" }
+    { id: 1, start: "10:00 AM", end: "12:30 PM" },
+    { id: 2, start: "01:00 PM", end: "3:30 PM" },
+    { id: 3, start: "4:00 PM", end: "6:30 PM" },
+    { id: 4, start: "7:00 PM", end: "9:30 PM" },
+    { id: 5, start: "10:00 PM", end: "12:30 PM" }
   ];
 
   const images = [
@@ -347,7 +347,7 @@ const Deluxe = () => {
               <motion.div 
                 key="time-slots"
                 variants={itemAnimation}
-                className="flex flex-wrap gap-2 justify-start  md:justify-center sm:justify-start"
+                className="flex flex-wrap gap-1 justify-start  md:justify-center sm:justify-start"
                 exit={{ opacity: 0 }}
               >
                 {timeSlots.map((slot, index) => (
@@ -409,33 +409,33 @@ const Deluxe = () => {
             </p>
             <div className="w-[100%] flex justify-center ">
             <motion.button
-  onClick={handleBooking}
-  variants={buttonAnimation}
-  initial="initial"
-  whileHover="hover"
-  whileTap="tap"
-  className={`w-[90%] sm:w-[90%] button-name bg-[#B1153C] text-white px-6 py-3 rounded-md transition-all ${
-    selectedTimeSlot && cartData.length < 2
-      ? "bg-[#B1153C] text-white"
-      : "bg-[#B1153C] opacity-80 cursor-not-allowed text-white"
-  }`}
->
-  <motion.span
-    initial={{ opacity: 1 }}
-    animate={{
-      opacity: [1, 0.8, 1],
-      scale: [1, 1.03, 1]
-    }}
-    transition={{
-      duration: 2,
-      repeat: Infinity,
-      repeatType: "reverse"
-    }}
-    className="inline-block"
-  >
-    Book Now
-  </motion.span>
-</motion.button>
+              onClick={handleBooking}
+              variants={buttonAnimation}
+              initial="initial"
+              whileHover="hover"
+              whileTap="tap"
+              className={`w-[90%] sm:w-[90%] button-name bg-[#B1153C] text-white px-6 py-3 rounded-md transition-all ${
+                selectedTimeSlot && cartData.length < 2
+                  ? "bg-[#B1153C] text-white"
+                  : "bg-[#B1153C] opacity-80 cursor-not-allowed text-white"
+              }`}
+            >
+              <motion.span
+                initial={{ opacity: 1 }}
+                animate={{
+                  opacity: [1, 0.8, 1],
+                  scale: [1, 1.03, 1]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatType: "reverse"
+                }}
+                className="inline-block"
+              >
+                Book Now
+              </motion.span>
+            </motion.button>
             </div>
           </motion.div>
         </motion.div>

@@ -138,9 +138,20 @@ const ServicesMain = () => {
     // Cleanup
     return () => window.removeEventListener('scroll', handleScroll);
   }, [controlsTitle, controlsServices]);
-
+  
+  // Scroll to top only once when component mounts
+  useEffect(() => {
+    // Only scroll to top on initial load
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+    // This empty dependency array ensures this effect runs only once on mount
+  }, []);
+  
   return (
-    <section id="services-section" className="bg-gray-200 py-12 md:py-16 min-h-screen scroll-mt-16">
+    <section id="services-section" className="bg-gray-50 py-12 md:py-16 min-h-screen scroll-mt-16 overflow-x-hidden">
       {/* Hero Section with Proper Overlapping */}
       <div className="relative">
         {/* Background Image */}
@@ -194,29 +205,15 @@ const ServicesMain = () => {
               variants={{
                 [index.toString()]: { opacity: 1, x: 0 }
               }}
-              className={`flex flex-col ${index % 2 === 0 ? '' : '-reverse'} md:flex-row items-center justify-center gap-6 md:gap-8 ${index > 0 ? 'mt-12 md:mt-20' : ''}`}
+              className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center justify-center gap-6 md:gap-8 ${index > 0 ? 'mt-12 md:mt-20' : ''}`}
             >
-              {index % 2 === 0 ? (
-                <>
-                  <ServiceImage image={service.image} alt={service.alt} />
-                  <ServiceContent 
-                    title={service.title} 
-                    description={service.description} 
-                    buttonText={service.buttonText} 
-                    onClick={() => navigate("/")} 
-                  />
-                </>
-              ) : (
-                <>
-                  <ServiceContent 
-                    title={service.title} 
-                    description={service.description} 
-                    buttonText={service.buttonText} 
-                    onClick={() => navigate("/")} 
-                  />
-                  <ServiceImage image={service.image} alt={service.alt} />
-                </>
-              )}
+              <ServiceImage image={service.image} alt={service.alt} />
+              <ServiceContent 
+                title={service.title} 
+                description={service.description} 
+                buttonText={service.buttonText} 
+                onClick={() => navigate("/")} 
+              />
             </motion.div>
           ))}
         </div>

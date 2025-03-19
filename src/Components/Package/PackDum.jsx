@@ -7,10 +7,17 @@ import RelaxImg from "../../assets/Relax.jpg";
 import { ChevronRight, Star, ArrowUp } from 'lucide-react';
 import ScrollToTop from '../ScrollTop';
 
+
 const Package = () => {
-  const navigate = useNavigate();
+  const navigates = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [showMore, setShowMore] = useState(false);
+
+
+
+  const HandleHome=()=>{
+    navigates('/')
+  }
 
   // Smooth scroll to top when component mounts and trigger animations
   useEffect(() => {
@@ -47,7 +54,7 @@ const Package = () => {
  const HandleBookNow=()=>{
   navigate("/")
  }
-
+  const navigate = useNavigate();
   return (
     <div className="bg-gradient-to-r from-blue-700 via-purple-600 to-pink-700 py-14 px-5 w-full flex justify-center items-center flex-col pt-[5%] pb-[3%] overflow-hidden">
       <ScrollToTop />
@@ -75,10 +82,10 @@ const Package = () => {
       
       <div className={`w-24 h-1 bg-yellow-300 rounded-full mb-10 transform transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}></div>
       
-      <div className="flex flex-col md:flex-row justify-center gap-14 md:gap-8 items-center w-full md:w-[100%]">
+      <div className="flex flex-col md:flex-row justify-center gap-14 md:gap-8 items-center w-[100%] md:w-[100%] ">
         {/* Delax Package */}
         <div
-          className={`bg-white p-4 rounded-2xl shadow-lg transform transition-all duration-700 hover:scale-105 hover:shadow-2xl w-[90%] md:w-[32%] cursor-pointer ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
+          className={`bg-white md:p-4 p-2 rounded-2xl shadow-lg transform transition-all duration-700 hover:scale-105 hover:shadow-2xl w-[100%] md:w-[32%] cursor-pointer ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
           style={{ transitionDelay: "0.2s" }}
         >
           <div className="relative overflow-hidden rounded-xl">
@@ -99,11 +106,11 @@ const Package = () => {
           
           <div className="w-16 h-1 bg-red-300 mx-auto my-2 rounded-full"></div>
           
-          <p className="text-gray-700 text-center text-sm md:text-base mt-2 mb-3 px-2">
+          <p className="text-gray-700 text-start text-sm md:text-base mt-2 mb-3 px-2 font-semibold">
             For 6 or less: Rs 2000 with decoration for 2.30 hrs
           </p>
           
-          {showMore && (
+        
             <div className="text-gray-700 text-sm md:text-base px-3 mb-4 animate-fade-in">
               <p className="mb-2">
                 Enjoy our most popular theater experience, perfect for intimate gatherings. 
@@ -118,19 +125,13 @@ const Package = () => {
                 <li>Themed decoration of your choice</li>
               </ul>
             </div>
-          )}
+         
           
-          <div className="flex justify-between flex-wrap gap-2 mt-3">
-            <button 
-              onClick={handleshowmore}
-              className="bg-transparent text-red-500 px-3 py-1 rounded-lg text-sm hover:bg-red-50 transition-colors duration-300 flex items-center"
-            >
-              {showMore ? "Show Less" : "Read More"}
-              <ArrowUp size={16} className={`ml-1 transition-transform duration-300 ${showMore ? "rotate-180" : ""}`} />
-            </button>
+          <div className="flex justify-center flex-wrap gap-2 mt-3">
+           
             
             <button 
-              onClick={handleReadMore}
+              onClick={HandleHome}
               className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600 transition-colors duration-300"
             >
               Select Package
@@ -140,7 +141,7 @@ const Package = () => {
 
         {/* Relexe Package */}
         <div
-          className={`bg-white p-4 rounded-2xl shadow-lg transform transition-all duration-700 hover:scale-105 hover:shadow-2xl w-[90%] md:w-[32%] cursor-pointer ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
+          className={`bg-white md:p-4 p-2 rounded-2xl shadow-lg transform transition-all duration-700 hover:scale-105 hover:shadow-2xl w-[100%] md:w-[32%] cursor-pointer ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
           style={{ transitionDelay: "0.4s" }}
         >
           <div className="relative overflow-hidden rounded-xl">
@@ -161,11 +162,11 @@ const Package = () => {
           
           <div className="w-16 h-1 bg-blue-300 mx-auto my-2 rounded-full"></div>
           
-          <p className="text-gray-700 text-center text-sm md:text-base mt-2 mb-3 px-2">
+          <p className="text-gray-700 text-start text-sm md:text-base mt-2 mb-3 px-2 font-semibold">
             For 10 or less: Rs 2500 with decoration for 2.30 hrs
           </p>
           
-          {showMore && (
+       
             <div className="text-gray-700 text-sm md:text-base px-3 mb-4 animate-fade-in">
               <p className="mb-2">
                 Experience our premium theater setup, perfect for larger groups and special occasions. 
@@ -180,21 +181,13 @@ const Package = () => {
                
               </ul>
             </div>
-          )}
+        
           
-          <div className="flex justify-between flex-wrap gap-2 mt-3">
-            <button 
-              onClick={handleshowmore}
-              
-              className="bg-transparent text-blue-500 px-3 py-1 rounded-lg text-sm hover:bg-blue-50 transition-colors duration-300 flex items-center"
-            >
-              
-              {showMore ? "Show Less" : "Read More"}
-              <ArrowUp size={16} className={`ml-1 transition-transform duration-300 ${showMore ? "rotate-180" : ""}`} />
-            </button>
+          <div className="flex justify-center flex-wrap gap-2 mt-3">
+            
             
             <button 
-             onClick={handleReadMore}
+             onClick={HandleHome}
               className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition-colors duration-300"
             >
               Select Package

@@ -1,8 +1,11 @@
 import React, { useContext, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import DelaxImg from "../assets/Delax.jpg";
-import RelaxImg from "../assets/Relax.jpg";
+import DelaxImg from "../assets/Delax-04.jpg";
+import Relaxsecond from "../assets/relax-05.jpg";
+import RelaxThird from "../assets/relax-04.jpg";
+import HomeBgImg from "../assets/Delax-07.jpg";
+// import RelaxImg from "../assets/Relax-04.jpg";
 import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
@@ -50,9 +53,9 @@ const Home = () => {
   }, []);
 
   const images = [
-    "https://t4.ftcdn.net/jpg/11/99/83/57/360_F_1199835732_evIkgrKAtpSUUCHg4XDWqOEW5SFk2ULI.jpg",
-    "https://i.pinimg.com/originals/52/07/cf/5207cfb3fd0f613551e4f24b50315378.jpg",
-    "https://cdn.cherishx.com/uploads/1686727757_webp_original.webp",
+    DelaxImg,
+    Relaxsecond,
+    RelaxThird,
   ];
 
   const sliderSettings = {
@@ -101,7 +104,7 @@ const Home = () => {
         className="relative w-full h-screen flex justify-center items-center p-4 bg-cover bg-center"
         style={{
           backgroundImage:
-            "url('https://plus.unsplash.com/premium_photo-1661726486910-7cfff916caad?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmlydGhkYXklMjBjZWxlYnJhdGlvbnxlbnwwfHwwfHx8MA%3D%3D')",
+           `url(${HomeBgImg})`,
         }}
         initial="hidden"
         animate="visible"
@@ -168,14 +171,9 @@ const Home = () => {
         <WelcomeSection />
       </motion.div>
 
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.4 }}
-        variants={fadeInUp}
-      >
+    
         <Package />
-      </motion.div>
+      
 
       <ServicesSection />
       <Birthday />

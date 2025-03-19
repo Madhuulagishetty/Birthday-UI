@@ -15,7 +15,7 @@ const WelcomeSection = () => {
         Welcome to Akaay Studio
       </h1>
       <p className="fontPoppin text-gray-600 max-w-5xl mx-auto mb-8 ">
-        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+      Celebrate life's special moments with a unique and unforgettable private theatre experience! Whether it’s a Birthday Party 🎂, a Romantic Anniversary 💍, or a Fun-Filled Event 🎉, we offer a cozy and exclusive setting tailored just for you. Enjoy personalized movie screenings, create lasting memories, and turn your occasions into extraordinary cinematic experiences.
       </p>
       <button 
         className="bg-[#C7013C] text-white px-8 py-3 rounded-full hover:bg-[#A30130] transition-colors duration-300 font-medium"

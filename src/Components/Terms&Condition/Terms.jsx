@@ -12,14 +12,25 @@ const TermsMain = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [animateIn, setAnimateIn] = useState(false);
   const payButtonRef = useRef(null);
+  const [amountWithTax, setAmountWithTax] = useState(0);
 
   useEffect(() => {
     const data = localStorage.getItem('bookingData');
     if (data) {
-      setBookingData(JSON.parse(data));
+      const parsedData = JSON.parse(data);
+      setBookingData(parsedData);
+      
+      // Calculate amount with 2% tax
+      const baseAmount = parsedData.totalAmount;
+      const taxAmount = (baseAmount * 0.02);
+      const total = baseAmount + taxAmount;
+      setAmountWithTax(total);
     } else {
       navigate('/');
     }
+    
+    // Rest of your effect code...
+ 
     
     // Trigger animations after component mounts
     setTimeout(() => {
@@ -61,7 +72,7 @@ const TermsMain = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount: bookingData.totalAmount,
+          amount: amountWithTax,
         }),
       });
       
@@ -91,7 +102,7 @@ const TermsMain = () => {
         whatsapp_number: bookingData.whatsapp,
         num_people: bookingData.people,
         decoration: bookingData.wantDecoration,
-        total_amount: bookingData.totalAmount,
+        total_amount: amountWithTax,
         payment_id: bookingData.paymentId,
         extraDecorations:bookingData.extraDecorations,
         bookingName:bookingData.bookingName,
@@ -104,15 +115,28 @@ const TermsMain = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ data: [templateParams] }),
+        body: JSON.stringify({
+          data: [
+            {
+              to_email: 'lagishettymadhu05@gmail.com',
+              booking_date: bookingData.date,
+              booking_time: bookingData.lastItem ? `${bookingData.lastItem.start} - ${bookingData.lastItem.end}` : "Not Available",
+              whatsapp_number: bookingData.whatsapp,
+              num_people: bookingData.people,
+              decoration: bookingData.wantDecoration ? "Yes" : "No",
+              total_amount: amountWithTax,
+              payment_id: bookingData.paymentId,
+              extraDecorations:bookingData.extraDecorations,
+             bookingName:bookingData.bookingName,
+             slotType:bookingData.slotType,
+             email:bookingData.email
+            }
+          ]
+        }),
       })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Success:', data);
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
+      .then(response => response.json())
+      .then(data => console.log('Success:', data))
+      .catch(error => console.error('Error:', error));
       
       await emailjs.send(
         'service_codgdqj',
@@ -135,7 +159,7 @@ const TermsMain = () => {
           whatsapp_number: bookingData.whatsapp,
           num_people: bookingData.people,
           decoration: bookingData.wantDecoration ? "Yes" : "No",
-          total_amount: bookingData.totalAmount,
+          total_amount: amountWithTax,
           payment_id: bookingData.paymentId,
         }),
       });
@@ -270,22 +294,14 @@ const TermsMain = () => {
       payButtonRef.current.classList.remove('button-pulse');
     }
   }, [isChecked]);
-
+  const formatCurrency = (amount) => {
+    return amount.toFixed(2);
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-400 to-pink-50 pt-16 pb-16 px-4 sm:px-6 md:px-8">
       <div className="max-w-4xl mx-auto pt-[3%]">
         <div className={`transition-all duration-500 transform ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
-          {/* <div className="flex items-center mb-6">
-            <button 
-              onClick={() => navigate('/')}
-              className="flex items-center text-gray-600 hover:text-pink-600 transition-colors duration-300 bg-white p-2 rounded-md mt-2  shadow-md hover:shadow-lg"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-              </svg>
-              <span className="ml-2 text-lg font-medium">Back</span>
-            </button>
-          </div> */}
+          
           
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
             <div className="bg-gradient-to-r from-purple-600 to-pink-500 py-4 px-6">
@@ -355,13 +371,28 @@ const TermsMain = () => {
                       transform: animateIn ? 'translateY(0)' : 'translateY(20px)'
                     }}
                   >
-                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-5 rounded-lg shadow-inner mb-6">
-                      <h3 className="font-semibold text-lg mb-3 text-purple-800">Booking Summary</h3>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-700">Total Amount:</span>
-                        <span className="text-2xl font-bold text-pink-600">₹{bookingData.totalAmount}</span>
-                      </div>
-                    </div>
+                   <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-5 rounded-lg shadow-inner mb-6">
+  <h3 className="font-semibold text-lg mb-3 text-purple-800">Booking Summary</h3>
+  
+  <div className="space-y-3">
+    <div className="flex justify-between items-center">
+      <span className="text-gray-700">Base Amount:</span>
+      <span className="font-semibold text-gray-800">₹{bookingData.totalAmount.toFixed(2)}</span>
+    </div>
+    
+    <div className="flex justify-between items-center text-sm">
+      <span className="text-gray-600">Tax (2%):</span>
+      <span className="text-gray-700">₹{(bookingData.totalAmount * 0.02).toFixed(2)}</span>
+    </div>
+    
+    <div className="h-px bg-purple-100 my-2"></div>
+    
+    <div className="flex justify-between items-center pt-2">
+      <span className="text-gray-800 font-medium">Total Amount:</span>
+      <span className="text-2xl font-bold text-pink-600">₹{amountWithTax.toFixed(2)}</span>
+    </div>
+  </div>
+</div>
                     
                     <button
                       ref={payButtonRef}
@@ -380,9 +411,12 @@ const TermsMain = () => {
                           Processing...
                         </span>
                       ) : (
-                        `Pay ₹${bookingData?.totalAmount || 0}`
+                        `Pay ₹${formatCurrency(amountWithTax)}`
                       )}
                     </button>
+                    <p className="text-center text-sm text-gray-500 mt-4">
+                      By clicking the button above, you agree to our Terms and Conditions
+                    </p>
                   </div>
                 )}
               </div>

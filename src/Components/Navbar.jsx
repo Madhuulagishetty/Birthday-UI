@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { BookCheck } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const navigate = useNavigate();
+  
   const navItems = [
     { label: "Home", to: "/" },
     // { label: "About Us", to: "/A" },
@@ -13,8 +15,17 @@ const Navbar = () => {
     { label: "Gallery", to: "/GalleryMain" },
     { label: "Packages", to: "/Package" },
     { label: "Contact Us", to: "/ContactUs" },
-  
   ];
+  
+  const handleHome = () => {
+    setIsMenuOpen(false); // Close menu when clicking Book Now
+    navigate("/");
+  };
+  
+  // New function to handle navigation from mobile menu
+  const handleNavClick = () => {
+    setIsMenuOpen(false); // Close the menu when a link is clicked
+  };
 
   return (
     <div className="fixed w-full z-40">
@@ -42,7 +53,7 @@ const Navbar = () => {
               ))}
 
               {/* Book Now Button */}
-              <button className="ml-4 bg-[#F5FF00] text-black px-6 py-2 rounded-full font-medium hover:bg-yellow-400 transition-colors duration-200 flex items-center gap-2">
+              <button className="ml-4 bg-[#F5FF00] text-black px-6 py-2 rounded-full font-medium hover:bg-yellow-400 transition-colors duration-200 flex items-center gap-2" onClick={handleHome}>
                 <BookCheck size={20} />
                 Book Now
               </button>
@@ -101,6 +112,7 @@ const Navbar = () => {
                 <NavLink
                   key={item.label}
                   to={item.to}
+                  onClick={handleNavClick}
                   className={({ isActive }) =>
                     `block text-white hover:bg-purple-700 px-3 py-2 rounded-md text-base font-medium
                       ${isActive ? "bg-purple-500" : ""}`
@@ -110,7 +122,7 @@ const Navbar = () => {
                 </NavLink>
               ))}
 
-              <button className="w-full mt-4 bg-[#F5FF00] text-black px-6 py-2 rounded-full font-medium hover:bg-yellow-400 transition-colors duration-200 flex items-center justify-center gap-2">
+              <button className="w-full mt-4 bg-[#F5FF00] text-black px-6 py-2 rounded-full font-medium hover:bg-yellow-400 transition-colors duration-200 flex items-center justify-center gap-2" onClick={handleHome}>
                 <BookCheck size={20} />
                 Book Now
               </button>

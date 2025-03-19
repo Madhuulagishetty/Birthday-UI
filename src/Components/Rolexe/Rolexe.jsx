@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { FaUtensils } from "react-icons/fa";
+
 import { Users, PartyPopper } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { contextApi } from "./ContextApi/Context";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {  Star } from 'lucide-react';
 
 const QuantityBirthday = () => { 
   const navigate = useNavigate();
@@ -78,8 +79,10 @@ const QuantityBirthday = () => {
     slotType
   ]);
   
-  const basePrice = 2000; 
-    
+  const basePrice = slotType === "deluxe" ? 2000 : slotType === "rolexe" ? 1500 : 2000;
+  console.log("Selected SlotType:", slotType);
+
+    console.log(basePrice)
   const decorationPrice = 500;
   const lastItem = cartData.length > 0 ? cartData[cartData.length - 1] : null;
 
@@ -171,8 +174,12 @@ const QuantityBirthday = () => {
       <div className="absolute inset-0 bg-black/60"></div>
       
       <div className="fontPoppin bg-white rounded-lg shadow-lg md:w-[35%] px-4 py-4 z-10 mt-[20%] md:mt-[4%]">
-        <div className="text-center mb-4">
-          <h2 className="text-2xl text-[#024D87] font-medium">Overview</h2>
+      <div className="flex flex-col md:flex-row items-center justify-between mb-4 ">
+          <div className="flex items-center bg-pink-50 text-pink-600 px-3 py-1.5 rounded-full">
+            <Star className="w-4 h-4 mr-1 fill-pink-500 text-pink-500" />
+            <span className="font-medium capitalize">{slotType} package</span>
+          </div>
+          <span className="text-sm font-medium text-gray-500">₹{basePrice} base price</span>
         </div>
         
         <div className="bg-blue-100 rounded-lg p-3 mb-6 flex flex-col gap-3 justify-between md:flex-row">
@@ -197,6 +204,8 @@ const QuantityBirthday = () => {
           </div>
         </div>
         
+        
+       
         <div className="text-center mb-6 w-[100%] flex justify-center">
           <h3 className="text-lg font-medium border-b border-black pb-2 md:w-[50%] w-[100%]">Booking Details</h3>
         </div>
@@ -397,7 +406,7 @@ const QuantityBirthday = () => {
           </div>
           {wantDecoration === "Yes" && (
             <div className="flex justify-between">
-              <span>Decoration (₹300)</span>
+              <span>Decoration (₹500)</span>
               <span>₹{decorationPrice}</span>
             </div>
           )}

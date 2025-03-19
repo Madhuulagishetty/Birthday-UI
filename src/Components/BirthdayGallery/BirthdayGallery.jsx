@@ -1,20 +1,28 @@
 import React, { useState } from 'react';
 import FsLightbox from 'fslightbox-react';
 // import ScrollToTop from '../ScrollTop';
+import DelaxImg from "../../assets/Delax-04.jpg";
+import Relaxsecond from "../../assets/relax-05.jpg";
+import RelaxThird from "../../assets/relax-04.jpg";
+import DelaxSecond from "../../assets/Delax-07.jpg";
+import RelaxSeventh from "../../assets/relax-06.jpg";
+
+import DelaxFifth from "../../assets/Delax-05.jpg";
+import DelaxThird from "../../assets/Delax-03.jpg";
 
 const BirthdayGallery = () => {
   const [toggler, setToggler] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const images = [
-    "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1464349153735-7db50ed83c84?w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1507608869274-d3177c8bb4c7?w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&auto=format&fit=crop"
+     DelaxImg,
+       Relaxsecond,
+       RelaxThird,
+       RelaxSeventh,
+       DelaxFifth,
+       DelaxSecond,
+       DelaxThird,
+       "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&auto=format&fit=crop"
   ];
 
   const openLightbox = (index) => {

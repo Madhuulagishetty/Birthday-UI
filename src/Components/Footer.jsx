@@ -1,15 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { MapPin, Phone, Mail } from 'lucide-react';
 import { FaWhatsapp } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import ScrollToTop from './ScrollTop'
 
 const Footer = () => {
+  // Added useEffect hook to handle scrolling when component mounts
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }, []); // Empty dependency array ensures it only runs once when component mounts
+
   return (
     <footer className="w-[100%] fontPoppin">
       {/* Main Footer */}
       <ScrollToTop />
-      <div className="bg-gray-100 py-8 px-4 md:px-8 lg:px-16">
+      <div className="bg-gray-200 py-8 px-4 md:px-8 lg:px-16">
         <div className="flex flex-col md:flex-row justify-between max-w-5xl mx-auto">
           {/* Navigation Section */}
           <div className="mb-8 md:mb-0 md:w-[35%]">
@@ -42,7 +50,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="font-semibold">Address</p>
-                  <p className="text-gray-600">Naka, Bhadwad Gaon, Themghar, Bhiwandi, Maharashtra 421305</p>
+                  <p className="text-gray-600">Office No.5, Pipeline, Behind Shree Krupa Hospital, Temghar Naka, Kalyan Road, Bhiwandi, Dist: Thane, Maharashtra. </p>
                 </div>
               </div>
               
@@ -52,7 +60,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="font-semibold">Mobile</p>
-                  <p className="text-gray-600">+91 9321893567/9325515697</p>
+                  <p className="text-gray-600">+91 9321893567/9764535650</p>
                 </div>
               </div>
               
@@ -62,7 +70,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="font-semibold">Mail ID</p>
-                  <p className="text-gray-600">info@gmail.com</p>
+                  <p className="text-gray-600">akaaystudio888@gmail.com</p>
                 </div>
               </div>
             </div>
@@ -100,7 +108,7 @@ const Footer = () => {
             
             {/* YouTube */}
             <div className="group relative">
-              <NavLink to="https://youtube.com/shorts/DwLtSNo9eSk?si=UbbNgzM1VA3Ypae3" target='_blank' className="bg-black text-white p-2 rounded-full block hover:bg-[#B1153C] transition-colors transform hover:scale-110 transition-transform duration-300">
+              <NavLink to="https://www.youtube.com/@AkaayStudio" target='_blank' className="bg-black text-white p-2 rounded-full block hover:bg-[#B1153C] transition-colors transform hover:scale-110 transition-transform duration-300">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M22.54 6.42C22.4212 5.94541 22.1793 5.51057 21.8387 5.15941C21.498 4.80824 21.0708 4.55318 20.6 4.42C18.88 4 12 4 12 4C12 4 5.12 4 3.4 4.46C2.92925 4.59318 2.50195 4.84824 2.16131 5.19941C1.82068 5.55057 1.57875 5.98541 1.46 6.46C1.14521 8.20556 0.991235 9.97631 1 11.75C0.988687 13.537 1.14266 15.3213 1.46 17.08C1.59096 17.5398 1.83831 17.9581 2.17814 18.2945C2.51798 18.6308 2.93882 18.8738 3.4 19C5.12 19.46 12 19.46 12 19.46C12 19.46 18.88 19.46 20.6 19C21.0708 18.8668 21.498 18.6118 21.8387 18.2606C22.1793 17.9094 22.4212 17.4746 22.54 17C22.8524 15.2676 23.0063 13.5103 23 11.75C23.0113 9.96295 22.8573 8.1787 22.54 6.42Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   <path d="M9.75 15.02L15.5 11.75L9.75 8.48001V15.02Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

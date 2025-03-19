@@ -2,6 +2,16 @@ import React, { useState, useEffect } from 'react';
 import FsLightbox from 'fslightbox-react';
 import { Link } from "react-router-dom";
 import { HousePlus, MoveRight, Headphones, Send, User, Mail, MessageSquare } from 'lucide-react';
+import DelaxImg from "../../assets/Delax-04.jpg";
+import Relaxsecond from "../../assets/relax-05.jpg";
+import RelaxThird from "../../assets/relax-04.jpg";
+import DelaxSecond from "../../assets/Delax-07.jpg";
+import RelaxSeventh from "../../assets/relax-06.jpg";
+
+import DelaxFifth from "../../assets/Delax-05.jpg";
+import DelaxThird from "../../assets/Delax-03.jpg";
+
+// import HomeBgImg from "../../assets/Delax-07.jpg";
 
 const GalleryMain = () => {
   const [toggler, setToggler] = useState(false);
@@ -16,13 +26,13 @@ const GalleryMain = () => {
   }, []);
 
   const images = [
-    "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1464349153735-7db50ed83c84?w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1507608869274-d3177c8bb4c7?w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop",
+    DelaxImg,
+    Relaxsecond,
+    RelaxThird,
+    RelaxSeventh,
+    DelaxFifth,
+    DelaxSecond,
+    DelaxThird,
     "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&auto=format&fit=crop"
   ];
 
@@ -32,7 +42,7 @@ const GalleryMain = () => {
   };
   
   const navigateToYoutube = () => {
-    window.open('https://youtube.com/shorts/DwLtSNo9eSk?si=UbbNgzM1VA3Ypae3', '_blank');
+    window.open('https://www.youtube.com/@AkaayStudio', '_blank');
   };
 
   return (
@@ -116,7 +126,7 @@ const GalleryMain = () => {
                     <img 
                       src={images[4]} 
                       alt="Party celebration" 
-                      className="w-full h-40 md:h-38 cursor-pointer object-cover rounded-sm hover:opacity-90 transition-opacity" 
+                      className="w-full h-[202px] md:h-38 cursor-pointer object-cover rounded-sm hover:opacity-90 transition-opacity" 
                       onClick={() => openLightbox(4)} 
                     />
                   </div>
@@ -144,7 +154,7 @@ const GalleryMain = () => {
                 <img 
                   src={images[7]} 
                   alt="Birthday party" 
-                  className="w-full h-40 md:h-[208px] cursor-pointer object-cover rounded-sm hover:opacity-90 transition-opacity" 
+                  className="w-full h-40 md:h-[250px] cursor-pointer object-cover rounded-sm hover:opacity-90 transition-opacity" 
                   onClick={() => openLightbox(7)} 
                 />
               </div>
@@ -153,16 +163,16 @@ const GalleryMain = () => {
         </div>
 
         {/* YouTube Button - Enhanced visibility and responsiveness */}
-        <div className="w-full py-6 flex justify-center mt-4 md:mt-8 px-4">
+        <div className="w-[100%] md:py-6 py-2 flex justify-center mt-4 md:mt-8 md:px-4 px-0">
           <button 
             onClick={navigateToYoutube}
-            className="w-full sm:w-auto rounded-full bg-gradient-to-r from-red-600 via-red-700 to-red-600 text-white font-medium py-3 px-6 md:px-8 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 md:gap-3 transform hover:scale-105"
+            className="w-[100%] sm:w-auto rounded-full bg-gradient-to-r from-red-600 via-red-700 to-red-600 text-white font-medium py-3 px-6 md:px-8 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 md:gap-3 transform hover:scale-105"
             aria-label="Click to watch more videos on YouTube"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
               <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
             </svg>
-            <span className="whitespace-nowrap">Watch Birthday Videos on YouTube</span>
+            <span className="whitespace-nowrap text-sm">Watch Birthday Videos on YouTube</span>
           </button>
         </div>
       </div>

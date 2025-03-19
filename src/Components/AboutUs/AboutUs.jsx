@@ -102,14 +102,14 @@ const AboutUs = () => {
     <div className="min-h-screen bg-gray-50 w-full overflow-hidden">
       {/* Hero Section with Gradient Background */}
       <div 
-        className="bg-cover bg-center h-[30vh] sm:h-[40vh] md:h-[50vh] lg:h-[50vh] relative" 
+        className="bg-cover bg-center h-[60vh] sm:h-[40vh] md:h-[50vh] lg:h-[50vh] relative" 
         style={{
           backgroundImage: "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSET1ZpZoFEqLyUfjyJTCBeXe3PJuTlqOZW-Q&s')",
           backgroundPosition: 'center center'
         }}
       >
         <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center px-4">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 md:mb-4 text-center">
+          <h1 className="text-5xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 md:mb-4 text-center">
             About Us
           </h1>
           <div className="h-1 w-24 sm:w-32 md:w-48 bg-pink-500 mb-4 md:mb-6"></div>
@@ -236,8 +236,8 @@ const AboutUs = () => {
                 data-aos-delay="100"
                 style={{animation: isVisible ? 'fadeInUp 0.5s 0.3s forwards' : 'none'}}
               >
-                <div className="mb-2 sm:mb-3 md:mb-4 bg-white/20 p-3 sm:p-4 md:p-6 rounded-full transform transition-all duration-300 hover:scale-110 hover:bg-white/30">
-                  <Sparkles size={24} className="text-white sm:w-6 sm:h-6" />
+                <div className="mb-2 sm:mb-3 md:mb-4 bg-white/20 p-3 sm:p-4 md:p-6  hover:cursor-pointer rounded-full transform transition-all duration-300 hover:scale-110 hover:bg-white/30">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-party-popper"><path d="M5.8 11.3 2 22l10.7-3.79"/><path d="M4 3h.01"/><path d="M22 8h.01"/><path d="M15 2h.01"/><path d="M22 20h.01"/><path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10"/><path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17"/><path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7"/><path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z"/></svg>
                 </div>
                 <div>
                   <h3 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2 text-start">{partyCount}+</h3>
@@ -252,11 +252,11 @@ const AboutUs = () => {
                 data-aos-delay="200"
                 style={{animation: isVisible ? 'fadeInUp 0.5s 0.5s forwards' : 'none'}}
               >
-                <div className="mb-2 sm:mb-3 md:mb-4 bg-white/20 p-3 sm:p-4 md:p-6 rounded-full transform transition-all duration-300 hover:scale-110 hover:bg-white/30">
-                  <Heart size={24} className="text-white sm:w-6 sm:h-6" />
+                <div className="mb-2 sm:mb-3 md:mb-4 bg-white/20 p-3 sm:p-4 hover:cursor-pointer md:p-6 rounded-full transform transition-all duration-300 hover:scale-110 hover:bg-white/30">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-smile-plus"><path d="M22 11v1a10 10 0 1 1-9-10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/><path d="M16 5h6"/><path d="M19 2v6"/></svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-bold mb-1 md:mb-2">{clientCount}+</h3>
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-bold mb-1 md:mb-2 text-start">{clientCount}+</h3>
                   <p className="text-base sm:text-lg md:text-xl">Clients Happy</p>
                 </div>
               </div>
@@ -268,11 +268,11 @@ const AboutUs = () => {
                 data-aos-delay="300"
                 style={{animation: isVisible ? 'fadeInUp 0.5s 0.7s forwards' : 'none'}}
               >
-                <div className="mb-2 sm:mb-3 md:mb-4 bg-white/20 p-3 sm:p-4 md:p-6 rounded-full transform transition-all duration-300 hover:scale-110 hover:bg-white/30">
-                  <CheckCircle size={24} className="text-white sm:w-6 sm:h-6" />
+                <div className="mb-2 sm:mb-3 md:mb-4 bg-white/20 p-3 sm:p-4 md:p-6 hover:cursor-pointer rounded-full transform transition-all duration-300 hover:scale-110 hover:bg-white/30">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-bold mb-1 md:mb-2">{qualityCount}%</h3>
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-bold mb-1 md:mb-2 text-start">{qualityCount}%</h3>
                   <p className="text-base sm:text-lg md:text-xl">Quality Guarantee</p>
                 </div>
               </div>
