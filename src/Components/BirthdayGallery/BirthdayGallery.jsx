@@ -1,27 +1,20 @@
 import React, { useState } from 'react';
 import FsLightbox from 'fslightbox-react';
 // import ScrollToTop from '../ScrollTop';
-import DelaxImg from "../../assets/Delax-04.jpg";
-import Relaxsecond from "../../assets/relax-05.jpg";
-import RelaxThird from "../../assets/relax-04.jpg";
-import DelaxSecond from "../../assets/Delax-07.jpg";
-import RelaxSeventh from "../../assets/relax-06.jpg";
 
-import DelaxFifth from "../../assets/Delax-05.jpg";
-import DelaxThird from "../../assets/Delax-03.jpg";
 
 const BirthdayGallery = () => {
   const [toggler, setToggler] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const images = [
-     DelaxImg,
-       Relaxsecond,
-       RelaxThird,
-       RelaxSeventh,
-       DelaxFifth,
-       DelaxSecond,
-       DelaxThird,
+    "src/assets/Delax-04.jpg",
+    "src/assets/relax-05.jpg",
+    "src/assets/relax-04.jpg",
+    "src/assets/Delax-07.jpg",
+    "src/assets/relax-06.jpg",
+    "src/assets/Delax-05.jpg",
+    "src/assets/Delax-03.jpg",
        "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&auto=format&fit=crop"
   ];
 

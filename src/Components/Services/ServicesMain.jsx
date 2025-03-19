@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
-import DeluxeImg from '../../assets/Delax.jpg';
+// import "src/assets/relax-04.jpg" from '../../assets/Delax.jpg';
 import { Link, useNavigate } from "react-router-dom";
 import { HousePlus, MoveRight } from 'lucide-react';
 
@@ -10,7 +10,7 @@ const serviceData = [
     id: 1,
     title: "Private movie screening",
     description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-    image: DeluxeImg,
+    image: "src/assets/relax-04.jpg",
     alt: "Private movie screening setup",
     buttonText: "Book Now"
   },
@@ -18,7 +18,7 @@ const serviceData = [
     id: 2,
     title: "Private movie screening",
     description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-    image: DeluxeImg,
+    image: "src/assets/relax-04.jpg",
     alt: "Private movie screening setup",
     buttonText: "Book Now"
   },
@@ -26,7 +26,7 @@ const serviceData = [
     id: 3,
     title: "Private movie screening",
     description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-    image: DeluxeImg,
+    image: "src/assets/relax-04.jpg",
     alt: "Private movie screening setup",
     buttonText: "Book Now"
   },
@@ -34,7 +34,7 @@ const serviceData = [
     id: 4,
     title: "Private movie screening",
     description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-    image: DeluxeImg,
+    image: "src/assets/relax-04.jpg",
     alt: "Private movie screening setup",
     buttonText: "Book Now"
   }

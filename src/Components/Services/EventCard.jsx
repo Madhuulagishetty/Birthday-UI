@@ -3,12 +3,9 @@ import {
   Cake,
   PartyPopper,
   Gift,
-  Calendar,
+
   Star,
-  Utensils,
-  Film,
-  CakeSlice,
-  Flower 
+  
 } from 'lucide-react';
 
 const EventCard = ({ icon: Icon, title, description, className = '' }) => {
