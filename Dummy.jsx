@@ -13,8 +13,6 @@ const TermsMain = () => {
   const [animateIn, setAnimateIn] = useState(false);
   const payButtonRef = useRef(null);
   const [amountWithTax, setAmountWithTax] = useState(0);
-  const [advanceAmount] = useState(1000); // Fixed advance amount
-  const [remainingAmount, setRemainingAmount] = useState(0);
 
   useEffect(() => {
     const data = localStorage.getItem('bookingData');
@@ -27,18 +25,18 @@ const TermsMain = () => {
       const taxAmount = (baseAmount * 0.02);
       const total = baseAmount + taxAmount;
       setAmountWithTax(total);
-      
-      // Calculate remaining amount (to be paid after event)
-      setRemainingAmount(total - advanceAmount);
     } else {
       navigate('/');
     }
+    
+    // Rest of your effect code...
+ 
     
     // Trigger animations after component mounts
     setTimeout(() => {
       setAnimateIn(true);
     }, 100);
-  }, [navigate, advanceAmount]);
+  }, [navigate]);
 
   const termsItems = [
     "We do NOT provide any movie/OTT accounts. We will do the setups using your OTT accounts/downloaded content.",
@@ -49,7 +47,7 @@ const TermsMain = () => {
     "Carrying AADHAAR CARD is mandatory. It will be scanned during entry.",
     "Couples under 18 years of age are not allowed to book the theatre",
     "Pets are strictly not allowed inside the theatre",
-    "We collect an advance amount of ₹1000 to book the slot. The remaining amount will be collected after the event."
+    "We collect an advance amount of RS. 750 plus convenience fee to book the slot."
   ];
   
   const Refund = [
@@ -74,7 +72,7 @@ const TermsMain = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount: advanceAmount, // Only charging the advance amount
+          amount: amountWithTax,
         }),
       });
       
@@ -104,14 +102,12 @@ const TermsMain = () => {
         whatsapp_number: bookingData.whatsapp,
         num_people: bookingData.people,
         decoration: bookingData.wantDecoration,
-        advance_amount: advanceAmount,
-        remaining_amount: remainingAmount,
         total_amount: amountWithTax,
         payment_id: bookingData.paymentId,
-        extraDecorations: bookingData.extraDecorations,
-        bookingName: bookingData.bookingName,
-        slotType: bookingData.slotType,
-        email: bookingData.email
+        extraDecorations:bookingData.extraDecorations,
+        bookingName:bookingData.bookingName,
+        slotType:bookingData.slotType,
+        email:bookingData.email
       };
       
       fetch('https://sheetdb.io/api/v1/dqqdhuekivsab', {
@@ -128,16 +124,12 @@ const TermsMain = () => {
               whatsapp_number: bookingData.whatsapp,
               num_people: bookingData.people,
               decoration: bookingData.wantDecoration ? "Yes" : "No",
-              advance_amount: advanceAmount,
-              remaining_amount: remainingAmount,
               total_amount: amountWithTax,
               payment_id: bookingData.paymentId,
-              extraDecorations: bookingData.extraDecorations,
-              bookingName: bookingData.bookingName,
-              slotType: bookingData.slotType,
-              email: bookingData.email,
-              payment_status: "Partial (Advance paid)",
-              NameUser:bookingData.NameUser
+              extraDecorations:bookingData.extraDecorations,
+             bookingName:bookingData.bookingName,
+             slotType:bookingData.slotType,
+             email:bookingData.email
             }
           ]
         }),
@@ -167,11 +159,8 @@ const TermsMain = () => {
           whatsapp_number: bookingData.whatsapp,
           num_people: bookingData.people,
           decoration: bookingData.wantDecoration ? "Yes" : "No",
-          advance_amount: advanceAmount,
-          remaining_amount: remainingAmount,
           total_amount: amountWithTax,
           payment_id: bookingData.paymentId,
-          payment_status: "Partial (Advance paid)"
         }),
       });
   
@@ -179,10 +168,9 @@ const TermsMain = () => {
       console.error('Error sending email or Formspree request:', error);
     }
   };
-
   const sendWhatsAppReminder = async (params) => {
     try {
-      const { to, date, time, remainingAmount } = params;
+      const { to, date, time } = params;
       const formattedNumber = to.startsWith('+') ? to : `+${to}`;
       
       const response = await fetch('https://backend-kf6u.onrender.com/send-whatsapp', {
@@ -190,12 +178,7 @@ const TermsMain = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          to: formattedNumber, 
-          date, 
-          time,
-          message: `Your booking is confirmed! \n\nDate: ${date} \nTime: ${time} \n\nAdvance Paid: ₹${advanceAmount} \nRemaining Amount: ₹${remainingAmount.toFixed(2)} (to be paid after the event) \n\nThank you for your booking!`
-        }),
+        body: JSON.stringify({ to: formattedNumber, date, time }),
       });
       
       if (!response.ok) {
@@ -214,10 +197,7 @@ const TermsMain = () => {
       status: "booked",
       paymentId: paymentDetails.razorpay_payment_id,
       timestamp: new Date(),
-      paymentStatus: 'partial',
-      advancePaid: advanceAmount,
-      remainingAmount: remainingAmount,
-      totalAmount: amountWithTax,
+      paymentStatus: 'completed',
       orderId: paymentDetails.razorpay_order_id
     };
 
@@ -243,10 +223,10 @@ const TermsMain = () => {
       
       const options = {
         key: 'rzp_test_MAK9N9Rei9tuH6',
-        amount: advanceAmount * 100, // Razorpay expects amount in paise
+        amount: order.amount,
         currency: "INR",
         name: "Birthday Booking",
-        description: "Advance Payment for Booking",
+        description: "Birthday Celebration Booking",
         order_id: order.id,
         handler: async function (response) {
           try {
@@ -273,8 +253,7 @@ const TermsMain = () => {
               await sendWhatsAppReminder({
                 to: `+91${bookingData.whatsapp}`,
                 date: bookingData.date,
-                time: `${bookingData.lastItem.start} - ${bookingData.lastItem.end}`,
-                remainingAmount: remainingAmount
+                time: `${bookingData.lastItem.start} - ${bookingData.lastItem.end}`
               });
             }
 
@@ -315,15 +294,14 @@ const TermsMain = () => {
       payButtonRef.current.classList.remove('button-pulse');
     }
   }, [isChecked]);
-
   const formatCurrency = (amount) => {
     return amount.toFixed(2);
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-400 to-pink-50 pt-16 pb-16 px-4 sm:px-6 md:px-8">
       <div className="max-w-4xl mx-auto pt-[3%]">
         <div className={`transition-all duration-500 transform ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
+          
           
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
             <div className="bg-gradient-to-r from-purple-600 to-pink-500 py-4 px-6">
@@ -393,40 +371,28 @@ const TermsMain = () => {
                       transform: animateIn ? 'translateY(0)' : 'translateY(20px)'
                     }}
                   >
-                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-5 rounded-lg shadow-inner mb-6">
-                      <h3 className="font-semibold text-lg mb-3 text-purple-800">Booking Summary</h3>
-                      
-                      <div className="space-y-3">
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-700">Base Amount:</span>
-                          <span className="font-semibold text-gray-800">₹{bookingData.totalAmount.toFixed(2)}</span>
-                        </div>
-                        
-                        <div className="flex justify-between items-center text-sm">
-                          <span className="text-gray-600">Tax (2%):</span>
-                          <span className="text-gray-700">₹{(bookingData.totalAmount * 0.02).toFixed(2)}</span>
-                        </div>
-                        
-                        <div className="h-px bg-purple-100 my-2"></div>
-                        
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-800 font-medium">Total Amount:</span>
-                          <span className="text-xl font-bold text-pink-600">₹{amountWithTax.toFixed(2)}</span>
-                        </div>
-
-                        <div className="h-px bg-purple-100 my-2"></div>
-                        
-                        <div className="flex justify-between items-center bg-green-50 p-2 rounded">
-                          <span className="text-gray-800 font-medium">Advance Payment (Now):</span>
-                          <span className="text-lg font-bold text-green-600">₹{advanceAmount.toFixed(2)}</span>
-                        </div>
-                        
-                        <div className="flex justify-between items-center bg-yellow-50 p-2 rounded">
-                          <span className="text-gray-800 font-medium">Remaining (After Event):</span>
-                          <span className="text-lg font-bold text-yellow-600">₹{remainingAmount.toFixed(2)}</span>
-                        </div>
-                      </div>
-                    </div>
+                   <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-5 rounded-lg shadow-inner mb-6">
+  <h3 className="font-semibold text-lg mb-3 text-purple-800">Booking Summary</h3>
+  
+  <div className="space-y-3">
+    <div className="flex justify-between items-center">
+      <span className="text-gray-700">Base Amount:</span>
+      <span className="font-semibold text-gray-800">₹{bookingData.totalAmount.toFixed(2)}</span>
+    </div>
+    
+    <div className="flex justify-between items-center text-sm">
+      <span className="text-gray-600">Tax (2%):</span>
+      <span className="text-gray-700">₹{(bookingData.totalAmount * 0.02).toFixed(2)}</span>
+    </div>
+    
+    <div className="h-px bg-purple-100 my-2"></div>
+    
+    <div className="flex justify-between items-center pt-2">
+      <span className="text-gray-800 font-medium">Total Amount:</span>
+      <span className="text-2xl font-bold text-pink-600">₹{amountWithTax.toFixed(2)}</span>
+    </div>
+  </div>
+</div>
                     
                     <button
                       ref={payButtonRef}
@@ -445,7 +411,7 @@ const TermsMain = () => {
                           Processing...
                         </span>
                       ) : (
-                        `Pay Advance ₹${formatCurrency(advanceAmount)}`
+                        `Pay ₹${formatCurrency(amountWithTax)}`
                       )}
                     </button>
                     <p className="text-center text-sm text-gray-500 mt-4">

@@ -14,6 +14,7 @@ const QuantityBirthday = () => {
   const [whatsapp, setWhatsapp] = useState("");
   const [decoration, setDecoration] = useState(false);
   const [bookingName, setBookingName] = useState("");
+  const [NameUser, SetNameUser] = useState("");
   const [email, setEmail] = useState("");
   const [wantDecoration, setWantDecoration] = useState("Yes");
   const [occasion, setOccasion] = useState("Anniversary");
@@ -76,7 +77,8 @@ const QuantityBirthday = () => {
     extraDecorations,
     date,
     cartData,
-    slotType
+    slotType,
+    NameUser
   ]);
   
   const basePrice = slotType === "deluxe" ? 2000 : slotType === "rolexe" ? 1500 : 2000;
@@ -162,7 +164,8 @@ const QuantityBirthday = () => {
       totalAmount: calculateTotal(),
       cartData,
       slotType,
-      lastItem
+      lastItem,
+      NameUser
     };
     
     localStorage.setItem('bookingData', JSON.stringify(bookingData));
@@ -176,8 +179,8 @@ const QuantityBirthday = () => {
       <div className="fontPoppin bg-white rounded-lg shadow-lg md:w-[35%] px-4 py-4 z-10 mt-[20%] md:mt-[4%]">
       <div className="flex flex-col md:flex-row items-center justify-between mb-4 ">
           <div className="flex items-center bg-pink-50 text-pink-600 px-3 py-1.5 rounded-full">
-            <Star className="w-4 h-4 mr-1 fill-pink-500 text-pink-500" />
-            <span className="font-medium capitalize">{slotType} package</span>
+            <Star className="w-5 h-5 mr-1 fill-pink-500 text-pink-500" />
+            <span className="text-xl capitalize font-semibold">{slotType} package</span>
           </div>
           <span className="text-sm font-medium text-gray-500">₹{basePrice} base price</span>
         </div>
@@ -270,6 +273,17 @@ const QuantityBirthday = () => {
             />
           </div>
           
+          <div>
+            <label className="block text-sm mb-1">
+              Name <span className="text-red-500">*</span>
+            </label>
+            <input 
+              type="email" 
+              value={NameUser}
+              onChange={(e) => SetNameUser(e.target.value)}
+              className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+            />
+          </div>
           <div>
             <label className="block text-sm mb-1">
               Email ID <span className="text-red-500">*</span>

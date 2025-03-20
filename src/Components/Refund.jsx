@@ -37,7 +37,7 @@ const RefundPolicy = () => {
           className="prose prose-lg text-gray-600"
         >
           <p className="mb-4">
-            We collect an advance amount of Rs 750 for reservation of a slot. This advance amount is fully refundable 
+            We collect an advance amount of Rs 1000 for reservation of a slot. This advance amount is fully refundable 
             (except convenience charges of payment gateway, if any) if booking is cancelled or we are informed about 
             cancellation through WhatsApp chat, at least 72 hours before the slot time.
           </p>

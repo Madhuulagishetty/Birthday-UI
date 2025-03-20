@@ -244,7 +244,7 @@ const Deluxe = () => {
         initial="hidden" 
         animate="visible" 
         variants={fadeIn}
-        className="relative md:max-w-[30rem] mt-5 w-full bg-white rounded-2xl shadow-xl overflow-hidden p-3 md:p-4 z-10 md:mt-[7%] md:mb-[3%]"
+        className="relative md:max-w-[30rem] mt-20  w-full bg-white rounded-2xl shadow-xl overflow-hidden p-3 md:p-4 z-10 md:mt-[7%] md:mb-[3%]"
       >
         <motion.div 
           initial={{ opacity: 0 }}
@@ -271,7 +271,7 @@ const Deluxe = () => {
           animate="visible"
           className="space-y-2 mt-3"
         >
-          <motion.div variants={itemAnimation} className="flex justify-between items-start">
+          <motion.div variants={itemAnimation} className="flex justify-between items-start flex-col md:flex-row gap-3">
             <h4 
               variants={pulseAnimation}
               initial="initial"
@@ -282,10 +282,10 @@ const Deluxe = () => {
             </h4>
             <motion.div 
               variants={itemAnimation} 
-              className="inline-flex items-center"
+              className="inline-flex  justify-center"
               whileHover={{ scale: 1.05 }}
             >
-              <div className="px-3 py-1 bg-green-50 text-green-500 rounded-full border border-green-500 text-sm">
+              <div className="px-3 py-1 bg-green-50 text-green-500 rounded-full border border-green-500 text-[12px] md:text-sm">
                 <span>{timeSlots.length - bookedSlots.length} Slots Available</span>
               </div>
             </motion.div>

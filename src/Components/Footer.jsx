@@ -11,8 +11,11 @@ const Footer = () => {
       top: 0,
       behavior: 'smooth'
     });
-  }, []); // Empty dependency array ensures it only runs once when component mounts
-
+  }); // Empty dependency array ensures it only runs once when component mounts
+  const handleWhatsAppClick = () => {
+    const phoneNumber = "919764535650";
+    window.open(`https://wa.me/${phoneNumber}`, "_blank");
+  };
   return (
     <footer className="w-[100%] fontPoppin">
       {/* Main Footer */}
@@ -60,7 +63,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="font-semibold">Mobile</p>
-                  <p className="text-gray-600">+91 9321893567/9764535650</p>
+                  <p className="text-gray-600">+91 9764535650</p>
                 </div>
               </div>
               
@@ -82,7 +85,7 @@ const Footer = () => {
           <div className="flex space-x-4 relative mb-6">
             {/* Facebook */}
             <div className="group relative">
-              <NavLink to="#" className="bg-black text-white p-2 rounded-full block hover:bg-[#B1153C] transition-colors transform hover:scale-110 transition-transform duration-300">
+              <NavLink to="#" className="bg-black text-white p-2 rounded-full block hover:bg-[#B1153C]  transform hover:scale-110 transition-transform duration-300">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M18 2H15C13.6739 2 12.4021 2.52678 11.4645 3.46447C10.5268 4.40215 10 5.67392 10 7V10H7V14H10V22H14V14H17L18 10H14V7C14 6.73478 14.1054 6.48043 14.2929 6.29289C14.4804 6.10536 14.7348 6 15 6H18V2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
@@ -120,10 +123,10 @@ const Footer = () => {
             </div>
             
             {/* WhatsApp */}
-            <div className="group relative">
-              <NavLink to="#" className="bg-black text-white p-2 rounded-full block hover:bg-[#B1153C] transition-colors transform hover:scale-110 transition-transform duration-300">
+            <div className="group relative hover:cursor-pointer">
+              <p className="bg-black text-white p-2 rounded-full block hover:bg-[#B1153C] transition-colors transform hover:scale-110  duration-300" onClick={handleWhatsAppClick}>
               <FaWhatsapp size={25}/>
-              </NavLink>
+              </p>
               <div className="absolute left-1/2 transform -translate-x-1/2 translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-4 transition-all duration-300 ease-in-out bg-black text-white text-xs px-2 py-1 rounded-md mt-2 pointer-events-none">
                 WhatsApp
               </div>
