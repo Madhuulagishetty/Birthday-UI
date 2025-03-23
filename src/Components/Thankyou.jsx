@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Lottie from 'react-lottie';
-import successAnimation from '../assets/Animation - 1741369360851.json';
+// import successAnimation from '../../assets/Animation - 1741369360851.json';
+import successAnimation from '../../public/assets/Animation - 1741369360851.json'
 
 const ThankYouPage = () => {
   // Lottie animation options with improved settings

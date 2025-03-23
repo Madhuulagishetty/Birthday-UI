@@ -41,7 +41,7 @@ const Navbar = () => {
             <div className="hidden md:flex items-center space-x-0 justify-between hover:cursor-pointer">
                   <div className="w-[17%]" onClick={homeDirect}>
                     
-                     <img src="src/assets/logo.png" alt="img is not coming" />
+                     <img src="assets/logo.png" alt="img is not coming" />
                   </div>
               <div className="flex items-center">
               {navItems.map((item, index) => (
