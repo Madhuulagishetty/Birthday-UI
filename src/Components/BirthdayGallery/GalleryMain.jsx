@@ -56,8 +56,9 @@ const GalleryMain = () => {
         <div 
           className="bg-cover bg-center h-[60vh] sm:h-[40vh] md:h-[40vh] lg:h-[50vh]" 
           style={{
-            backgroundImage: 'url("https://image.wedmegood.com/resized/720X/uploads/member/1390611/1597761581_image6689.jpg")',
-            filter: 'brightness(0.3)'
+            backgroundImage: 'url("src/assets/inside-header.jpg")',
+            // backgroundImage: 'url("https://image.wedmegood.com/resized/720X/uploads/member/1390611/1597761581_image6689.jpg")',
+            filter: 'brightness(0.7)'
           }}
         />
         
@@ -65,7 +66,7 @@ const GalleryMain = () => {
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <div className="container mx-auto px-4 py-4 sm:py-6 md:py-8 text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white relative inline-block mb-4 sm:mb-6">
-             BirthdayGallery
+             Gallery
               <div className="absolute bottom-[-10px] left-0 w-full h-1 bg-pink-500"></div>
             </h1>
           </div>
@@ -75,7 +76,7 @@ const GalleryMain = () => {
                 <HousePlus className="w-4 h-4 sm:w-5 sm:h-5" />Home
               </Link>
               <div className="flex gap-1 sm:gap-2 text-base sm:text-lg md:text-xl font-semibold items-center text-white">
-                <MoveRight className="w-4 h-4 sm:w-5 sm:h-5 animate-move-left"/>BirthdayGallery
+                <MoveRight className="w-4 h-4 sm:w-5 sm:h-5 animate-move-left"/>Gallery
               </div>
             </div>
           </div>
@@ -86,7 +87,7 @@ const GalleryMain = () => {
       <div className="container mx-auto px-4 py-10">
         {/* Gallery Title */}
         <div className="fontCursive text-4xl md:text-5xl text-pink-700 p-4 text-center mb-6">
-          BirthdayGallery
+          Gallery
         </div>
 
         {/* Gallery Grid */}
@@ -175,7 +176,7 @@ const GalleryMain = () => {
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
               <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
             </svg>
-            <span className="whitespace-nowrap text-sm">Watch Birthday Videos on YouTube</span>
+            <span className="whitespace-nowrap text-sm">Watch Videos on YouTube</span>
           </button>
         </div>
       </div>

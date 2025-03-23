@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Sparkles, Heart, CheckCircle, Calendar, PhoneCall, HousePlus, MoveRight } from 'lucide-react';
 import { useNavigate, Link } from "react-router-dom";
-import DeluxeImg from '../../assets/Delax.jpg';
+import DeluxeImg from '../../../public/assets/Delax.jpg';
 
 const AboutUs = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -45,7 +45,7 @@ const AboutUs = () => {
     });
     
    
-  }, []);
+  });
   
   const startCounters = () => {
     // Party counter (0 to 100+)
@@ -108,11 +108,13 @@ const AboutUs = () => {
       <div 
         className="bg-cover bg-center h-[60vh] sm:h-[40vh] md:h-[50vh] lg:h-[50vh] relative" 
         style={{
-          backgroundImage: "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSET1ZpZoFEqLyUfjyJTCBeXe3PJuTlqOZW-Q&s')",
+           backgroundImage: 'url("src/assets/inside-header.jpg")',
+            // filter: 'brightness(0.7)'
+          // backgroundImage: "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSET1ZpZoFEqLyUfjyJTCBeXe3PJuTlqOZW-Q&s')",
           backgroundPosition: 'center center'
         }}
       >
-        <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center px-4">
+        <div className="absolute inset-0 bg-black/0 flex flex-col items-center justify-center px-4">
           <h1 className="text-5xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 md:mb-4 text-center">
             About Us
           </h1>

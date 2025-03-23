@@ -13,7 +13,8 @@ const TermsMain = () => {
   const [animateIn, setAnimateIn] = useState(false);
   const payButtonRef = useRef(null);
   const [amountWithTax, setAmountWithTax] = useState(0);
-  const [advanceAmount] = useState(1000); // Fixed advance amount
+  const [advanceAmount, setAdvanceAmount] = useState(0); // We'll calculate this with tax
+  const [baseAdvanceAmount] = useState(1000); // Fixed base advance amount (before tax)
   const [remainingAmount, setRemainingAmount] = useState(0);
 
   useEffect(() => {
@@ -22,14 +23,17 @@ const TermsMain = () => {
       const parsedData = JSON.parse(data);
       setBookingData(parsedData);
       
-      // Calculate amount with 2% tax
+      // No tax calculation here, just set the total amount
       const baseAmount = parsedData.totalAmount;
-      const taxAmount = (baseAmount * 0.02);
-      const total = baseAmount + taxAmount;
-      setAmountWithTax(total);
+      setAmountWithTax(baseAmount);
+      
+      // Calculate advance amount with 2% tax
+      const advanceTax = (baseAdvanceAmount * 0.02);
+      const advanceWithTax = baseAdvanceAmount + advanceTax;
+      setAdvanceAmount(advanceWithTax);
       
       // Calculate remaining amount (to be paid after event)
-      setRemainingAmount(total - advanceAmount);
+      setRemainingAmount(baseAmount - baseAdvanceAmount);
     } else {
       navigate('/');
     }
@@ -38,7 +42,7 @@ const TermsMain = () => {
     setTimeout(() => {
       setAnimateIn(true);
     }, 100);
-  }, [navigate, advanceAmount]);
+  }, [navigate, baseAdvanceAmount]);
 
   const termsItems = [
     "We do NOT provide any movie/OTT accounts. We will do the setups using your OTT accounts/downloaded content.",
@@ -74,7 +78,7 @@ const TermsMain = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount: advanceAmount, // Only charging the advance amount
+          amount: advanceAmount, // Charging the advance amount with tax
         }),
       });
       
@@ -194,7 +198,7 @@ const TermsMain = () => {
           to: formattedNumber, 
           date, 
           time,
-          message: `Your booking is confirmed! \n\nDate: ${date} \nTime: ${time} \n\nAdvance Paid: ₹${advanceAmount} \nRemaining Amount: ₹${remainingAmount.toFixed(2)} (to be paid after the event) \n\nThank you for your booking!`
+          message: `Your booking is confirmed! \n\nDate: ${date} \nTime: ${time} \n\nAdvance Paid: ₹${advanceAmount.toFixed(2)} \nRemaining Amount: ₹${remainingAmount.toFixed(2)} (to be paid after the event) \n\nThank you for your booking!`
         }),
       });
       
@@ -398,18 +402,6 @@ const TermsMain = () => {
                       
                       <div className="space-y-3">
                         <div className="flex justify-between items-center">
-                          <span className="text-gray-700">Base Amount:</span>
-                          <span className="font-semibold text-gray-800">₹{bookingData.totalAmount.toFixed(2)}</span>
-                        </div>
-                        
-                        <div className="flex justify-between items-center text-sm">
-                          <span className="text-gray-600">Tax (2%):</span>
-                          <span className="text-gray-700">₹{(bookingData.totalAmount * 0.02).toFixed(2)}</span>
-                        </div>
-                        
-                        <div className="h-px bg-purple-100 my-2"></div>
-                        
-                        <div className="flex justify-between items-center">
                           <span className="text-gray-800 font-medium">Total Amount:</span>
                           <span className="text-xl font-bold text-pink-600">₹{amountWithTax.toFixed(2)}</span>
                         </div>
@@ -417,6 +409,16 @@ const TermsMain = () => {
                         <div className="h-px bg-purple-100 my-2"></div>
                         
                         <div className="flex justify-between items-center bg-green-50 p-2 rounded">
+                          <span className="text-gray-800 font-medium">Advance Payment:</span>
+                          <span className="text-lg font-bold text-green-600">₹{baseAdvanceAmount.toFixed(2)}</span>
+                        </div>
+                        
+                        <div className="flex justify-between items-center text-sm pl-2">
+                          <span className="text-gray-600">Convince fee (2%):</span>
+                          <span className="text-gray-700">₹{(baseAdvanceAmount * 0.02).toFixed(2)}</span>
+                        </div>
+                        
+                        <div className="flex justify-between items-center bg-green-100 p-2 rounded">
                           <span className="text-gray-800 font-medium">Advance Payment (Now):</span>
                           <span className="text-lg font-bold text-green-600">₹{advanceAmount.toFixed(2)}</span>
                         </div>

@@ -113,13 +113,13 @@ const Deluxe = () => {
     { id: 2, start: "01:00 PM", end: "3:30 PM" },
     { id: 3, start: "4:00 PM", end: "6:30 PM" },
     { id: 4, start: "7:00 PM", end: "9:30 PM" },
-    { id: 5, start: "10:00 PM", end: "12:30 PM" }
+    { id: 5, start: "10:00 PM", end: "12:30 AM" }
   ];
 
   const images = [
-    "https://t4.ftcdn.net/jpg/11/99/83/57/360_F_1199835732_evIkgrKAtpSUUCHg4XDWqOEW5SFk2ULI.jpg",
-    "https://i.pinimg.com/originals/52/07/cf/5207cfb3fd0f613551e4f24b50315378.jpg",
-    "https://cdn.cherishx.com/uploads/1686727757_webp_original.webp"
+    "src/assets/Delax-03.jpg",
+    "src/assets/Delax-04.jpg",
+    "src/assets/Delax-01.jpg"
   ];
 
   const sliderSettings = {
@@ -170,6 +170,13 @@ const Deluxe = () => {
       toast.error("Please select a time slot before proceeding.");
       return;
     }
+    localStorage.removeItem("people");
+    localStorage.removeItem("whatsapp");
+    localStorage.removeItem("bookingName");
+    localStorage.removeItem("email");
+    localStorage.removeItem("wantDecoration");
+    localStorage.removeItem("occasion");
+    localStorage.removeItem("extraDecorations");
     toast.success("Booking successful!");
     setSlotType('deluxe');
     navigate("/QuantityBirthday", {
@@ -358,7 +365,7 @@ const Deluxe = () => {
                       AddtoSlot(slot);
                     }}
                     initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    animate={{ opacity: 1, y: 0,  backgroundColor: selectedTimeSlot && selectedTimeSlot.id === slot.id ? "#3b82f6" : undefined, color: selectedTimeSlot && selectedTimeSlot.id === slot.id ? "#fff" : undefined}}
                     transition={{ delay: 0.1 * index, duration: 0.3 }}
                     whileHover={
                       !bookedSlots.some((booked) => booked.id === slot.id) 
@@ -377,7 +384,7 @@ const Deluxe = () => {
                     disabled={bookedSlots.some((booked) => booked.id === slot.id)}
                     className={`rounded-xl border text-sm transition-all px-1 py-2 md:px-2 md:py-2 ${
                       selectedTimeSlot && selectedTimeSlot.id === slot.id
-                        ? "border-[#055085] bg-blue-50 text-[#055085] shadow-md"
+                        ? "border-[#055085] bg-blue-500 text-[#000] shadow-md"
                         : bookedSlots.some((booked) => booked.id === slot.id)
                         ? "bg-gray-300 cursor-not-allowed text-gray-500"
                         : "border-gray-200 hover:border-purple-200"
@@ -399,13 +406,13 @@ const Deluxe = () => {
               whileHover={{ x: 3 }}
             >
               <span className="text-1xl font-semibold">₹2000</span>
-              <span className="text-sm">for up to 2 people with decoration</span>
+              <span className="text-sm">for up to 25 people with decoration</span>
             </div>
             <p 
               className="text-sm text-gray-500 mb-4"
               whileHover={{ x: 3 }}
             >
-              More than 6 people not allowed
+              More than 10 people not allowed
             </p>
             <div className="w-[100%] flex justify-center ">
             <motion.button

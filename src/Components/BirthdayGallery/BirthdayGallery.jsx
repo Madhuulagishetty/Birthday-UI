@@ -27,7 +27,7 @@ const BirthdayGallery = () => {
     <>
 
       <div className="w-full flex justify-center flex-col items-center h-full py-4 md:pt-6 md:pb-26 ">
-        <div className="fontCursive text-5xl md:text-5xl text-pink-700 p-4 md:p-6 mt-[15%] md:mt-[0%]">BirthdayGallerys</div>
+        <div className="fontCursive text-5xl md:text-5xl text-pink-700 p-4 md:p-6 mt-[15%] md:mt-[0%]">Gallery</div>
         <div className="w-full md:w-11/12 lg:w-4/5 xl:w-3/4 bg-white flex">
           <div className="w-full flex flex-col md:flex-row gap-2 p-2 md:p-0">
             <div className="w-full md:w-3/4">

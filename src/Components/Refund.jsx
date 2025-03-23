@@ -31,7 +31,7 @@ const RefundPolicy = () => {
         </motion.h2>
         
         <motion.div 
-          initial={{ opacity: 0 }}
+          initial={{ opacity: 0 }} 
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.5 }}
           className="prose prose-lg text-gray-600"

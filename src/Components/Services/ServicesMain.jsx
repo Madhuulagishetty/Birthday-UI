@@ -2,43 +2,57 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import DeluxeImg from '../../assets/Delax.jpg';
 import { Link, useNavigate } from "react-router-dom";
-import { HousePlus, MoveRight } from 'lucide-react';
+import { HousePlus, MoveRight, Heart, Star, Calendar } from 'lucide-react';
 
 // Service data for reusability
 const serviceData = [
   {
     id: 1,
-    title: "Private movie screening",
-    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-    image: DeluxeImg,
-    alt: "Private movie screening setup",
-    buttonText: "Book Now"
+    title: "Romantic Surprise Packages",
+    description: "Transform any occasion into an unforgettable memory with our thoughtfully curated surprise packages. From elegant flower arrangements to personalized gifts, we handle every detail to create a magical experience. Perfect for anniversaries, proposals, or simply showing someone special how much you care. Our team works discreetly to ensure the element of surprise remains intact while delivering an experience that speaks directly to your loved one's heart.",
+    image: 'src/assets/Service-Bouquet-and-other-gifts.jpg',
+    alt: "Romantic gift and flower arrangement",
+    buttonText: "Plan Your Surprise",
+    icon: <Heart className="w-5 h-5 text-pink-500" />
   },
   {
     id: 2,
-    title: "Private movie screening",
-    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-    image: DeluxeImg,
-    alt: "Private movie screening setup",
-    buttonText: "Book Now"
+    title: "Atmospheric Fog Entrances",
+    description: "Make a dramatic statement with our signature fog entrance experience. Create an ethereal, dreamlike atmosphere that transforms any space into something magical. Our professional-grade fog systems produce a beautiful low-lying effect that's perfect for weddings, proposals, or special celebrations. We carefully control the density and flow to ensure the perfect ambiance while maintaining comfort for you and your guests. This unique touch will leave everyone in awe.",
+    image: 'src/assets/Fog-entry-01.png',
+    alt: "Atmospheric fog entrance setup",
+    buttonText: "Create Magic",
+    icon: <Star className="w-5 h-5 text-pink-500" />
   },
   {
     id: 3,
-    title: "Private movie screening",
-    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-    image: DeluxeImg,
-    alt: "Private movie screening setup",
-    buttonText: "Book Now"
+    title: "Professional Photoshoot Sessions",
+    description: "Capture your special moments with our professional photography services. Our experienced photographers specialize in romantic settings and intimate moments, ensuring every emotion is preserved beautifully. We offer customized backdrops, professional lighting, and artistic direction to create stunning images you'll cherish forever. Whether it's a proposal, anniversary, or just because, we'll help you document your love story with elegance and style.",
+    image: 'src/assets/Service-Photoshoot.jpg',
+    alt: "Professional romantic photoshoot setup",
+    buttonText: "Book Your Session",
+    icon: <Calendar className="w-5 h-5 text-pink-500" />
   },
   {
     id: 4,
-    title: "Private movie screening",
-    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-    image: DeluxeImg,
+    title: "Private Movie Screenings",
+    description: "Experience the magic of cinema in an intimate setting with our private movie screening service. Transform any space into your personal theater with high-definition projection, surround sound, and comfortable seating. Choose from classic romance films, personal favorites, or even custom videos and slideshows. We handle all technical aspects while you focus on enjoying this unique experience with someone special. Add customized decorations and themed elements for an extra special touch.",
+    image: "src/assets/Service-Private-movie-screening.jpg",
     alt: "Private movie screening setup",
-    buttonText: "Book Now"
-  }
+    buttonText: "Reserve Your Screening",
+    icon: <Star className="w-5 h-5 text-pink-500" />
+  },
+  {
+    id: 5,
+    title: "Gourmet Snacks & Beverages",
+    description: "Elevate your experience with our premium selection of gourmet treats and handcrafted beverages. From artisanal chocolates to fresh fruit platters, elegant canapés to custom mocktails, we offer the perfect refreshments for your special occasion. Our menu can be fully customized to accommodate dietary preferences and create perfect pairings. Each item is beautifully presented and served with attention to detail, ensuring your romantic evening has the perfect finishing touch.",
+    image: "src/assets/Service-Snacks-and-beverage.jpg",
+    alt: "Luxury snacks and beverages arrangement",
+    buttonText: "Explore Menu Options",
+    icon: <Heart className="w-5 h-5 text-pink-500" />
+   }
 ];
+
 const handleWhatsAppClick = () => {
   const phoneNumber = "919764535650";
   window.open(`https://wa.me/${phoneNumber}`, "_blank");
@@ -162,15 +176,15 @@ const ServicesMain = () => {
         <div 
           className="bg-cover bg-center h-[60vh] sm:h-[40vh] md:h-[50vh] lg:h-[40vh]" 
           style={{
-            backgroundImage: 'url("https://image.wedmegood.com/resized/720X/uploads/member/1390611/1597761581_image6689.jpg")',
-            filter: 'brightness(0.3)'
+            backgroundImage: 'url("src/assets/inside-header.jpg")',
+            filter: 'brightness(0.8)'
           }}
         />
         
         {/* Overlay Content - Absolutely positioned */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <div className="container mx-auto px-4 py-4 sm:py-6 md:py-8 text-center">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white relative inline-block mb-4 sm:mb-6">
+          <div className="container mx-auto px-4 py-4 sm:py-6 md:py-0 text-center">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white relative inline-block mb-0 sm:mb-6">
               Our Services
               <div className="absolute bottom-[-10px] left-0 w-full h-1 bg-pink-500"></div>
             </h1>

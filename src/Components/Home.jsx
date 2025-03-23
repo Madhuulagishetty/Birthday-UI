@@ -51,9 +51,10 @@ const Home = () => {
   }, []);
 
   const images = [
+    "src/assets/Delax-01.jpg",
+    "src/assets/Delax-08.jpg",
     "src/assets/Delax-04.jpg",
-    "src/assets/relax-05.jpg",
-    "src/assets/relax-04.jpg",
+
   ];
 
   const sliderSettings = {
@@ -107,7 +108,7 @@ const Home = () => {
         className="relative w-full h-screen flex justify-center items-center p-4 bg-cover bg-center"
         style={{
           backgroundImage:
-           `url('src/assets/Delax-07.jpg')`,
+           `url('src/assets/home-header-01.jpg')`,
         }}
         initial="hidden"
         animate="visible"

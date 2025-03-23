@@ -5,25 +5,30 @@ import { HousePlus, MoveRight } from 'lucide-react';
 import {Link} from "react-router-dom";
 
 import { useNavigate } from "react-router-dom";
-import DelaxImg from "../../assets/Delax.jpg";
-import RelaxImg from "../../assets/Relax.jpg";
+
 
 const ServicesSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const sliderRef = useRef(null);
   const navigate = useNavigate();
   const serviceImages = [
-    RelaxImg,
-    "https://i.pinimg.com/originals/52/07/cf/5207cfb3fd0f613551e4f24b50315378.jpg",
-    "https://cdn.cherishx.com/uploads/1686727757_webp_original.webp",
-    DelaxImg
+    'src/assets/Service-Bouquet-and-other-gifts.jpg',
+    "src/assets/Fog-entry-01.PNG",
+    "src/assets/Service-Photoshoot.jpg",
+    "src/assets/Service-Private-movie-screening.jpg",
+    "src/assets/Service-Snacks-and-beverage.jpg",
+
+   
+    // DelaxImg
   ];
 
   const servicePoints = [
-    'Professional Event Photography',
-    'Creative Wedding Cinematography',
-    'Corporate Event Coverage',
-    'Candid Moments Capturing'
+    'Service Bouquet and other-gifts',
+    'Service Fog entry',
+    'Service Photoshoot',
+    'Service Private movie screening',
+    'Service Snacks and beverage'
+
   ];
 
   // Smooth scroll to top when component mounts

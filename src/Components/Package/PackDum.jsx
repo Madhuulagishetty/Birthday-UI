@@ -90,7 +90,7 @@ const Package = () => {
       <div className="flex flex-col md:flex-row justify-center gap-14 md:gap-8 items-center w-[100%] md:w-[100%] ">
         {/* Delax Package */}
         <div
-          className={`bg-white md:p-4 p-2 rounded-2xl shadow-lg transform transition-all duration-700 hover:scale-105 hover:shadow-2xl w-[100%] md:w-[32%] cursor-pointer ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
+          className={`bg-white md:p-4 p-2 rounded-2xl shadow-lg transform transition-all duration-700 hover:scale-105 hover:shadow-2xl w-[100%] md:w-[37%] cursor-pointer ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
           style={{ transitionDelay: "0.2s" }}
         >
           <div className="relative overflow-hidden rounded-xl">
@@ -122,12 +122,17 @@ const Package = () => {
                 This package includes:
               </p>
               <ul className="list-disc list-inside space-y-1 text-gray-600">
-                <li>Comfortable seating for up to 6 people</li>
+                {/* <li>Comfortable seating for up to 4 people</li> */}
+                {/* <li></li> */}
                 <li>Premium sound system</li>
-                <li>Customizable lighting</li>
-                <li>Complimentary popcorn</li>
-                <li>One round of soft drinks</li>
-                <li>Themed decoration of your choice</li>
+                <li> Balloon Arch Setup</li>
+                <li> Candles and Light Setup</li>
+                <li> Birthday / Anniversary Neon Lights</li>
+                <li> Rose Petal Setup on Table</li>
+                <li> Floor Balloon Setup</li>
+                <li> Special Custom Message or Name Display on LED Screen</li>
+                <li>8X12 Mini Theater Screen</li>
+                <li>We'll Display the Pictures or Videos on the Mini Theater Screen as per the Customer</li>
               </ul>
             </div>
          
@@ -146,7 +151,7 @@ const Package = () => {
 
         {/* Relexe Package */}
         <div
-          className={`bg-white md:p-4 p-2 rounded-2xl shadow-lg transform transition-all duration-700 hover:scale-105 hover:shadow-2xl w-[100%] md:w-[32%] cursor-pointer ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
+          className={`bg-white md:p-4 p-2 rounded-2xl shadow-lg transform transition-all duration-700 hover:scale-105 hover:shadow-2xl w-[100%] md:w-[37%] cursor-pointer ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
           style={{ transitionDelay: "0.4s" }}
         >
           <div className="relative overflow-hidden rounded-xl">
@@ -178,12 +183,16 @@ const Package = () => {
                 This package includes:
               </p>
               <ul className="list-disc list-inside space-y-1 text-gray-600">
-                <li>Luxury seating for up to 10 people</li>
-                <li>4K ultra-HD projector</li>
-                <li>Surround sound system</li>
-                <li>Interactive lighting control</li>
-                <li>Premium snack platter</li>
-               
+                <li>Premium sound system</li>
+                <li> Balloon Arch Setup</li>
+                <li> Candles and Light Setup</li>
+                <li> Birthday / Anniversary Neon Lights</li>
+                <li> Rose Petal Setup on Table</li>
+                <li> Floor Balloon Setup</li>
+                <li> Special Custom Message or Name Display on LED Screen</li>
+                <li>8X12 Mini Theater Screen</li>
+                <li>We'll Display the Pictures or Videos on the Mini Theater Screen as per the Customer</li>
+              
               </ul>
             </div>
         

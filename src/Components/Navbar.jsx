@@ -21,6 +21,8 @@ const Navbar = () => {
     setIsMenuOpen(false); // Close menu when clicking Book Now
     navigate("/");
   };
+
+  const homeDirect=()=>{navigate('/')}
   
   // New function to handle navigation from mobile menu
   const handleNavClick = () => {
@@ -31,9 +33,17 @@ const Navbar = () => {
     <div className="fixed w-full z-40">
       <nav className="bg-gradient-to-r from-[#C035A2] via-[#6E23AC] to-[#0b5688]">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-end h-16">
+          {/* <div>
+            <img src="blob:https://web.whatsapp.com/cd6b7a4c-4a2d-4cc0-98fd-5d5f309240ab" alt="img is not coming" />
+          </div> */}
+          <div className="flex items-center justify-between h-16">
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-0">
+            <div className="hidden md:flex items-center space-x-0 justify-between hover:cursor-pointer">
+                  <div className="w-[17%]" onClick={homeDirect}>
+                    
+                     <img src="src/assets/logo.png" alt="img is not coming" />
+                  </div>
+              <div className="flex items-center">
               {navItems.map((item, index) => (
                 <NavLink
                   key={item.label}
@@ -57,6 +67,7 @@ const Navbar = () => {
                 <BookCheck size={20} />
                 Book Now
               </button>
+              </div>
             </div>
 
             {/* Mobile Menu Button */}

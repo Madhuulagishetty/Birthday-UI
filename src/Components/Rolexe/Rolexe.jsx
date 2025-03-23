@@ -109,16 +109,18 @@ const Rolexe = () => {
 
   const timeSlots = [
     { id: 1, start: "10:00 AM", end: "12:30 PM" },
-    { id: 2, start: "12:30 PM", end: "3:30 PM" },
+    { id: 2, start: "1:00 PM", end: "3:30 PM" },
     { id: 3, start: "4:00 PM", end: "6:30 PM" },
     { id: 4, start: "7:00 PM", end: "9:30 PM" },
-    { id: 5, start: "10:00 PM", end: "12:30 PM" }
+    { id: 5, start: "10:00 PM", end: "12:30 AM" }
   ];
 
   const images = [
-    "https://t4.ftcdn.net/jpg/11/99/83/57/360_F_1199835732_evIkgrKAtpSUUCHg4XDWqOEW5SFk2ULI.jpg",
-    "https://i.pinimg.com/originals/52/07/cf/5207cfb3fd0f613551e4f24b50315378.jpg",
-    "https://cdn.cherishx.com/uploads/1686727757_webp_original.webp"
+    "src/assets/Delax-08.jpg",
+    "src/assets/Delax-07.jpg",
+    "src/assets/Delax-06.jpg",
+
+     
   ];
 
   const sliderSettings = {
@@ -310,7 +312,7 @@ const Rolexe = () => {
                   disabled={bookedSlots.some((booked) => booked.id === slot.id)}
                   className={`rounded-xl border text-sm transition-all px-[7px] pt-1 pb-1 ${
                     selectedTimeSlot && selectedTimeSlot.id === slot.id
-                      ? "border-[#055085] bg-blue-50 text-[#055085] shadow-md"
+                      ? "border-[#055085] bg-blue-500 text-[#fff] shadow-md"
                       : bookedSlots.some((booked) => booked.id === slot.id)
                       ? "bg-gray-300 cursor-not-allowed text-gray-500"
                       : "border-gray-200 hover:border-purple-200 hover:shadow-sm"
@@ -331,9 +333,9 @@ const Rolexe = () => {
           >
             <div className="flex items-baseline gap-1">
               <span className="text-1xl font-semibold">₹2000</span>
-              <span className="text-sm">for up to 2 people with decoration</span>
+              <span className="text-sm">for up to 12 people with decoration</span>
             </div>
-            <p className="text-sm text-gray-500 pb-4">More than 6 people not allowed</p>
+            <p className="text-sm text-gray-500 pb-4">More than 7 people not allowed</p>
             <div className="w-[100%] flex justify-center">
              <motion.button
                onClick={handleBooking}
