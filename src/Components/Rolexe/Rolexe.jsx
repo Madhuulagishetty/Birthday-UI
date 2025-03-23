@@ -116,9 +116,9 @@ const Rolexe = () => {
   ];
 
   const images = [
-    "src/assets/Delax-08.jpg",
-    "src/assets/Delax-07.jpg",
-    "src/assets/Delax-06.jpg",
+    "assets/Delax-08.JPG",
+    "assets/Delax-07.JPG",
+    "assets/Delax-06.JPG",
 
      
   ];

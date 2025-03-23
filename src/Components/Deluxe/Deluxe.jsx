@@ -117,9 +117,9 @@ const Deluxe = () => {
   ];
 
   const images = [
-    "src/assets/Delax-03.jpg",
-    "src/assets/Delax-04.jpg",
-    "src/assets/Delax-01.jpg"
+    "assets/Delax-03.JPG",
+    "assets/Delax-04.JPG",
+    "assets/Delax-01.JPG"
   ];
 
   const sliderSettings = {
