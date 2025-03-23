@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import DelaxImg from "../../assets/Delax.jpg";
-import RelaxImg from "../../assets/Relax.jpg";
+// import DelaxImg from "../../assets/Delax.jpg";
+// import RelaxImg from "../../assets/Relax.jpg";
 import { ChevronRight, Star, ArrowUp } from 'lucide-react';
 import ScrollToTop from '../ScrollTop';
 
@@ -95,7 +95,7 @@ const Package = () => {
         >
           <div className="relative overflow-hidden rounded-xl">
             <img
-              src={DelaxImg}
+              src={"/assets/Delax.jpg"}
               alt="Rolexe Theater T1"
               className="rounded-xl w-full h-48 md:h-64 object-cover transform transition duration-700 hover:scale-110"
             />
@@ -156,7 +156,7 @@ const Package = () => {
         >
           <div className="relative overflow-hidden rounded-xl">
             <img
-              src={RelaxImg}
+              src={"/assets/Relax.jpg"}
               alt="Deluxe Theater T2"
               className="rounded-xl w-full h-48 md:h-64 object-cover transform transition duration-700 hover:scale-110"
             />
