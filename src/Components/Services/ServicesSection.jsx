@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import PrivateTheatreExperience from './EventCard'
-import { HousePlus, MoveRight } from 'lucide-react';
-import {Link} from "react-router-dom";
+
 
 import { useNavigate } from "react-router-dom";
 
@@ -12,14 +11,14 @@ const ServicesSection = () => {
   const sliderRef = useRef(null);
   const navigate = useNavigate();
   const serviceImages = [
-    'src/assets/Service-Bouquet-and-other-gifts.jpg',
-    "src/assets/Fog-entry-01.PNG",
-    "src/assets/Service-Photoshoot.jpg",
-    "src/assets/Service-Private-movie-screening.jpg",
-    "src/assets/Service-Snacks-and-beverage.jpg",
+    'assets/Service-Bouquet-and-other-gifts.jpg',
+    "assets/Fog-entry-01.PNG",
+    "assets/Service-Photoshoot.jpg",
+    "assets/Service-Private-movie-screening.jpg",
+    "assets/Service-Snacks-and-beverage.jpg",
 
    
-    // DelaxImg
+    
   ];
 
   const servicePoints = [

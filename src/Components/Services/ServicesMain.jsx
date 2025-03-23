@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
-import DeluxeImg from '../../assets/Delax.jpg';
+
 import { Link, useNavigate } from "react-router-dom";
 import { HousePlus, MoveRight, Heart, Star, Calendar } from 'lucide-react';
 
