@@ -390,14 +390,14 @@ const QuantityBirthday = () => {
                       key={occ}
                       type="button"
                       onClick={() => setOccasion(occ)}
-                      className={`flex items-center justify-center px-3 py-2 rounded-lg border ${
+                      className={`flex items-center  px-1 py-1 rounded-lg border ${
                         occasion === occ 
                           ? 'bg-purple-50 border-purple-500 text-purple-700' 
                           : 'border-gray-300 hover:bg-gray-50'
                       } transition-colors`}
                     >
                       <span className="mr-2">{getOccasionIcon(occ)}</span>
-                      <span className="text-sm truncate">{occ.split(' ')[0]}</span>
+                      <span className="text-sm truncate">{occ}</span>
                     </button>
                   ))}
                 </div>
