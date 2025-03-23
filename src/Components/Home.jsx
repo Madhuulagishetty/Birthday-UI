@@ -1,10 +1,5 @@
 import React, { useContext, useEffect } from "react";
-
 import "react-toastify/dist/ReactToastify.css";
-
-
-
-
 import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -51,9 +46,9 @@ const Home = () => {
   }, []);
 
   const images = [
-    "src/assets/Delax-01.jpg",
-    "src/assets/Delax-08.jpg",
-    "src/assets/Delax-04.jpg",
+    "/assets/Delax-01.JPG",
+    "/assets/Delax-08.JPG",
+    "/assets/Delax-04.JPG",
 
   ];
 
@@ -108,13 +103,13 @@ const Home = () => {
         className="relative w-full h-screen flex justify-center items-center p-4 bg-cover bg-center"
         style={{
           backgroundImage:
-           `url('src/assets/home-header-01.jpg')`,
+           `url('/assets/home-header-01.jpg')`,
         }}
         initial="hidden"
         animate="visible"
         variants={fadeIn}
       >
-        <div className="absolute inset-0 bg-black/60"></div>
+        <div className="absolute inset-0 bg-black/30"></div>
 
         <motion.div
           className="bg-white rounded-lg shadow-lg z-10 w-full max-w-lg sm:max-w-md px-3 py-3 mt-[20%] md:mt-[3%]"

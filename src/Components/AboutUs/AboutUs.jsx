@@ -108,10 +108,8 @@ const AboutUs = () => {
       <div 
         className="bg-cover bg-center h-[60vh] sm:h-[40vh] md:h-[50vh] lg:h-[50vh] relative" 
         style={{
-           backgroundImage: 'url("src/assets/inside-header.jpg")',
-            // filter: 'brightness(0.7)'
-          // backgroundImage: "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSET1ZpZoFEqLyUfjyJTCBeXe3PJuTlqOZW-Q&s')",
-          backgroundPosition: 'center center'
+           backgroundImage: 'url("/assets/inside-header.jpg")',
+           backgroundPosition: 'center center'
         }}
       >
         <div className="absolute inset-0 bg-black/0 flex flex-col items-center justify-center px-4">

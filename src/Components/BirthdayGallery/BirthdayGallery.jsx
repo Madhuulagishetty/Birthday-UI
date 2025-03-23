@@ -8,13 +8,13 @@ const BirthdayGallery = () => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const images = [
-    "src/assets/Delax-04.jpg",
-    "src/assets/relax-05.jpg",
-    "src/assets/relax-04.jpg",
-    "src/assets/Delax-07.jpg",
-    "src/assets/relax-06.jpg",
-    "src/assets/Delax-05.jpg",
-    "src/assets/Delax-03.jpg",
+    "/assets/Delax-04.JPG",
+    "/assets/Relax-05.jpg",
+    "/assets/Relax-04.jpg",
+    "/assets/Delax-07.JPG",
+    "/assets/Relax-06.jpg",
+    "/assets/Delax-05.JPG",
+    "/assets/Delax-03.JPG",
        "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&auto=format&fit=crop"
   ];
 

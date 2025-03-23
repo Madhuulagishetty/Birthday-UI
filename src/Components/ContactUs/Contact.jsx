@@ -89,8 +89,8 @@ const Contact = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: 'url("https://image.wedmegood.com/resized/720X/uploads/member/1390611/1597761581_image6689.jpg")',
-          filter: 'brightness(0.3)'
+          backgroundImage: 'url("/assets/inside-header.jpg")',
+          filter: 'brightness(0.8)'
         }}
       />
       

@@ -19,13 +19,13 @@ const GalleryMain = () => {
   }, []);
 
   const images = [
-    "src/assets/Delax-04.jpg",
-    "src/assets/relax-05.jpg",
-    "src/assets/relax-04.jpg",
-    "src/assets/Delax-07.jpg",
-    "src/assets/relax-06.jpg",
-    "src/assets/Delax-05.jpg",
-    "src/assets/Delax-03.jpg",
+    "/assets/Delax-04.JPG",
+    "/assets/Relax-05.jpg",
+    "/assets/Relax-04.jpg",
+    "/assets/Delax-07.JPG",
+    "/assets/Relax-06.jpg",
+    "/assets/Delax-05.JPG",
+    "/assets/Delax-03.JPG",
  
 
    
@@ -56,9 +56,9 @@ const GalleryMain = () => {
         <div 
           className="bg-cover bg-center h-[60vh] sm:h-[40vh] md:h-[40vh] lg:h-[50vh]" 
           style={{
-            backgroundImage: 'url("src/assets/inside-header.jpg")',
+            backgroundImage: 'url("/assets/inside-header.jpg")',
             // backgroundImage: 'url("https://image.wedmegood.com/resized/720X/uploads/member/1390611/1597761581_image6689.jpg")',
-            filter: 'brightness(0.7)'
+            filter: 'brightness(0.8)'
           }}
         />
         
