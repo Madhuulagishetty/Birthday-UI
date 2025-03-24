@@ -25,7 +25,7 @@ const RefundPolicy = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="text-2xl md:text-3xl font-bold text-gray-800 mb-6 text-center"
+          className="text-2xl md:text-3xl font-bold text-gray-800 mb-6 text-center mt-[20%] md:mt-[0%]"
         >
           Refund Policy
         </motion.h2>

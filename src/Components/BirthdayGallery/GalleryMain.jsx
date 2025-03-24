@@ -57,7 +57,7 @@ const GalleryMain = () => {
           className="bg-cover bg-center h-[60vh] sm:h-[40vh] md:h-[40vh] lg:h-[50vh]" 
           style={{
             backgroundImage: 'url("/assets/inside-header.jpg")',
-            // backgroundImage: 'url("https://image.wedmegood.com/resized/720X/uploads/member/1390611/1597761581_image6689.jpg")',
+          
             filter: 'brightness(0.8)'
           }}
         />
@@ -122,7 +122,7 @@ const GalleryMain = () => {
                     <img 
                       src={images[3]} 
                       alt="Birthday cake" 
-                      className="w-full h-40 md:h-36 lg:h-40 cursor-pointer object-cover rounded-sm hover:opacity-90 transition-opacity" 
+                      className="w-full h-[202px] md:h-38 lg:h-40 cursor-pointer object-cover rounded-sm hover:opacity-90 transition-opacity" 
                       onClick={() => openLightbox(3)} 
                     />
                   </div>
@@ -130,7 +130,7 @@ const GalleryMain = () => {
                     <img 
                       src={images[4]} 
                       alt="Party celebration" 
-                      className="w-full h-[202px] md:h-38 cursor-pointer object-cover rounded-sm hover:opacity-90 transition-opacity" 
+                      className="w-full h-[186px] md:h-38 cursor-pointer object-cover rounded-sm hover:opacity-90 transition-opacity" 
                       onClick={() => openLightbox(4)} 
                     />
                   </div>

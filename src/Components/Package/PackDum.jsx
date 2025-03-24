@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import DelaxImg from "../../assets/Delax.jpg";
-// import RelaxImg from "../../assets/Relax.jpg";
+
 import { ChevronRight, Star, ArrowUp } from 'lucide-react';
 import ScrollToTop from '../ScrollTop';
 
@@ -81,7 +80,7 @@ const Package = () => {
         ))}
       </div>
       
-      <div className={`fontCursive text-white text-3xl md:text-5xl text-center mb-2 transform transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
+      <div className={`fontCursive text-white mt-[30%] md:mt-[0%] text-3xl md:text-5xl text-center mb-2 transform transition-all duration-1000  ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
         Our Packages
       </div>
       

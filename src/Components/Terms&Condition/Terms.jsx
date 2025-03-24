@@ -78,7 +78,7 @@ const TermsMain = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount: advanceAmount, // Charging the advance amount with tax
+          amount: advanceAmount, 
         }),
       });
       
