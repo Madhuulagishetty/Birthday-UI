@@ -46,53 +46,6 @@ const AboutUs = () => {
     
    
   });
-  
-  const startCounters = () => {
-    // Party counter (0 to 100+)
-    let partyDuration = 2000; // 2 seconds
-    let partyStartTime = null;
-    let partyEndValue = 1500;
-    
-    // Client counter (1 to 5000+)
-    let clientDuration = 3000; // 3 seconds
-    let clientStartTime = null;
-    let clientEndValue = 5000;
-    
-    // Quality counter (0 to 100%)
-    let qualityDuration = 2500; // 2.5 seconds
-    let qualityStartTime = null;
-    let qualityEndValue = 100;
-    
-    const animateCounters = (timestamp) => {
-      if (!partyStartTime) partyStartTime = timestamp;
-      if (!clientStartTime) clientStartTime = timestamp;
-      if (!qualityStartTime) qualityStartTime = timestamp;
-      
-      const partyElapsed = timestamp - partyStartTime;
-      const clientElapsed = timestamp - clientStartTime;
-      const qualityElapsed = timestamp - qualityStartTime;
-      
-      // Calculate current count based on easing function
-      const partyProgress = Math.min(partyElapsed / partyDuration, 1);
-      const clientProgress = Math.min(clientElapsed / clientDuration, 1);
-      const qualityProgress = Math.min(qualityElapsed / qualityDuration, 1);
-      
-      // Easing function for smoother animation (ease-out)
-      const easeOut = t => 1 - Math.pow(1 - t, 3);
-      
-      // Update state with current count
-      setPartyCount(Math.floor(easeOut(partyProgress) * partyEndValue));
-      setClientCount(Math.max(1, Math.floor(easeOut(clientProgress) * clientEndValue)));
-      setQualityCount(Math.floor(easeOut(qualityProgress) * qualityEndValue));
-      
-      // Continue animation if not complete
-      if (partyProgress < 1 || clientProgress < 1 || qualityProgress < 1) {
-        requestAnimationFrame(animateCounters);
-      }
-    };
-    
-    requestAnimationFrame(animateCounters);
-  };
 
   const handleContactClick = () => {
     navigate("/ContactUs");
@@ -244,7 +197,7 @@ const AboutUs = () => {
                 <svg xmlns="http://www.w3.org/2000/svg" width="36" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-party-popper"><path d="M5.8 11.3 2 22l10.7-3.79"/><path d="M4 3h.01"/><path d="M22 8h.01"/><path d="M15 2h.01"/><path d="M22 20h.01"/><path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10"/><path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17"/><path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7"/><path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z"/></svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2 text-start">{partyCount}+</h3>
+                  <h3 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold  text-start">{partyCount}+</h3>
                   <p className="text-base sm:text-lg md:text-xl">Party Completed</p>
                 </div>
               </div>
@@ -260,7 +213,7 @@ const AboutUs = () => {
                 <svg xmlns="http://www.w3.org/2000/svg" width="36" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-smile-plus"><path d="M22 11v1a10 10 0 1 1-9-10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/><path d="M16 5h6"/><path d="M19 2v6"/></svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-bold mb-1 md:mb-2 text-start">{clientCount}+</h3>
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-bold  text-start">{clientCount}+</h3>
                   <p className="text-base sm:text-lg md:text-xl">Clients Happy</p>
                 </div>
               </div>
@@ -276,7 +229,7 @@ const AboutUs = () => {
                 <svg xmlns="http://www.w3.org/2000/svg" width="36" height="35" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-bold mb-1 md:mb-2 text-start">{qualityCount}%</h3>
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-start">{qualityCount}%</h3>
                   <p className="text-base sm:text-lg md:text-xl">Quality Guarantee</p>
                 </div>
               </div>

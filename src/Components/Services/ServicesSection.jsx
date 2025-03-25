@@ -147,7 +147,7 @@ const ServicesSection = () => {
               style={{ animationDelay: `${index * 0.2}s` }}
             >
               <ChevronRight className="text-blue-600" />
-              <span className='fontPoppin'>{point}</span>
+              <span className='fontPoppin font-semibold'>{point}</span>
             </div>
           ))}
         </div>

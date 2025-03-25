@@ -116,7 +116,7 @@ const Package = () => {
           
         
             <div className="text-gray-700 text-sm md:text-base px-3 mb-4 animate-fade-in">
-              <p className="mb-2">
+              <p className="mb-2 font-semibold">
                 Enjoy our most popular theater experience, perfect for intimate gatherings. 
                 This package includes:
               </p>
@@ -177,7 +177,7 @@ const Package = () => {
           
        
             <div className="text-gray-700 text-sm md:text-base px-3 mb-4 animate-fade-in">
-              <p className="mb-2">
+              <p className="mb-2 font-semibold">
                 Experience our premium theater setup, perfect for larger groups and special occasions. 
                 This package includes:
               </p>
