@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { HousePlus, MoveRight } from 'lucide-react';
 
 
-// import HomeBgImg from "../../assets/Delax-07.jpg";
+
 
 const GalleryMain = () => {
   const [toggler, setToggler] = useState(false);
@@ -64,13 +64,13 @@ const GalleryMain = () => {
         
         {/* Overlay Content - Absolutely positioned */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <div className="container mx-auto px-4 py-4 sm:py-6 md:py-8 text-center">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white relative inline-block mb-4 sm:mb-6">
+          <div className="container mx-auto mt-4  text-center">
+            <h1 className="text-5xl sm:text-4xl md:text-5xl font-bold text-white relative inline-block  sm:mb-6">
              Gallery
               <div className="absolute bottom-[-10px] left-0 w-full h-1 bg-pink-500"></div>
             </h1>
           </div>
-          <div className="flex items-center space-x-2 mt-2 sm:mt-4">
+          <div className="flex items-center space-x-2 sm:mt-4">
             <div className="flex gap-3 sm:gap-5">
               <Link to="/" className="flex gap-1 sm:gap-2 text-base sm:text-lg md:text-xl font-semibold items-center text-white">
                 <HousePlus className="w-4 h-4 sm:w-5 sm:h-5" />Home

@@ -40,6 +40,7 @@ const Footer = () => {
               <li>
                 <NavLink to="/Package" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Packages</NavLink>
               </li>
+              
             </ul>
           </div>
           
@@ -150,6 +151,9 @@ const Footer = () => {
             <span className="mx-2 text-gray-500">|</span>
             <NavLink to="/TermsAndCondition" className="hover:text-red-400 transition-colors">
               Terms and Conditions
+            </NavLink>
+            <NavLink to="/PrivacyPolicy" className="hover:text-red-400 transition-colors">
+              PrivacyPolicy
             </NavLink>
             
            

@@ -19,7 +19,7 @@ import GalleryMain from './Components/BirthdayGallery/GalleryMain'
 
 import TermsMain from './Components/Terms&Condition/Terms'
 import ScrollToTop from './Components/ScrollTop'
-// import Privacy from './Components/Privacy'
+import PrivacyPolicy from './Components/privacy-policy/privacy'
 import RefundPolicy from './Components/Refund'
 import AboutUs from './Components/AboutUs/AboutUs'
 
@@ -51,6 +51,8 @@ const App = () => {
         <Route path="RefundPolicy" element={<RefundPolicy/>}/>
         <Route path="TermsAndCondition" element={<TermsAndCondition/>}/>
         <Route path="AboutUs" element={<AboutUs/>}/>
+        <Route path="PrivacyPolicy" element={<PrivacyPolicy/>}/>
+
 
 
 
