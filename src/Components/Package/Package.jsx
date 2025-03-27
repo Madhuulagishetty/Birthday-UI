@@ -83,7 +83,7 @@ const Packages = () => {
       </div>
       
       {/* Title with animation */}
-      <div className={`transform transition-all duration-1000 flex flex-col items-center ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
+      <div className={`transform transition-all duration-1000 flex flex-col items-center mt-[25%] md:mt-[0%] ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
         <h2 className="fontCursive text-white text-3xl md:text-5xl text-center mb-2">
           Our Packages
         </h2>
