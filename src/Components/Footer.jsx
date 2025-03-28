@@ -152,6 +152,7 @@ const Footer = () => {
             <NavLink to="/TermsAndCondition" className="hover:text-red-400 transition-colors">
               Terms and Conditions
             </NavLink>
+            <span className="mx-2 text-gray-500">|</span>
             <NavLink to="/PrivacyPolicy" className="hover:text-red-400 transition-colors">
               PrivacyPolicy
             </NavLink>
