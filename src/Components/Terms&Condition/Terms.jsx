@@ -246,7 +246,7 @@ const TermsMain = () => {
       const order = await createOrder();
       
       const options = {
-        key: 'rzp_test_MAK9N9Rei9tuH6',
+        key: 'rzp_live_7I7nJJIaq1bIol',
         amount: advanceAmount * 100, // Razorpay expects amount in paise
         currency: "INR",
         name: "Birthday Booking",
