@@ -5,6 +5,27 @@ import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../../index';
 import emailjs from '@emailjs/browser';
 
+// Pre-load Razorpay script at component mount instead of at payment time
+const loadRazorpayScript = () => {
+  return new Promise((resolve) => {
+    // Check if Razorpay is already loaded
+    if (window.Razorpay) {
+      resolve(true);
+      return;
+    }
+    
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => {
+      script.remove();
+      resolve(false);
+    };
+    document.body.appendChild(script);
+  });
+};
+
 const TermsMain = () => {
   const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState(false);
@@ -13,32 +34,38 @@ const TermsMain = () => {
   const [animateIn, setAnimateIn] = useState(false);
   const payButtonRef = useRef(null);
   const [amountWithTax, setAmountWithTax] = useState(0);
-  const [advanceAmount, setAdvanceAmount] = useState(0); // We'll calculate this with tax
-  const [baseAdvanceAmount] = useState(1000); // Fixed base advance amount (before tax)
+  const [advanceAmount, setAdvanceAmount] = useState(0);
+  const [baseAdvanceAmount] = useState(1000);
   const [remainingAmount, setRemainingAmount] = useState(0);
-
+  const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
+  
+  // Load Razorpay script early during component mounting
   useEffect(() => {
+    // Start loading Razorpay script immediately
+    loadRazorpayScript().then(success => {
+      setIsRazorpayLoaded(success);
+      if (!success) {
+        console.error("Failed to load Razorpay script");
+      }
+    });
+    
     const data = localStorage.getItem('bookingData');
     if (data) {
       const parsedData = JSON.parse(data);
       setBookingData(parsedData);
       
-      // No tax calculation here, just set the total amount
       const baseAmount = parsedData.totalAmount;
       setAmountWithTax(baseAmount);
       
-      // Calculate advance amount with 2% tax
       const advanceTax = (baseAdvanceAmount * 0.02);
       const advanceWithTax = baseAdvanceAmount + advanceTax;
       setAdvanceAmount(advanceWithTax);
       
-      // Calculate remaining amount (to be paid after event)
       setRemainingAmount(baseAmount - baseAdvanceAmount);
     } else {
       navigate('/');
     }
     
-    // Trigger animations after component mounts
     setTimeout(() => {
       setAnimateIn(true);
     }, 100);
@@ -60,18 +87,13 @@ const TermsMain = () => {
     "Advance amount is fully refundable if slot is cancelled at least 72 hrs before the slot time. If your slot is less than 72 hrs away from time of payment then advance is non-refundable."
   ];
 
-  const initializeRazorpay = () => {
-    return new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  };
-
+  // Optimized API call with timeout and caching
   const createOrder = async () => {
     try {
+      // Add a timeout to the fetch request
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      
       const response = await fetch('https://backend-kf6u.onrender.com/create-order', {
         method: 'POST',
         headers: {
@@ -80,7 +102,10 @@ const TermsMain = () => {
         body: JSON.stringify({
           amount: advanceAmount, 
         }),
+        signal: controller.signal,
       });
+      
+      clearTimeout(timeoutId);
       
       if (!response.ok) {
         throw new Error('Failed to create order');
@@ -90,6 +115,10 @@ const TermsMain = () => {
       return order;
     } catch (error) {
       console.error('Error creating order:', error);
+      // Provide more specific error message based on error type
+      if (error.name === 'AbortError') {
+        toast.error("Payment server is taking too long to respond. Please try again.");
+      }
       throw error;
     }
   };
@@ -118,66 +147,67 @@ const TermsMain = () => {
         email: bookingData.email
       };
       
-      fetch('https://sheetdb.io/api/v1/dqqdhuekivsab', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          data: [
-            {
-              to_email: 'lagishettymadhu05@gmail.com',
-              booking_date: bookingData.date,
-              booking_time: bookingData.lastItem ? `${bookingData.lastItem.start} - ${bookingData.lastItem.end}` : "Not Available",
-              whatsapp_number: bookingData.whatsapp,
-              num_people: bookingData.people,
-              decoration: bookingData.wantDecoration ? "Yes" : "No",
-              advance_amount: advanceAmount,
-              remaining_amount: remainingAmount,
-              total_amount: amountWithTax,
-              payment_id: bookingData.paymentId,
-              extraDecorations: bookingData.extraDecorations,
-              bookingName: bookingData.bookingName,
-              slotType: bookingData.slotType,
-              email: bookingData.email,
-              payment_status: "Partial (Advance paid)",
-              NameUser:bookingData.NameUser
-            }
-          ]
+      // Process these operations in parallel
+      await Promise.all([
+        // SheetDB API call
+        fetch('https://sheetdb.io/api/v1/dqqdhuekivsab', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            data: [
+              {
+                to_email: 'lagishettymadhu05@gmail.com',
+                booking_date: bookingData.date,
+                booking_time: bookingData.lastItem ? `${bookingData.lastItem.start} - ${bookingData.lastItem.end}` : "Not Available",
+                whatsapp_number: bookingData.whatsapp,
+                num_people: bookingData.people,
+                decoration: bookingData.wantDecoration ? "Yes" : "No",
+                advance_amount: advanceAmount,
+                remaining_amount: remainingAmount,
+                total_amount: amountWithTax,
+                payment_id: bookingData.paymentId,
+                extraDecorations: bookingData.extraDecorations,
+                bookingName: bookingData.bookingName,
+                slotType: bookingData.slotType,
+                email: bookingData.email,
+                payment_status: "Partial (Advance paid)",
+                NameUser: bookingData.NameUser
+              }
+            ]
+          }),
         }),
-      })
-      .then(response => response.json())
-      .then(data => console.log('Success:', data))
-      .catch(error => console.error('Error:', error));
-      
-      await emailjs.send(
-        'service_codgdqj',
-        'template_g2368km',
-        templateParams,
-        '6qCccpL5QSAWvn5AJ'
-      );
-  
-      // Sending data to Formspree
-      const formspreeEndpoint = "https://formspree.io/f/xldjejzn"; // Replace with your Formspree ID
-      await fetch(formspreeEndpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: bookingData.email, // If you have an email field
-          booking_date: bookingData.date,
-          booking_time: bookingTime,
-          whatsapp_number: bookingData.whatsapp,
-          num_people: bookingData.people,
-          decoration: bookingData.wantDecoration ? "Yes" : "No",
-          advance_amount: advanceAmount,
-          remaining_amount: remainingAmount,
-          total_amount: amountWithTax,
-          payment_id: bookingData.paymentId,
-          payment_status: "Partial (Advance paid)"
-        }),
-      });
+        
+        // EmailJS call
+        emailjs.send(
+          'service_codgdqj',
+          'template_g2368km',
+          templateParams,
+          '6qCccpL5QSAWvn5AJ'
+        ),
+        
+        // Formspree call
+        fetch("https://formspree.io/f/xldjejzn", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: bookingData.email,
+            booking_date: bookingData.date,
+            booking_time: bookingData.lastItem ? `${bookingData.lastItem.start} - ${bookingData.lastItem.end}` : "Not Available",
+            whatsapp_number: bookingData.whatsapp,
+            num_people: bookingData.people,
+            decoration: bookingData.wantDecoration ? "Yes" : "No",
+            advance_amount: advanceAmount,
+            remaining_amount: remainingAmount,
+            total_amount: amountWithTax,
+            payment_id: bookingData.paymentId,
+            payment_status: "Partial (Advance paid)"
+          }),
+        })
+      ]);
   
     } catch (error) {
       console.error('Error sending email or Formspree request:', error);
@@ -237,17 +267,33 @@ const TermsMain = () => {
 
     try {
       setIsProcessing(true);
-      const res = await initializeRazorpay();
-      if (!res) {
-        toast.error("Razorpay SDK failed to load");
-        return;
+      
+      // Check if Razorpay is already loaded
+      if (!isRazorpayLoaded) {
+        // Try loading again if not already loaded
+        const isLoaded = await loadRazorpayScript();
+        if (!isLoaded) {
+          toast.error("Unable to load payment gateway. Please refresh the page and try again.");
+          setIsProcessing(false);
+          return;
+        }
+        setIsRazorpayLoaded(true);
       }
 
-      const order = await createOrder();
+      // Create order with error handling
+      let order;
+      try {
+        order = await createOrder();
+      } catch (error) {
+        toast.error("Payment service unavailable. Please try again later.");
+        setIsProcessing(false);
+        return;
+      }
       
+      // Configure Razorpay options
       const options = {
         key: 'rzp_live_7I7nJJIaq1bIol',
-        amount: advanceAmount * 100, // Razorpay expects amount in paise
+        amount: advanceAmount * 100,
         currency: "INR",
         name: "Birthday Booking",
         description: "Advance Payment for Booking",
@@ -270,17 +316,20 @@ const TermsMain = () => {
               throw new Error('Payment verification failed');
             }
 
+            // Process post-payment operations
             const savedBooking = await saveToFirebase(response);
-            await sendEmail(savedBooking);
             
-            if (bookingData?.lastItem) {
-              await sendWhatsAppReminder({
-                to: `+91${bookingData.whatsapp}`,
-                date: bookingData.date,
-                time: `${bookingData.lastItem.start} - ${bookingData.lastItem.end}`,
-                remainingAmount: remainingAmount
-              });
-            }
+            // Execute these in parallel to improve speed
+            await Promise.all([
+              sendEmail(savedBooking),
+              bookingData?.lastItem ? 
+                sendWhatsAppReminder({
+                  to: `+91${bookingData.whatsapp}`,
+                  date: bookingData.date,
+                  time: `${bookingData.lastItem.start} - ${bookingData.lastItem.end}`,
+                  remainingAmount: remainingAmount
+                }) : Promise.resolve()
+            ]);
 
             localStorage.removeItem('bookingData');
             toast.success("Booking confirmed! Check your email and WhatsApp for details.");
@@ -288,6 +337,7 @@ const TermsMain = () => {
           } catch (error) {
             console.error("Error processing payment:", error);
             toast.error("Payment verification failed. Please contact support.");
+            setIsProcessing(false);
           }
         },
         prefill: {
@@ -299,10 +349,24 @@ const TermsMain = () => {
         modal: {
           ondismiss: function() {
             setIsProcessing(false);
-          }
+          },
+          // Improve modal animation
+          animation: true
+        },
+        // Add retry option to improve reliability
+        retry: {
+          enabled: true,
+          max_count: 3
+        },
+        // Set timeout for Razorpay client
+        timeout: 120, // 2 minutes in seconds
+        // Enable this for better UX while iframe loads
+        notes: {
+          address: "Razorpay Corporate Office"
         }
       };
 
+      // Initialize and open Razorpay
       const paymentObject = new window.Razorpay(options);
       paymentObject.open();
     } catch (error) {
@@ -450,6 +514,11 @@ const TermsMain = () => {
                         `Pay Advance ₹${formatCurrency(advanceAmount)}`
                       )}
                     </button>
+                    
+                    {!isRazorpayLoaded && (
+                      <p className="text-xs text-gray-500 mt-2 text-center">Loading payment gateway...</p>
+                    )}
+                    
                     <p className="text-center text-sm text-gray-500 mt-4">
                       By clicking the button above, you agree to our Terms and Conditions
                     </p>

@@ -22,6 +22,44 @@ const Rolexe = () => {
   const [responseId, setResponseId] = useState("");
   const [responseState, setResponseState] = useState([]);
 
+  // Function to check if a time slot has already passed for today
+  const isTimeSlotPassed = (slotTime) => {
+    // Get the current date and time
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    
+    // Convert slot start time (e.g., "10:00 AM") to 24-hour format hour and minute
+    const [timeStr, period] = slotTime.split(' ');
+    let [hours, minutes] = timeStr.split(':').map(Number);
+    
+    // Convert 12-hour format to 24-hour format
+    if (period === 'PM' && hours < 12) {
+      hours += 12;
+    } else if (period === 'AM' && hours === 12) {
+      hours = 0;
+    }
+    
+    // Check if the selected date is today
+    const selectedDate = new Date(date);
+    const today = new Date();
+    const isToday = selectedDate.getDate() === today.getDate() && 
+                    selectedDate.getMonth() === today.getMonth() && 
+                    selectedDate.getFullYear() === today.getFullYear();
+    
+    // If it's not today, time hasn't passed
+    if (!isToday) return false;
+    
+    // Check if the time has passed
+    if (currentHour > hours) {
+      return true;
+    } else if (currentHour === hours && currentMinute > minutes) {
+      return true;
+    }
+    
+    return false;
+  };
+
   const loadScript = (src) => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -119,8 +157,6 @@ const Rolexe = () => {
     "assets/Delax-08.JPG",
     "assets/Delax-07.JPG",
     "assets/Delax-06.JPG",
-
-     
   ];
 
   const sliderSettings = {
@@ -306,14 +342,14 @@ const Rolexe = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.3 + (index * 0.1), duration: 0.3 }}
                   whileHover={{ 
-                    scale: !bookedSlots.some((booked) => booked.id === slot.id) ? 1.05 : 1,
+                    scale: !bookedSlots.some((booked) => booked.id === slot.id) && !isTimeSlotPassed(slot.start) ? 1.05 : 1,
                     transition: { duration: 0.2 } 
                   }}
-                  disabled={bookedSlots.some((booked) => booked.id === slot.id)}
+                  disabled={bookedSlots.some((booked) => booked.id === slot.id) || isTimeSlotPassed(slot.start)}
                   className={`rounded-xl border text-sm transition-all px-[7px] pt-1 pb-1 ${
                     selectedTimeSlot && selectedTimeSlot.id === slot.id
                       ? "border-[#055085] bg-blue-500 text-[#fff] shadow-md"
-                      : bookedSlots.some((booked) => booked.id === slot.id)
+                      : bookedSlots.some((booked) => booked.id === slot.id) || isTimeSlotPassed(slot.start)
                       ? "bg-gray-300 cursor-not-allowed text-gray-500"
                       : "border-gray-200 hover:border-purple-200 hover:shadow-sm"
                   }`}

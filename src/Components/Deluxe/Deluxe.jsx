@@ -116,6 +116,40 @@ const Deluxe = () => {
     { id: 5, start: "10:00 PM", end: "12:30 AM" }
   ];
 
+  // Function to check if a time slot has passed for today
+  const isTimeSlotPassed = (slot) => {
+    // If selected date is not today, don't disable any slots based on time
+    const today = new Date().toISOString().split('T')[0];
+    if (date !== today) return false;
+    
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    
+    // Parse the start time from slot
+    const startTimeStr = slot.start;
+    const [hourStr, minuteStr, period] = startTimeStr.match(/(\d+):(\d+)\s([AP]M)/).slice(1);
+    
+    let slotHour = parseInt(hourStr);
+    const slotMinute = parseInt(minuteStr);
+    
+    // Convert to 24-hour format
+    if (period === "PM" && slotHour !== 12) {
+      slotHour += 12;
+    } else if (period === "AM" && slotHour === 12) {
+      slotHour = 0;
+    }
+    
+    // Compare current time with slot time
+    if (currentHour > slotHour) {
+      return true;
+    } else if (currentHour === slotHour && currentMinute > slotMinute) {
+      return true;
+    }
+    
+    return false;
+  };
+
   const images = [
     "assets/Delax-03.JPG",
     "assets/Delax-04.JPG",
@@ -243,6 +277,11 @@ const Deluxe = () => {
     tap: { scale: 0.98 }
   };
 
+  // Calculate the number of available slots (excluding both booked and passed slots)
+  const availableSlots = timeSlots.filter(
+    slot => !bookedSlots.some(booked => booked.id === slot.id) && !isTimeSlotPassed(slot)
+  ).length;
+
   return (
     <div className="fontPoppin relative w-full min-h-screen p-4 md:p-8 flex items-center justify-center bg-cover bg-center bg-[url('/assets/home-header-01.jpg')]">
       <div className="absolute inset-0 bg-black/60"></div>
@@ -289,11 +328,11 @@ const Deluxe = () => {
             </h4>
             <motion.div 
               variants={itemAnimation} 
-              className="inline-flex  justify-center"
+              className="inline-flex justify-center"
               whileHover={{ scale: 1.05 }}
             >
               <div className="px-3 py-1 bg-green-50 text-green-500 rounded-full border border-green-500 text-[12px] md:text-sm">
-                <span>{timeSlots.length - bookedSlots.length} Slots Available</span>
+                <span>{availableSlots} Slots Available</span>
               </div>
             </motion.div>
           </motion.div>
@@ -354,48 +393,64 @@ const Deluxe = () => {
               <motion.div 
                 key="time-slots"
                 variants={itemAnimation}
-                className="flex flex-wrap gap-1 justify-start  md:justify-center sm:justify-start"
+                className="flex flex-wrap gap-1 justify-start md:justify-center sm:justify-start"
                 exit={{ opacity: 0 }}
               >
-                {timeSlots.map((slot, index) => (
-                  <motion.button
-                    key={slot.id}
-                    onClick={() => {
-                      setSelectedTimeSlot(slot);
-                      AddtoSlot(slot);
-                    }}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0,  backgroundColor: selectedTimeSlot && selectedTimeSlot.id === slot.id ? "#3b82f6" : undefined, color: selectedTimeSlot && selectedTimeSlot.id === slot.id ? "#fff" : undefined}}
-                    transition={{ delay: 0.1 * index, duration: 0.3 }}
-                    whileHover={
-                      !bookedSlots.some((booked) => booked.id === slot.id) 
-                        ? { 
-                            scale: 1.08, 
-                            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-                            backgroundColor: "#f0f7ff"
-                          } 
-                        : {}
-                    }
-                    whileTap={
-                      !bookedSlots.some((booked) => booked.id === slot.id)
-                        ? { scale: 0.95 }
-                        : {}
-                    }
-                    disabled={bookedSlots.some((booked) => booked.id === slot.id)}
-                    className={`rounded-xl border text-sm transition-all px-1 py-2 md:px-2 md:py-2 ${
-                      selectedTimeSlot && selectedTimeSlot.id === slot.id
-                        ? "border-[#055085] bg-blue-500 text-[#000] shadow-md"
-                        : bookedSlots.some((booked) => booked.id === slot.id)
-                        ? "bg-gray-300 cursor-not-allowed text-gray-500"
-                        : "border-gray-200 hover:border-purple-200"
-                    }`}
-                  >
-                    <div className="font-medium text-[12px] w-15 text-center">
-                    <p>{slot.start} To</p>
-                    <p>{slot.end}</p>
-                  </div>
-                  </motion.button>
-                ))}
+                {timeSlots.map((slot, index) => {
+                  const isBooked = bookedSlots.some((booked) => booked.id === slot.id);
+                  const isPassed = isTimeSlotPassed(slot);
+                  const isDisabled = isBooked || isPassed;
+                  
+                  return (
+                    <motion.button
+                      key={slot.id}
+                      onClick={() => {
+                        if (!isDisabled) {
+                          setSelectedTimeSlot(slot);
+                          AddtoSlot(slot);
+                        }
+                      }}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ 
+                        opacity: 1, 
+                        y: 0,  
+                        backgroundColor: selectedTimeSlot && selectedTimeSlot.id === slot.id ? "#3b82f6" : undefined, 
+                        color: selectedTimeSlot && selectedTimeSlot.id === slot.id ? "#fff" : undefined
+                      }}
+                      transition={{ delay: 0.1 * index, duration: 0.3 }}
+                      whileHover={
+                        !isDisabled
+                          ? { 
+                              scale: 1.08, 
+                              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                              backgroundColor: "#f0f7ff"
+                            } 
+                          : {}
+                      }
+                      whileTap={
+                        !isDisabled
+                          ? { scale: 0.95 }
+                          : {}
+                      }
+                      disabled={isDisabled}
+                      className={`rounded-xl border text-sm transition-all px-1 py-2 md:px-2 md:py-2 ${
+                        selectedTimeSlot && selectedTimeSlot.id === slot.id
+                          ? "border-[#055085] bg-blue-500 text-white shadow-md"
+                          : isBooked
+                          ? "bg-gray-300 cursor-not-allowed text-gray-500"
+                          : isPassed
+                          ? "bg-gray-200 cursor-not-allowed text-gray-400 line-through"
+                          : "border-gray-200 hover:border-purple-200"
+                      }`}
+                    >
+                      <div className="font-medium text-[12px] w-15 text-center">
+                        <p>{slot.start} To</p>
+                        <p>{slot.end}</p>
+                        {isPassed && <p className="text-[10px] text-red-400">Passed</p>}
+                      </div>
+                    </motion.button>
+                  );
+                })}
               </motion.div>
             )}
           </AnimatePresence>
@@ -426,6 +481,7 @@ const Deluxe = () => {
                   ? "bg-[#B1153C] text-white"
                   : "bg-[#B1153C] opacity-80 cursor-not-allowed text-white"
               }`}
+              disabled={!selectedTimeSlot || cartData.length >= 2}
             >
               <motion.span
                 initial={{ opacity: 1 }}
