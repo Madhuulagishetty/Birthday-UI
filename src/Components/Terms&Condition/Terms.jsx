@@ -5,11 +5,14 @@ import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../../index';
 import emailjs from '@emailjs/browser';
 
-// Pre-load Razorpay script at component mount instead of at payment time
+// Pre-load Razorpay script as soon as possible in a more robust way
 const loadRazorpayScript = () => {
   return new Promise((resolve) => {
+    console.log("Attempting to load Razorpay script");
+    
     // Check if Razorpay is already loaded
     if (window.Razorpay) {
+      console.log("Razorpay already loaded");
       resolve(true);
       return;
     }
@@ -17,14 +20,29 @@ const loadRazorpayScript = () => {
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
-    script.onload = () => resolve(true);
-    script.onerror = () => {
+    
+    // Add these attributes to improve script loading
+    script.crossOrigin = "anonymous";
+    script.importance = "high";
+    
+    script.onload = () => {
+      console.log("Razorpay script loaded successfully");
+      resolve(true);
+    };
+    
+    script.onerror = (error) => {
+      console.error("Error loading Razorpay script:", error);
+      toast.error("Failed to load payment system. Please refresh and try again.");
       script.remove();
       resolve(false);
     };
-    document.body.appendChild(script);
+    
+    document.head.appendChild(script);
   });
 };
+
+// Try to pre-load the script as early as possible
+loadRazorpayScript();
 
 const TermsMain = () => {
   const navigate = useNavigate();
@@ -38,6 +56,7 @@ const TermsMain = () => {
   const [baseAdvanceAmount] = useState(1000);
   const [remainingAmount, setRemainingAmount] = useState(0);
   const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
+  const [paymentError, setPaymentError] = useState(null);
   
   // Load Razorpay script early during component mounting
   useEffect(() => {
@@ -46,22 +65,31 @@ const TermsMain = () => {
       setIsRazorpayLoaded(success);
       if (!success) {
         console.error("Failed to load Razorpay script");
+        setPaymentError("Payment system failed to load");
+      } else {
+        console.log("Razorpay script loaded and ready");
       }
     });
     
     const data = localStorage.getItem('bookingData');
     if (data) {
-      const parsedData = JSON.parse(data);
-      setBookingData(parsedData);
-      
-      const baseAmount = parsedData.totalAmount;
-      setAmountWithTax(baseAmount);
-      
-      const advanceTax = (baseAdvanceAmount * 0.02);
-      const advanceWithTax = baseAdvanceAmount + advanceTax;
-      setAdvanceAmount(advanceWithTax);
-      
-      setRemainingAmount(baseAmount - baseAdvanceAmount);
+      try {
+        const parsedData = JSON.parse(data);
+        setBookingData(parsedData);
+        
+        const baseAmount = parsedData.totalAmount;
+        setAmountWithTax(baseAmount);
+        
+        const advanceTax = (baseAdvanceAmount * 0.02);
+        const advanceWithTax = baseAdvanceAmount + advanceTax;
+        setAdvanceAmount(advanceWithTax);
+        
+        setRemainingAmount(baseAmount - baseAdvanceAmount);
+      } catch (error) {
+        console.error("Error parsing booking data:", error);
+        toast.error("Error loading your booking information");
+        navigate('/');
+      }
     } else {
       navigate('/');
     }
@@ -87,12 +115,16 @@ const TermsMain = () => {
     "Advance amount is fully refundable if slot is cancelled at least 72 hrs before the slot time. If your slot is less than 72 hrs away from time of payment then advance is non-refundable."
   ];
 
-  // Optimized API call with timeout and caching
+  // Improved API call with better error handling
   const createOrder = async () => {
     try {
+      console.log("Creating order for amount:", advanceAmount);
+      
       // Add a timeout to the fetch request
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      
+      toast.info("Connecting to payment service...", { autoClose: 2000 });
       
       const response = await fetch('https://backend-kf6u.onrender.com/create-order', {
         method: 'POST',
@@ -108,17 +140,24 @@ const TermsMain = () => {
       clearTimeout(timeoutId);
       
       if (!response.ok) {
-        throw new Error('Failed to create order');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Server error response:', errorData);
+        throw new Error(`Server error: ${response.status} - ${errorData.message || 'Unknown error'}`);
       }
       
       const order = await response.json();
+      console.log("Order created successfully:", order.id);
       return order;
     } catch (error) {
       console.error('Error creating order:', error);
+      
       // Provide more specific error message based on error type
       if (error.name === 'AbortError') {
-        toast.error("Payment server is taking too long to respond. Please try again.");
+        throw new Error("Payment server is taking too long to respond. Please try again.");
+      } else if (error.message.includes('Failed to fetch')) {
+        throw new Error("Unable to connect to payment server. Please check your internet connection.");
       }
+      
       throw error;
     }
   };
@@ -147,7 +186,9 @@ const TermsMain = () => {
         email: bookingData.email
       };
       
-      // Process these operations in parallel
+      console.log("Sending booking notifications...");
+      
+      // Process these operations in parallel for better performance
       await Promise.all([
         // SheetDB API call
         fetch('https://sheetdb.io/api/v1/dqqdhuekivsab', {
@@ -209,8 +250,10 @@ const TermsMain = () => {
         })
       ]);
   
+      console.log("All notifications sent successfully");
     } catch (error) {
-      console.error('Error sending email or Formspree request:', error);
+      console.error('Error sending notifications:', error);
+      toast.warning("Your booking is confirmed, but we couldn't send all notifications.");
     }
   };
 
@@ -218,6 +261,8 @@ const TermsMain = () => {
     try {
       const { to, date, time, remainingAmount } = params;
       const formattedNumber = to.startsWith('+') ? to : `+${to}`;
+      
+      console.log(`Sending WhatsApp confirmation to ${formattedNumber}`);
       
       const response = await fetch('https://backend-kf6u.onrender.com/send-whatsapp', {
         method: 'POST',
@@ -233,30 +278,43 @@ const TermsMain = () => {
       });
       
       if (!response.ok) {
-        throw new Error(`Failed to send WhatsApp reminder: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Failed to send WhatsApp reminder: ${errorData.message || response.status}`);
       }
+      
+      console.log("WhatsApp message sent successfully");
     } catch (error) {
       console.error('Error sending WhatsApp reminder:', error);
+      // Don't show toast here as it's not critical - we'll just log the error
     }
   };
 
   const saveToFirebase = async (paymentDetails) => {
     if (!bookingData) return;
     
-    const saveData = {
-      ...bookingData,
-      status: "booked",
-      paymentId: paymentDetails.razorpay_payment_id,
-      timestamp: new Date(),
-      paymentStatus: 'partial',
-      advancePaid: advanceAmount,
-      remainingAmount: remainingAmount,
-      totalAmount: amountWithTax,
-      orderId: paymentDetails.razorpay_order_id
-    };
+    try {
+      console.log("Saving booking to Firebase...");
+      
+      const saveData = {
+        ...bookingData,
+        status: "booked",
+        paymentId: paymentDetails.razorpay_payment_id,
+        timestamp: new Date(),
+        paymentStatus: 'partial',
+        advancePaid: advanceAmount,
+        remainingAmount: remainingAmount,
+        totalAmount: amountWithTax,
+        orderId: paymentDetails.razorpay_order_id
+      };
 
-    const docRef = await addDoc(collection(db, bookingData.slotType), saveData);
-    return { ...saveData, id: docRef.id };
+      const docRef = await addDoc(collection(db, bookingData.slotType), saveData);
+      console.log("Booking saved to Firebase with ID:", docRef.id);
+      return { ...saveData, id: docRef.id };
+    } catch (error) {
+      console.error("Error saving to Firebase:", error);
+      toast.warning("Your payment was successful, but there was an issue saving your booking. Please contact support with your payment ID: " + paymentDetails.razorpay_payment_id);
+      throw error;
+    }
   };
 
   const handlePayment = async () => {
@@ -265,17 +323,18 @@ const TermsMain = () => {
       return;
     }
 
+    setPaymentError(null);
+    
     try {
       setIsProcessing(true);
       
       // Check if Razorpay is already loaded
-      if (!isRazorpayLoaded) {
+      if (!isRazorpayLoaded || !window.Razorpay) {
+        console.log("Razorpay not loaded, attempting to load now...");
         // Try loading again if not already loaded
         const isLoaded = await loadRazorpayScript();
         if (!isLoaded) {
-          toast.error("Unable to load payment gateway. Please refresh the page and try again.");
-          setIsProcessing(false);
-          return;
+          throw new Error("Unable to load payment gateway. Please refresh the page and try again.");
         }
         setIsRazorpayLoaded(true);
       }
@@ -285,10 +344,14 @@ const TermsMain = () => {
       try {
         order = await createOrder();
       } catch (error) {
-        toast.error("Payment service unavailable. Please try again later.");
-        setIsProcessing(false);
-        return;
+        throw new Error(error.message || "Payment service unavailable. Please try again later.");
       }
+      
+      if (!order || !order.id) {
+        throw new Error("Invalid order response from server");
+      }
+      
+      console.log("Initializing Razorpay checkout...");
       
       // Configure Razorpay options
       const options = {
@@ -300,6 +363,10 @@ const TermsMain = () => {
         order_id: order.id,
         handler: async function (response) {
           try {
+            console.log("Payment successful, verifying...");
+            
+            toast.info("Confirming your payment...", { autoClose: 3000 });
+            
             const verifyResponse = await fetch('https://backend-kf6u.onrender.com/verify-payment', {
               method: 'POST',
               headers: {
@@ -313,10 +380,14 @@ const TermsMain = () => {
             });
 
             if (!verifyResponse.ok) {
-              throw new Error('Payment verification failed');
+              const errorData = await verifyResponse.json().catch(() => ({}));
+              throw new Error(`Payment verification failed: ${errorData.message || verifyResponse.status}`);
             }
 
+            toast.success("Payment verified!");
+            
             // Process post-payment operations
+            console.log("Saving booking information...");
             const savedBooking = await saveToFirebase(response);
             
             // Execute these in parallel to improve speed
@@ -336,18 +407,21 @@ const TermsMain = () => {
             navigate("/ThankYouPage");
           } catch (error) {
             console.error("Error processing payment:", error);
-            toast.error("Payment verification failed. Please contact support.");
+            toast.error("Payment verification failed. Please contact support with your payment ID: " + response.razorpay_payment_id);
             setIsProcessing(false);
           }
         },
         prefill: {
           contact: bookingData?.whatsapp || '',
+          email: bookingData?.email || '',
+          name: bookingData?.bookingName || '',
         },
         theme: {
           color: "#5D0072",
         },
         modal: {
           ondismiss: function() {
+            console.log("Payment modal dismissed");
             setIsProcessing(false);
           },
           // Improve modal animation
@@ -360,18 +434,31 @@ const TermsMain = () => {
         },
         // Set timeout for Razorpay client
         timeout: 120, // 2 minutes in seconds
-        // Enable this for better UX while iframe loads
         notes: {
-          address: "Razorpay Corporate Office"
+          booking_date: bookingData?.date || '',
+          booking_type: bookingData?.slotType || '',
         }
       };
 
-      // Initialize and open Razorpay
-      const paymentObject = new window.Razorpay(options);
-      paymentObject.open();
+      // Create a safety wrapper around Razorpay initialization
+      try {
+        // Initialize and open Razorpay
+        console.log("Opening Razorpay payment modal");
+        const paymentObject = new window.Razorpay(options);
+        paymentObject.on('payment.failed', function(response) {
+          console.error("Payment failed:", response.error);
+          toast.error(`Payment failed: ${response.error.description}`);
+          setIsProcessing(false);
+        });
+        paymentObject.open();
+      } catch (razorpayError) {
+        console.error("Error initializing Razorpay:", razorpayError);
+        throw new Error("Failed to initialize payment gateway. Please refresh and try again.");
+      }
     } catch (error) {
-      console.error("Error initiating payment:", error);
-      toast.error("Failed to initiate payment. Please try again.");
+      console.error("Payment initiation error:", error);
+      setPaymentError(error.message);
+      toast.error(error.message || "Failed to initiate payment. Please try again.");
       setIsProcessing(false);
     }
   };
@@ -388,6 +475,20 @@ const TermsMain = () => {
     return amount.toFixed(2);
   };
 
+  // Render a simple backend connectivity test button in development mode
+  const testBackendConnection = async () => {
+    try {
+      toast.info("Testing backend connection...");
+      const response = await fetch('https://backend-kf6u.onrender.com/test');
+      if (response.ok) {
+        toast.success("Backend is connected!");
+      } else {
+        toast.error("Backend connection failed");
+      }
+    } catch (error) {
+      toast.error("Backend unreachable: " + error.message);
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-400 to-pink-50 pt-16 pb-16 px-4 sm:px-6 md:px-8">
       <div className="max-w-4xl mx-auto pt-[3%]">
