@@ -1,13 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Sparkles, Heart, CheckCircle, Calendar, PhoneCall, HousePlus, MoveRight } from 'lucide-react';
 import { useNavigate, Link } from "react-router-dom";
-import DeluxeImg from '../../../public/assets/Delax.jpg';
+import DeluxeImg from '/assets/Delax.jpg';
 
 const AboutUs = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [partyCount, setPartyCount] = useState(0);
-  const [clientCount, setClientCount] = useState(0);
-  const [qualityCount, setQualityCount] = useState(0);
+ 
   const statsRef = useRef(null);
   const countersStarted = useRef(false);
   const navigate = useNavigate();
