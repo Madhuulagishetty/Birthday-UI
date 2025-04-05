@@ -151,9 +151,9 @@ const Deluxe = () => {
   };
 
   const images = [
-    "assets/Delax-03.JPG",
-    "assets/Delax-04.JPG",
-    "assets/Delax-01.JPG"
+    "assets/Delax-10.jpg",
+    "assets/Delax-11.jpg",
+    "assets/Delax-12.jpg"
   ];
 
   const sliderSettings = {
@@ -347,7 +347,7 @@ const Deluxe = () => {
               transition={{ type: "spring", stiffness: 400 }}
             >
               <Users size={25} className="text-gray-600" />
-              <span className="text-sm text-gray-600">Max 6 People</span>
+              <span className="text-sm text-gray-600">Max 25 People</span>
             </motion.div>
       
             <motion.div 
@@ -460,14 +460,15 @@ const Deluxe = () => {
               className="flex items-baseline gap-1 mb-1"
               whileHover={{ x: 3 }}
             >
-              <span className="text-1xl font-semibold">₹2000</span>
-              <span className="text-sm">for up to 25 people with decoration</span>
+              <span className="text-1xl font-semibold">₹2500</span>
+              <span className="text-sm capitalize">For 10 or less: Rs 2500 with decoration for 2.30 hrs</span>
             </div>
             <p 
-              className="text-sm text-gray-500 mb-4"
+              className="text-sm text-black mb-4 capitalize"
               whileHover={{ x: 3 }}
             >
-              More than 10 people not allowed
+              If more than 10 peoples then Rs 150/ extra per person. Maximum 25 peoples can book.
+
             </p>
             <div className="w-[100%] flex justify-center ">
             <motion.button

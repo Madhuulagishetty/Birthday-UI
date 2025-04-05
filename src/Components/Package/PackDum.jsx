@@ -94,7 +94,7 @@ const Package = () => {
         >
           <div className="relative overflow-hidden rounded-xl">
             <img
-              src={"/assets/Delax.jpg"}
+              src={"/assets/Delax-12.jpg"}
               alt="Rolexe Theater T1"
               className="rounded-xl w-full h-48 md:h-64 object-cover transform transition duration-700 hover:scale-110"
             />
@@ -155,7 +155,7 @@ const Package = () => {
         >
           <div className="relative overflow-hidden rounded-xl">
             <img
-              src={"/assets/Relax.jpg"}
+              src={"/assets/Relax-13.jpg"}
               alt="Deluxe Theater T2"
               className="rounded-xl w-full h-48 md:h-64 object-cover transform transition duration-700 hover:scale-110"
             />

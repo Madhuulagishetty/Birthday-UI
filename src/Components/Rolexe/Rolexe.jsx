@@ -154,9 +154,9 @@ const Rolexe = () => {
   ];
 
   const images = [
-    "assets/Delax-08.JPG",
-    "assets/Delax-07.JPG",
-    "assets/Delax-06.JPG",
+    "assets/Relax-08.jpg",
+    "assets/Relax-09.jpg",
+    "assets/Relax-07.jpg",
   ];
 
   const sliderSettings = {
@@ -291,7 +291,7 @@ const Rolexe = () => {
           animate="visible"
         >
           <motion.h4 variants={itemVariants} className="text-[1.2rem] font-semibold text-[#B3153D]">
-            Rolexe Theater T2
+            Rolexe Theater T1
           </motion.h4>
           
           <motion.div variants={itemVariants} className="inline-flex items-center">
@@ -306,7 +306,7 @@ const Rolexe = () => {
           >
             <div className="flex items-center space-x-2">
               <Users size={25} className="text-gray-600" />
-              <span className="text-sm text-gray-600">Max 6 People</span>
+              <span className="text-sm text-gray-600">Max 12 People</span>
             </div>
       
             <div className="flex items-center space-x-2 mt-2 sm:mt-0">
@@ -369,9 +369,9 @@ const Rolexe = () => {
           >
             <div className="flex items-baseline gap-1">
               <span className="text-1xl font-semibold">₹2000</span>
-              <span className="text-sm">for up to 12 people with decoration</span>
+              <span className="text-sm capitalize">For 6 or less: Rs 2000 with decoration for 2.30 hrs </span>
             </div>
-            <p className="text-sm text-gray-500 pb-4">More than 7 people not allowed</p>
+            <p className="text-sm text-black pb-4 capitalize">If more than 6 peoples then Rs 150/extra per person. Maximum 12 peoples can book.</p>
             <div className="w-[100%] flex justify-center">
              <motion.button
                onClick={handleBooking}
