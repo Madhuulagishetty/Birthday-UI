@@ -130,7 +130,9 @@ const TermsMain = () => {
               slotType: bookingData.slotType,
               email: bookingData.email,
               payment_status: "Partial (Advance paid)",
-              NameUser: bookingData.NameUser
+              NameUser: bookingData.NameUser,
+              PaymentMode:"Online"
+
             }
           ]
         }),
