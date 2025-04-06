@@ -86,7 +86,7 @@ const Footer = () => {
           <div className="flex space-x-4 relative mb-6">
             {/* Facebook */}
             <div className="group relative">
-              <NavLink to="#" className="bg-black text-white p-2 rounded-full block hover:bg-[#B1153C]  transform hover:scale-110 transition-transform duration-300">
+              <NavLink to="https://www.facebook.com/profile.php?id=61574711979656&mibextid=wwXIfr&mibextid=wwXIfr" target='_blank' className="bg-black text-white p-2 rounded-full block hover:bg-[#B1153C]  transform hover:scale-110 transition-transform duration-300">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M18 2H15C13.6739 2 12.4021 2.52678 11.4645 3.46447C10.5268 4.40215 10 5.67392 10 7V10H7V14H10V22H14V14H17L18 10H14V7C14 6.73478 14.1054 6.48043 14.2929 6.29289C14.4804 6.10536 14.7348 6 15 6H18V2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { contextApi } from "./ContextApi/Context";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Star, Calendar, Clock, Minus, Plus, Users, Gift, Check, PlusCircle, CreditCard } from 'lucide-react';
+import { Star, Calendar, Clock, Minus, Plus, Users, Gift, Check, PlusCircle, CreditCard, MapPin } from 'lucide-react';
 
 const QuantityBirthday = () => { 
   const navigate = useNavigate();
@@ -16,6 +16,7 @@ const QuantityBirthday = () => {
   const [bookingName, setBookingName] = useState("");
   const [NameUser, SetNameUser] = useState("");
   const [email, setEmail] = useState("");
+  const [address, setAddress] = useState(""); // New state for address
   const [wantDecoration, setWantDecoration] = useState("Yes");
   const [occasion, setOccasion] = useState("Anniversary");
   const [extraDecorations, setExtraDecorations] = useState([]);
@@ -47,6 +48,7 @@ const QuantityBirthday = () => {
       localStorage.removeItem("whatsapp");
       localStorage.removeItem("bookingName");
       localStorage.removeItem("email");
+      localStorage.removeItem("address"); // Add address to localStorage clear
       localStorage.removeItem("wantDecoration");
       localStorage.removeItem("occasion");
       localStorage.removeItem("extraDecorations");
@@ -61,6 +63,7 @@ const QuantityBirthday = () => {
     setDecoration(false);
     setBookingName("");
     setEmail("");
+    setAddress(""); // Add address to reset
     setWantDecoration("Yes");
     setOccasion("Anniversary");
     setExtraDecorations([]);
@@ -72,6 +75,7 @@ const QuantityBirthday = () => {
     localStorage.setItem("whatsapp", whatsapp);
     localStorage.setItem("bookingName", bookingName);
     localStorage.setItem("email", email);
+    localStorage.setItem("address", address); // Add address to localStorage save
     localStorage.setItem("wantDecoration", wantDecoration);
     localStorage.setItem("occasion", occasion);
     localStorage.setItem("extraDecorations", JSON.stringify(extraDecorations));
@@ -83,6 +87,7 @@ const QuantityBirthday = () => {
     whatsapp,
     bookingName,
     email,
+    address, // Add address to dependencies
     wantDecoration,
     occasion,
     extraDecorations,
@@ -108,10 +113,10 @@ const QuantityBirthday = () => {
 
     // Handle all decoration types with their proper prices
     if (extraDecorations.includes("fog-01")) {
-      total += 750; // Fog price
+      total += 750; // Fog price (02 Pots)
     }
     if (extraDecorations.includes("fog-02")) {
-      total += 1000; // Fog price
+      total += 1000; // Fog price (04 Pots)
     }
     if (extraDecorations.includes("candle_light")) {
       total += 499; // Candle Light Dinner price
@@ -169,6 +174,10 @@ const QuantityBirthday = () => {
       toast.error("Please enter your email address.");
       return;
     }
+    if (!address.trim()) {
+      toast.error("Please enter your address.");
+      return;
+    }
     if (!date || !whatsapp.trim()) {
       toast.error("Please Select the Date and Enter WhatsApp Number.");
       return;
@@ -189,6 +198,7 @@ const QuantityBirthday = () => {
     const bookingData = {
       bookingName,
       email,
+      address, // Include address in booking data
       date,
       people,
       whatsapp,
@@ -335,36 +345,34 @@ const QuantityBirthday = () => {
                 )}
               </div>
               
-              {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    WhatsApp Number <span className="text-rose-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">+91</span>
-                    <input 
-                      type="tel" 
-                      value={whatsapp}
-                      onChange={(e) => setWhatsapp(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                      placeholder="10-digit number"
-                      className="w-full pl-12 border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition" 
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                   Celebrations Person Name / "नाम उत्सव व्यक्ति" <span className="text-rose-500">*</span>
-                  </label>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  WhatsApp Number <span className="text-rose-500">*</span>
+                </label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">+91</span>
                   <input 
-                    type="text" 
-                    value={NameUser}
-                    onChange={(e) => SetNameUser(e.target.value)}
-                    placeholder="Name of the person celebrating"
-                    className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition" 
+                    type="tel" 
+                    value={whatsapp}
+                    onChange={(e) => setWhatsapp(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    placeholder="10-digit number"
+                    className="w-full pl-12 border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition" 
                   />
                 </div>
-              {/* </div> */}
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Celebrations Person Name / "नाम उत्सव व्यक्ति" <span className="text-rose-500">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  value={NameUser}
+                  onChange={(e) => SetNameUser(e.target.value)}
+                  placeholder="Name of the person celebrating"
+                  className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition" 
+                />
+              </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -377,6 +385,23 @@ const QuantityBirthday = () => {
                   placeholder="your@email.com"
                   className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition" 
                 />
+              </div>
+              
+              {/* New Address Field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Address <span className="text-rose-500">*</span>
+                </label>
+                <div className="relative">
+                  <MapPin className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
+                  <textarea 
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="Enter your full address"
+                    rows={3}
+                    className="w-full pl-10 border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition" 
+                  />
+                </div>
               </div>
               
               <div>
@@ -618,6 +643,8 @@ const QuantityBirthday = () => {
           )}
         </div>
       </div>
+      
+      
       
       <ToastContainer
         position="top-center"

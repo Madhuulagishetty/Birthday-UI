@@ -290,7 +290,7 @@ const TermsMain = () => {
       }, 300); // Open Razorpay dashboard within 0.3 seconds
     } catch (error) {
       console.error("Error initiating payment:", error);
-      toast.error("Failed to initiate payment. Please try again.");
+      toast.error("Your Internet Connection is Slow. Please try again.");
       setIsProcessing(false);
     }
   };
