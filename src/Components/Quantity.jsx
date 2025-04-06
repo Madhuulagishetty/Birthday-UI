@@ -107,8 +107,11 @@ const QuantityBirthday = () => {
     }
 
     // Handle all decoration types with their proper prices
-    if (extraDecorations.includes("fog")) {
+    if (extraDecorations.includes("fog-01")) {
       total += 750; // Fog price
+    }
+    if (extraDecorations.includes("fog-02")) {
+      total += 1000; // Fog price
     }
     if (extraDecorations.includes("candle_light")) {
       total += 499; // Candle Light Dinner price
@@ -456,7 +459,8 @@ const QuantityBirthday = () => {
                 
                 <div className="space-y-2">
                   {[
-                    { id: "fog", name: "Fog Entry", price: 750, icon: "🌫️" },
+                    { id: "fog-01", name: "Fog Entry (02 Pots)", price: 750, icon: "🌫️" },
+                    { id: "fog-02", name: "Fog Entry (04 Pots)", price: 1000, icon: "🌫️" },
                     { id: "candle_light", name: "Candle Light Dinner", price: 499, icon: "🕯️" },
                     { id: "photo_clipping", name: "Photo Clipping", price: 149, icon: "📸" },
                     { id: "led_numbers", name: "LED Numbers", price: 99, icon: "🔢" },
@@ -514,10 +518,16 @@ const QuantityBirthday = () => {
                     {extraDecorations.length > 0 && (
                       <div className="pt-2 border-t border-purple-100">
                         <div className="text-sm font-medium text-purple-800 mb-1">Add-ons</div>
-                        {extraDecorations.includes("fog") && (
+                        {extraDecorations.includes("fog-01") && (
                           <div className="flex justify-between text-sm">
-                            <span>Fog Machine</span>
+                            <span>Fog Entry (02 Pots)</span>
                             <span>₹750</span>
+                          </div>
+                        )}
+                         {extraDecorations.includes("fog-02") && (
+                          <div className="flex justify-between text-sm">
+                            <span>Fog Entry (04 Pots)</span>
+                            <span>₹1000</span>
                           </div>
                         )}
                         {extraDecorations.includes("candle_light") && (

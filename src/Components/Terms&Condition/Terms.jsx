@@ -51,7 +51,7 @@ const TermsMain = () => {
   }, [navigate, baseAdvanceAmount]);
 
   const termsItems = [
-    "We do NOT provide any movie/OTT accounts. We will do the setups using your OTT accounts/downloaded content.",
+    "There will be no reduction in price if lesser members arrive",
     "Smoking/Drinking is NOT allowed inside the theater.",
     "Any DAMAGE caused to theater, including decorative materials like ballons, lights etc will have to be reimbursed.",
     "Guests are requested to maintain CLEANLINESS inside the theater.",
@@ -59,7 +59,8 @@ const TermsMain = () => {
     "Carrying AADHAAR CARD is mandatory. It will be scanned during entry.",
     "Couples under 18 years of age are not allowed to book the theatre",
     "Pets are strictly not allowed inside the theatre",
-    "We collect an advance amount of ₹1000 to book the slot. The remaining amount will be collected after the event."
+    "We collect an advance amount of ₹1000 to book the slot. The remaining amount will be collected after the event.",
+    "Customers will be liable to pay in case of any damage to the theater caused by them. Cleaning fees up to Rs 500 will be charged in cases where significant cleaning would be required after check out."
   ];
   
   const Refund = [
@@ -322,7 +323,7 @@ const TermsMain = () => {
                   {termsItems.map((item, index) => (
                     <li 
                       key={index} 
-                      className="text-gray-800 pb-3 border-b border-gray-100 last:border-0 transition-all duration-300"
+                      className="text-gray-800  border-b border-gray-100 last:border-0 transition-all duration-300"
                       style={{ 
                         transitionDelay: `${300 + (index * 50)}ms`,
                         opacity: animateIn ? 1 : 0,
