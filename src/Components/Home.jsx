@@ -96,13 +96,10 @@ const Home = () => {
     window.open(`https://wa.me/${phoneNumber}`, "_blank");
   };
 
-  // Force open calendar when input is clicked
   const openCalendar = (e) => {
-    // This prevents default to ensure the click doesn't interfere with the native date picker
+    
     e.preventDefault();
-    // This finds the input element
     const dateInput = document.getElementById('date');
-    // This simulates a click to open the native date picker
     dateInput.showPicker();
   };
 

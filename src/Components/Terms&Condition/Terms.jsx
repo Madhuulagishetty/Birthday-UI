@@ -17,6 +17,8 @@ const TermsMain = () => {
   const [remainingAmount, setRemainingAmount] = useState(0);
   // Pre-initialize Razorpay to avoid delay
   const [razorpayInitialized, setRazorpayInitialized] = useState(false);
+  // Fixed convenience fee
+  const [convenienceFee] = useState(24.08);
 
   useEffect(() => {
     const data = localStorage.getItem('bookingData');
@@ -28,10 +30,9 @@ const TermsMain = () => {
       const baseAmount = parsedData.totalAmount;
       setAmountWithTax(baseAmount);
       
-      // Calculate advance amount with 2% tax
-      const advanceTax = (baseAdvanceAmount * 0.02);
-      const advanceWithTax = baseAdvanceAmount + advanceTax;
-      setAdvanceAmount(advanceWithTax);
+      // Calculate advance amount with fixed convenience fee
+      const advanceWithFee = baseAdvanceAmount + convenienceFee;
+      setAdvanceAmount(advanceWithFee);
       
       // Calculate remaining amount (to be paid after event)
       setRemainingAmount(baseAmount - baseAdvanceAmount);
@@ -48,7 +49,7 @@ const TermsMain = () => {
     initializeRazorpay().then(success => {
       setRazorpayInitialized(success);
     });
-  }, [navigate, baseAdvanceAmount]);
+  }, [navigate, baseAdvanceAmount, convenienceFee]);
 
   const termsItems = [
     "There will be no reduction in price if lesser members arrive",
@@ -132,7 +133,6 @@ const TermsMain = () => {
               payment_status: "Partial (Advance paid)",
               NameUser: bookingData.NameUser,
               PaymentMode:"Online"
-
             }
           ]
         }),
@@ -399,8 +399,8 @@ const TermsMain = () => {
                         </div>
                         
                         <div className="flex justify-between items-center text-sm pl-2">
-                          <span className="text-gray-600">Convince fee (2%):</span>
-                          <span className="text-gray-700">₹{(baseAdvanceAmount * 0.02).toFixed(2)}</span>
+                          <span className="text-gray-600">Convenience fee:</span>
+                          <span className="text-gray-700">₹{convenienceFee.toFixed(2)}</span>
                         </div>
                         
                         <div className="flex justify-between items-center bg-green-100 p-2 rounded">
