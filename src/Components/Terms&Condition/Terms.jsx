@@ -149,29 +149,37 @@ const TermsMain = () => {
 
   const sendWhatsAppReminder = async (params) => {
     try {
-      const { to, date, time, remainingAmount } = params;
-      const formattedNumber = to.startsWith('+') ? to : `+${to}`;
-      
-      const response = await fetch('https://backend-kf6u.onrender.com/send-whatsapp', {
+      const { to, date, time, remainingAmount, advanceAmount } = params;
+  
+      const formattedNumber = to.startsWith('+') ? to.slice(1) : to; // Zaply expects number without "+" (e.g. "91836...")
+      const message = `Your booking is confirmed! \n\nDate: ${date} \nTime: ${time} \n\nAdvance Paid: ₹${advanceAmount.toFixed(2)} \nRemaining Amount: ₹${remainingAmount.toFixed(2)} (to be paid after the event) \n\nThank you for your booking!`;
+  
+      const instanceId = '1jwqiaabsd'; // Replace with your actual Zaply instance ID
+      const authToken = 'ycpusy3wbzdfbrqwzrh15kyswt1h1m'; // Replace with your actual Zaply token
+  
+      const response = await fetch(`https://api.zaply.dev/v1/instance/${instanceId}/message/send`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
         },
-        body: JSON.stringify({ 
-          to: formattedNumber, 
-          date, 
-          time,
-          message: `Your booking is confirmed! \n\nDate: ${date} \nTime: ${time} \n\nAdvance Paid: ₹${advanceAmount.toFixed(2)} \nRemaining Amount: ₹${remainingAmount.toFixed(2)} (to be paid after the event) \n\nThank you for your booking!`
+        body: JSON.stringify({
+          number: formattedNumber,
+          message,
         }),
       });
-      
+  
       if (!response.ok) {
-        throw new Error(`Failed to send WhatsApp reminder: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(`Failed to send WhatsApp reminder: ${response.status} - ${errorData.message}`);
       }
+  
+      console.log('WhatsApp reminder sent successfully!');
     } catch (error) {
       console.error('Error sending WhatsApp reminder:', error);
     }
   };
+  
 
   const saveToFirebase = async (paymentDetails) => {
     if (!bookingData) return;
