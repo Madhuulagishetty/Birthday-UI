@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Sparkles, Heart, CheckCircle, Calendar, PhoneCall, HousePlus, MoveRight } from 'lucide-react';
 import { useNavigate, Link } from "react-router-dom";
-import DeluxeImg from '/assets/delax.jpg';
+
 
 const AboutUs = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -136,7 +136,7 @@ const AboutUs = () => {
             <div className="rounded-2xl overflow-hidden shadow-2xl transform transition-all duration-500 hover:scale-105 relative group">
               <div className="absolute inset-0 bg-gradient-to-r from-pink-600/40 via-purple-600/40 to-blue-600/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
               <img 
-                src={DeluxeImg} 
+                src={/assets/delax.jpg} 
                 alt="Akaay Studio Bhiwandi"
                 title="Akaay Studio Bhiwandi" 
                 className="w-full h-[250px] sm:h-[350px] md:h-[400px] lg:h-[500px] object-cover"
