@@ -10,11 +10,11 @@ const Navbar = () => {
   const navItems = [
     { label: "Home", to: "/" },
     // { label: "About Us", to: "/A" },
-    { label: "About US", to: "/AboutUs" },
-    { label: "Services", to: "/ServicesMain" },
-    { label: "Gallery", to: "/GalleryMain" },
-    { label: "Packages", to: "/Package" },
-    { label: "Contact Us", to: "/ContactUs" },
+    { label: "About US", to: "/about-us" },
+    { label: "Services", to: "/services" },
+    { label: "Gallery", to: "/akkay-studio-gallery" },
+    { label: "Packages", to: "/akkay-studio-packages" },
+    { label: "Contact Us", to: "/contact-us" },
   ];
   
   const handleHome = () => {
@@ -33,15 +33,13 @@ const Navbar = () => {
     <div className="fixed w-full z-40">
       <nav className="bg-gradient-to-r from-[#C035A2] via-[#6E23AC] to-[#0b5688]">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
-          {/* <div>
-            <img src="blob:https://web.whatsapp.com/cd6b7a4c-4a2d-4cc0-98fd-5d5f309240ab" alt="img is not coming" />
-          </div> */}
+         
           <div className="flex items-center justify-between h-16">
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-0 justify-between hover:cursor-pointer">
                   <div className="w-[17%]" onClick={homeDirect}>
                     
-                     <img src="assets/logo.png" alt="img is not coming" />
+                     <img src="assets/logo.png" alt='Akaay Studio Photography'  title='Akaay Studio Photography' />
                   </div>
               <div className="flex items-center">
               {navItems.map((item, index) => (
@@ -59,7 +57,7 @@ const Navbar = () => {
                   }
                 >
                   {item.label}
-                </NavLink>
+                </NavLink>  
               ))}
 
               {/* Book Now Button */}
@@ -71,7 +69,11 @@ const Navbar = () => {
             </div>
 
             {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center w-full justify-end">
+            <div className="md:hidden flex items-center w-full justify-between">
+                <div className="w-[55%]" onClick={homeDirect}>
+                    
+                    <img src="assets/logo.png" alt='Akaay Studio Photography'  title='Akaay Studio Photography' />
+                 </div>
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="text-white p-2"
@@ -96,6 +98,8 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Menu */}
+    
+          
           <div
             className={`
               md:hidden 
@@ -118,6 +122,7 @@ const Navbar = () => {
               }
             `}
           >
+           
             <div className="px-4 pt-2 pb-4 space-y-2">
               {navItems.map((item) => (
                 <NavLink
@@ -138,7 +143,8 @@ const Navbar = () => {
                 Book Now
               </button>
             </div>
-          </div>
+            </div>
+          
         </div>
       </nav>
     </div>

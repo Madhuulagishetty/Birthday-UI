@@ -214,7 +214,7 @@ const QuantityBirthday = () => {
     };
     
     localStorage.setItem('bookingData', JSON.stringify(bookingData));
-    navigate('/TermsMain');
+    navigate('/terms-conditions');
   };
   
   // Get icons for occasions

@@ -186,7 +186,8 @@ const BookingCard = () => {
               <div key={index} className="aspect-video w-full overflow-hidden">
                 <img
                   src={img}
-                  alt={`Theater View ${index + 1}`}
+                  alt='Akaay Studio Photography'
+                  title='Akaay Studio Photography'  
                   className="w-full h-full object-cover rounded-lg"
                 />
               </div>

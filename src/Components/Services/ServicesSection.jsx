@@ -11,11 +11,11 @@ const ServicesSection = () => {
   const sliderRef = useRef(null);
   const navigate = useNavigate();
   const serviceImages = [
-    'assets/Service-Bouquet-and-other-gifts.jpg',
-    "assets/Fog-entry-01.PNG",
-    "assets/Service-Photoshoot.jpg",
-    "assets/Service-Private-movie-screening.jpg",
-    "assets/Service-Snacks-and-beverage.jpg",
+    'assets/service-bouquet-and-other-gifts.jpg',
+    "assets/atmospheric-fog-entrances.jpg",
+    "assets/service-photoshoot.jpg",
+    "assets/service-private-movie-screening.jpg",
+    "assets/service-snacks-and-beverage.jpg",
 
    
     
@@ -54,7 +54,7 @@ const ServicesSection = () => {
     setCurrentSlide((prev) => (prev - 1 + serviceImages.length) % serviceImages.length);
   };
   const HandleBooking=()=>{
-       navigate("/ServicesMain")
+       navigate("/services")
   }
   return (
     <>
@@ -82,7 +82,8 @@ const ServicesSection = () => {
               >
                 <img 
                   src={img} 
-                  alt={`Service ${index + 1}`} 
+                  alt='Akaay Studio Photography'
+                  title='Akaay Studio Photography'
                   className="w-full h-full object-cover rounded-2xl"
                 />
               </div>

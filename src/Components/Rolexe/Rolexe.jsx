@@ -19,8 +19,7 @@ const Rolexe = () => {
   const [bookedSlots, setBookedSlots] = useState([]);
   const [loading, setLoading] = useState(true); // Added for loading animation
   const navigate = useNavigate();
-  const [responseId, setResponseId] = useState("");
-  const [responseState, setResponseState] = useState([]);
+ 
 
   // Function to check if a time slot has already passed for today
   const isTimeSlotPassed = (slotTime) => {
@@ -154,9 +153,9 @@ const Rolexe = () => {
   ];
 
   const images = [
-    "assets/Relax-08.jpg",
-    "assets/Relax-09.jpg",
-    "assets/Relax-07.jpg",
+    "assets/relax-08.jpg",
+    "assets/relax-09.jpg",
+    "assets/relax-07.jpg",
   ];
 
   const sliderSettings = {
@@ -216,7 +215,7 @@ const Rolexe = () => {
     localStorage.removeItem("extraDecorations");
     toast.success("Booking successful!");
     setSlotType('rolexe');
-    navigate("/QuantityBirthday", {
+    navigate("/user-details", {
       state: {
         timeSlot: selectedTimeSlot,
       },
@@ -276,7 +275,8 @@ const Rolexe = () => {
               <div key={index} className="aspect-video w-full overflow-hidden">
                 <img
                   src={img}
-                  alt={`Theater View ${index + 1}`}
+                  alt="Akaay Studio Thane"
+                  title="Akaay Studio Thane"
                   className="w-full h-full object-cover rounded-lg"
                 />
               </div>

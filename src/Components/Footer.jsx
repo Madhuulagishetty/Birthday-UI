@@ -11,7 +11,7 @@ const Footer = () => {
       top: 0,
       behavior: 'smooth'
     });
-  }); // Empty dependency array ensures it only runs once when component mounts
+  },[]); // Empty dependency array ensures it only runs once when component mounts
   const handleWhatsAppClick = () => {
     const phoneNumber = "919764535650";
     window.open(`https://wa.me/${phoneNumber}`, "_blank");
@@ -29,16 +29,16 @@ const Footer = () => {
                 <NavLink to="/" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Home</NavLink>
               </li>
               <li>
-                <NavLink to="/AboutUs" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">About Us</NavLink>
+              <NavLink to="/about-us" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">About Us</NavLink>
               </li>
               <li>
-                <NavLink to="/ServicesMain" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Our Services</NavLink>
+                <NavLink to="/services" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Our Services</NavLink>
               </li>
               <li>
-                <NavLink to="/GalleryMain" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Gallery</NavLink>
+                <NavLink to="/akkay-studio-gallery" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Gallery</NavLink>
               </li>
               <li>
-                <NavLink to="/Package" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Packages</NavLink>
+                <NavLink to="/akkay-studio-packages" className="text-gray-800 hover:text-red-500 block pb-2 border-b border-gray-300 hover:translate-x-1 transform transition-transform duration-300">Packages</NavLink>
               </li>
               
             </ul>
@@ -145,15 +145,15 @@ const Footer = () => {
             Copyright ©2025
           </p>
           <div className="flex flex-wrap justify-center md:justify-end space-x-2 text-sm">
-            <NavLink to="/RefundPolicy" className="hover:text-red-400 transition-colors">
+            <NavLink to="/refund-policy" className="hover:text-red-400 transition-colors">
               Refund Policy
             </NavLink>
             <span className="mx-2 text-gray-500">|</span>
-            <NavLink to="/TermsAndCondition" className="hover:text-red-400 transition-colors">
+            <NavLink to="/terms-condition" className="hover:text-red-400 transition-colors">
               Terms and Conditions
             </NavLink>
             <span className="mx-2 text-gray-500">|</span>
-            <NavLink to="/PrivacyPolicy" className="hover:text-red-400 transition-colors">
+            <NavLink to="/privacy-policy" className="hover:text-red-400 transition-colors">
               PrivacyPolicy
             </NavLink>
             

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
-import {HousePlus, MoveRight, Headphones, Send, User, Mail, MessageSquare} from 'lucide-react'
+import { HousePlus, MoveRight, Mail, Phone, MapPin } from 'lucide-react'
 import ScrollToTop from '../ScrollTop';
 import { db } from '../../index';
 import { collection, addDoc } from 'firebase/firestore';
@@ -51,9 +51,9 @@ const Contact = () => {
     }
   };
   
-
   const contactItems = [
     {
+      icons: <MapPin className="w-8 h-8 text-black z-10" />,
       title: "Office Address",
       content: [
         "Naka, Bhadwad Gaon, Themghar,", 
@@ -61,17 +61,17 @@ const Contact = () => {
       ]
     },
     {
+      icons: <Mail className="w-8 h-8 text-black z-10" />,
       title: "Email Address",
       content: [
         "akaaystudio888@gmail.com",
-        
       ]
     },
     {
+      icons: <Phone className="w-8 h-8 text-black z-10" />,
       title: "Phone Number",
       content: [
-
-        "91 9764535650"
+        "+91 9764535650"
       ]
     }
   ];
@@ -83,11 +83,11 @@ const Contact = () => {
  
   return (
     <>
-    <div className="relative w-full h-96 overflow-hidden">
+    <div className="relative w-full h-[50vh] overflow-hidden">
       {/* Background image */}
       <ScrollToTop />
       <div 
-        className="absolute inset-0 bg-cover bg-center"
+        className="absolute inset-0 bg-cover bg-center h-[60vh] sm:h-[40vh] md:h-[40vh] lg:h-[40vh]"
         style={{
           backgroundImage: 'url("/assets/inside-header.jpg")',
           filter: 'brightness(0.8)'
@@ -95,9 +95,9 @@ const Contact = () => {
       />
       
       {/* Overlay Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center h-full text-white text-center">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-5xl font-bold text-white relative inline-block ">
+      <div className="relative z-10 flex flex-col items-center justify-center  text-white text-center">
+      <div className="container mx-auto px-4 py-8 mt-[20%] md:mt-[5%]">
+        <h1 className="text-4xl md:text-5xl font-bold text-white relative inline-block ">
           Contact Us
           <div className="absolute bottom-[-10px] left-0 w-full h-1 bg-pink-500"></div>
         </h1>
@@ -150,13 +150,8 @@ const Contact = () => {
                   }}
                 ></div>
                 
-                <Headphones 
-                  className="w-8 h-8 text-black z-10" 
-                  style={{
-                    transform: hoveredIndex === index ? 'rotateY(180deg)' : 'rotateY(0)',
-                    transition: 'transform 0.7s ease'
-                  }}
-                />
+                {/* Use the icon from contactItems array */}
+                {item.icons}
               </div>
               
               {/* Title with slide-up animation */}

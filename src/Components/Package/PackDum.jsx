@@ -87,15 +87,16 @@ const Package = () => {
       <div className={`w-24 h-1 bg-yellow-300 rounded-full mb-10 transform transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}></div>
       
       <div className="flex flex-col md:flex-row justify-center gap-14 md:gap-8 items-center w-[100%] md:w-[100%] ">
-        {/* Delax Package */}
+        {/* delax Package */}
         <div
           className={`bg-white md:p-4 p-2 rounded-2xl shadow-lg transform transition-all duration-700 hover:scale-105 hover:shadow-2xl w-[100%] md:w-[37%] cursor-pointer ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
           style={{ transitionDelay: "0.2s" }}
         >
           <div className="relative overflow-hidden rounded-xl">
             <img
-              src={"/assets/Delax-12.jpg"}
-              alt="Rolexe Theater T1"
+              src={"/assets/rolexe-theater-T1.jpg"}
+              alt="Akaay Studio Thane"
+              title="Akaay Studio Thane"
               className="rounded-xl w-full h-48 md:h-64 object-cover transform transition duration-700 hover:scale-110"
             />
             <div className="absolute top-3 right-3 bg-red-600 text-white text-xs px-2 py-1 rounded-full flex items-center">
@@ -155,8 +156,9 @@ const Package = () => {
         >
           <div className="relative overflow-hidden rounded-xl">
             <img
-              src={"/assets/Relax-13.jpg"}
-              alt="Deluxe Theater T2"
+              src={"/assets/deluxe-theater-T2.jpg"}
+              alt="Akaay Studio Thane"
+              title="Akaay Studio Thane"
               className="rounded-xl w-full h-48 md:h-64 object-cover transform transition duration-700 hover:scale-110"
             />
             <div className="absolute top-3 right-3 bg-blue-600 text-white text-xs px-2 py-1 rounded-full flex items-center">

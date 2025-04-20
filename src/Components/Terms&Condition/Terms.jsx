@@ -148,26 +148,59 @@ const TermsMain = () => {
   };
 
   const sendWhatsAppReminder = async (params) => {
+    console.log('sending whatsapp reminder')
     try {
-      const { to, date, time, remainingAmount } = params;
-      const formattedNumber = to.startsWith('+') ? to : `+${to}`;
+      const { to, date, time, bookingName, people, location, slotType, decorations, extraDecorations } = params;
+  
+      const formattedNumber = to.startsWith('+') ? to.slice(1) : to; // Zaply expects number without "+" (e.g. "91836...")
       
-      const response = await fetch('https://backend-kf6u.onrender.com/send-whatsapp', {
+      // Enhanced message with more details and formatting
+      const message = 
+`🎬 *BOOKING CONFIRMATION* 🎬
+
+Hello ${bookingName || 'there'}!
+
+Your theater booking is confirmed!
+
+📅 *Date:* ${date}
+⏰ *Time:* ${time}
+👥 *Guests:* ${people || '(not specified)'}
+🏠 *Venue:* Mini Theater ${location || ''}
+🎫 *Slot Type:* ${slotType || 'Standard'}
+${decorations ? `✨ *Decorations:* Yes${extraDecorations ? `\n   Details: ${extraDecorations}` : ''}` : ''}
+
+Please remember:
+• Arrive 15 minutes early
+• Bring your AADHAAR card for verification
+• No smoking/drinking allowed inside
+• Maintain cleanliness in the theater
+
+For any questions, contact us at: 
+📞 +91-98765-43210
+
+Thank you for your booking! Enjoy your experience!`;
+
+      const instanceId = 'kmol8bcxdw'; // Replace with your actual Zaply instance ID
+      const authToken = 'fhog27ywnu34qd25jdtkc8ydrtjezo'; // Replace with your actual Zaply token
+  
+      const response = await fetch(`https://api.zaply.dev/v1/instance/${instanceId}/message/send`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
         },
-        body: JSON.stringify({ 
-          to: formattedNumber, 
-          date, 
-          time,
-          message: `Your booking is confirmed! \n\nDate: ${date} \nTime: ${time} \n\nAdvance Paid: ₹${advanceAmount.toFixed(2)} \nRemaining Amount: ₹${remainingAmount.toFixed(2)} (to be paid after the event) \n\nThank you for your booking!`
+        body: JSON.stringify({
+          number: formattedNumber,
+          message,
         }),
       });
-      
+  
       if (!response.ok) {
-        throw new Error(`Failed to send WhatsApp reminder: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(`Failed to send WhatsApp reminder: ${response.status} - ${errorData.message}`);
       }
+  
+      console.log('WhatsApp reminder sent successfully!');
     } catch (error) {
       console.error('Error sending WhatsApp reminder:', error);
     }
@@ -257,18 +290,24 @@ const TermsMain = () => {
               const savedBooking = await saveToFirebase(response);
               await saveBookingToSheet(savedBooking);
               
+              // Use the enhanced WhatsApp reminder function with additional booking details
               if (bookingData?.lastItem) {
                 await sendWhatsAppReminder({
-                  to: `+91${bookingData.whatsapp}`,
+                  to: `91${bookingData.whatsapp}`, // Format for Zaply without the '+' prefix
                   date: bookingData.date,
                   time: `${bookingData.lastItem.start} - ${bookingData.lastItem.end}`,
-                  remainingAmount: remainingAmount
+                  bookingName: bookingData.bookingName || bookingData.NameUser,
+                  people: bookingData.people,
+                  location: bookingData.location || '',
+                  slotType: bookingData.slotType,
+                  decorations: bookingData.wantDecoration,
+                  extraDecorations: bookingData.extraDecorations
                 });
               }
 
               localStorage.removeItem('bookingData');
               toast.success("Booking confirmed! Check your WhatsApp for details.");
-              navigate("/ThankYouPage");
+              navigate("/thank-you");
             } catch (error) {
               console.error("Error processing payment:", error);
               toast.error("Payment verification failed. Please contact support.");

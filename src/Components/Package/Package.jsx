@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import DelaxImg from "../../assets/Delax.jpg";
-// import RelaxImg from "../../assets/Relax.jpg";
+// import delaxImg from "../../assets/delax.jpg";
+// import relaxImg from "../../assets/relax.jpg";
 import { ChevronRight, Check, Star } from 'lucide-react';
 
 const Packages = () => {
@@ -30,7 +30,7 @@ const Packages = () => {
   const handlePackageSelect = (pkg) => {
     setSelectedPackage(pkg);
     // Show a toast confirmation when package is selected
-    toast.success(`${pkg === "Delax" ? "Deluxe Theater T2" : "Rolexe Theater T1"} selected!`, {
+    toast.success(`${pkg === "delax" ? "Deluxe Theater T2" : "Rolexe Theater T1"} selected!`, {
       position: "top-center",
       autoClose: 1500,
       hideProgressBar: false,
@@ -54,10 +54,10 @@ const Packages = () => {
       
       // Navigate based on the selected package after a short delay
       setTimeout(() => {
-        if (selectedPackage === "Delax") {
-          navigate("/Deluxe");
+        if (selectedPackage === "delax") {
+          navigate("/delux-package");
         } else if (selectedPackage === "Relexe") {
-          navigate("/Rolexe");
+          navigate("/rolexe-pakage");
         }
       }, 1600);
     }
@@ -107,8 +107,9 @@ const Packages = () => {
           
           <div className="relative overflow-hidden rounded-xl">
             <img
-              src={"assets/Relax-13.jpg"}
-              alt="Rolexe Theater T1"
+              src={"assets/relax-13.jpg"}
+              alt="Akaay Studio Thane"
+               title="Akaay Studio Thane"
               className="rounded-xl w-full h-48 md:h-64 object-cover transform transition duration-700 hover:scale-110"
             />
             <div className="absolute top-3 left-3 bg-red-600 text-white text-xs px-2 py-1 rounded-full flex items-center">
@@ -138,12 +139,12 @@ const Packages = () => {
         {/* Deluxe Theater Package */}
         <div
           className={`bg-white p-4 rounded-2xl shadow-lg transform transition-all duration-700 hover:scale-105 hover:shadow-2xl w-[90%] md:w-[40%] cursor-pointer relative ${
-            selectedPackage === "Delax" ? "border-4 border-blue-500 scale-105" : ""
+            selectedPackage === "delax" ? "border-4 border-blue-500 scale-105" : ""
           } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
-          onClick={() => handlePackageSelect("Delax")}
+          onClick={() => handlePackageSelect("delax")}
           style={{ transitionDelay: "0.4s" }}
         >
-          {selectedPackage === "Delax" && (
+          {selectedPackage === "delax" && (
             <div className="absolute -top-3 -right-3 bg-blue-500 text-white rounded-full p-2 z-10 shadow-lg transform scale-in animate-bounce">
               <Check size={20} />
             </div>
@@ -151,8 +152,9 @@ const Packages = () => {
           
           <div className="relative overflow-hidden rounded-xl">
             <img
-              src={"assets/Delax-12.jpg"}
-              alt="Deluxe Theater T2"
+              src={"assets/deluxe-theater-T2.jpg"}
+              alt="Akaay Studio Thane"
+                  title="Akaay Studio Thane"
               className="rounded-xl w-full h-48 md:h-64 object-cover transform transition duration-700 hover:scale-110"
             />
             <div className="absolute top-3 left-3 bg-purple-600 text-white text-xs px-2 py-1 rounded-full flex items-center">

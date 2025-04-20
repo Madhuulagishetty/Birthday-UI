@@ -78,7 +78,8 @@ const RecipeApp = () => {
           >
             <img 
               src={recipe.image} 
-              alt={recipe.name} 
+              alt='Akaay Studio Photography'
+              title='Akaay Studio Photography'
               className="w-full h-48 object-cover"
             />
             <div className="p-4 ">

@@ -151,9 +151,9 @@ const Deluxe = () => {
   };
 
   const images = [
-    "assets/Delax-10.jpg",
-    "assets/Delax-11.jpg",
-    "assets/Delax-12.jpg"
+    "assets/delax-10.jpg",
+    "assets/delax-11.jpg",
+    "assets/delax-12.jpg"
   ];
 
   const sliderSettings = {
@@ -213,7 +213,7 @@ const Deluxe = () => {
     localStorage.removeItem("extraDecorations");
     toast.success("Booking successful!");
     setSlotType('deluxe');
-    navigate("/QuantityBirthday", {
+    navigate("/user-details", {
       state: {
         timeSlot: selectedTimeSlot,
       },
@@ -303,7 +303,8 @@ const Deluxe = () => {
               <div key={index} className="aspect-video w-full overflow-hidden">
                 <img
                   src={img}
-                  alt={`Theater View ${index + 1}`}
+                  alt="Akaay Studio Thane"
+                  title="Akaay Studio Thane"
                   className="w-full h-full object-cover rounded-lg"
                 />
               </div>

@@ -19,13 +19,13 @@ const GalleryMain = () => {
   }, []);
 
   const images = [
-    "/assets/Delax-04.JPG",
-    "/assets/Relax-05.jpg",
-    "/assets/Relax-04.jpg",
-    "/assets/Delax-07.JPG",
-    "/assets/Relax-06.jpg",
-    "/assets/Delax-05.JPG",
-    "/assets/Delax-03.JPG",
+    "/assets/delax-04.JPG",
+    "/assets/relax-05.jpg",
+    "/assets/relax-04.jpg",
+    "/assets/delax-07.JPG",
+    "/assets/relax-06.jpg",
+    "/assets/delax-05.JPG",
+    "/assets/gallery-08.jpg",
  
 
    
@@ -54,7 +54,7 @@ const GalleryMain = () => {
       <div className="relative">
         {/* Background Image */}
         <div 
-          className="bg-cover bg-center h-[60vh] sm:h-[40vh] md:h-[40vh] lg:h-[50vh]" 
+          className="bg-cover bg-center h-[60vh] sm:h-[40vh] md:h-[40vh] lg:h-[40vh]" 
           style={{
             backgroundImage: 'url("/assets/inside-header.jpg")',
           
@@ -64,13 +64,13 @@ const GalleryMain = () => {
         
         {/* Overlay Content - Absolutely positioned */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <div className="container mx-auto mt-4  text-center">
-            <h1 className="text-5xl sm:text-4xl md:text-5xl font-bold text-white relative inline-block  sm:mb-6">
+          <div className="container mx-auto mt-6  text-center">
+            <h1 className="text-4xl sm:text-4xl md:text-5xl font-bold text-white relative inline-block sm:mb-6">
              Gallery
-              <div className="absolute bottom-[-10px] left-0 w-full h-1 bg-pink-500"></div>
+              <div className="absolute bottom [-10px] left-0 w-full h-1 bg-pink-500 mb-6"></div>
             </h1>
           </div>
-          <div className="flex items-center space-x-2 sm:mt-4">
+          <div className="flex items-center space-x-2 mt-4 md:mt-0">
             <div className="flex gap-3 sm:gap-5">
               <Link to="/" className="flex gap-1 sm:gap-2 text-base sm:text-lg md:text-xl font-semibold items-center text-white">
                 <HousePlus className="w-4 h-4 sm:w-5 sm:h-5" />Home
@@ -91,19 +91,22 @@ const GalleryMain = () => {
         </div>
 
         {/* Gallery Grid */}
-        <div className="w-full md:w-11/12 lg:w-4/5 xl:w-3/4 mx-auto bg-white  overflow-hidden">
-        <div className="w-full flex flex-col md:flex-row gap-2 p-2 md:p-0">
+        <div className="w-full md:w-11/12 lg:w-4/5 xl:w-3/4 bg-white  mx-auto">
+          <div className="w-full flex flex-col md:flex-row gap-2 p-2 md:p-0">
             <div className="w-full md:w-3/4">
               <div className="w-full flex flex-col md:flex-row gap-2">
                 <img 
                   src={images[0]} 
-                  alt="Birthday celebration" 
+                  alt="Akaay Studio Mumbai" 
+                  title="Akaay Studio Mumbai" 
+
                   className="w-full md:w-1/3 h-40 md:h-52 cursor-pointer object-cover" 
                   onClick={() => openLightbox(0)} 
                 />
                 <img 
                   src={images[1]} 
-                  alt="Party setup" 
+                  alt="Akaay Studio Mumbai" 
+                  title="Akaay Studio Mumbai" 
                   className="w-full md:w-2/3 h-40 md:h-52 cursor-pointer object-cover mt-2 md:mt-0" 
                   onClick={() => openLightbox(1)} 
                 />
@@ -112,7 +115,8 @@ const GalleryMain = () => {
                 <div className="w-full md:w-3/5">
                   <img 
                     src={images[2]} 
-                    alt="Birthday decorations" 
+                    alt="Akaay Studio Mumbai" 
+                  title="Akaay Studio Mumbai" 
                     className="w-full h-48 md:h-80 cursor-pointer object-cover" 
                     onClick={() => openLightbox(2)} 
                   />
@@ -121,7 +125,8 @@ const GalleryMain = () => {
                   <div className="w-1/2 md:w-full">
                     <img 
                       src={images[3]} 
-                      alt="Birthday cake" 
+                      alt="Akaay Studio" 
+                      title="Akaay Studio"  
                       className="w-full h-40 md:h-36 lg:h-40 cursor-pointer object-cover" 
                       onClick={() => openLightbox(3)} 
                     />
@@ -129,7 +134,8 @@ const GalleryMain = () => {
                   <div className="w-1/2 md:w-full lg:h-[150px]">
                     <img 
                       src={images[4]} 
-                      alt="Party celebration" 
+                      alt="Akaay Studio"
+                      title='Akaay Studio' 
                       className="w-full h-40 md:h-38 lg:h-[150px] cursor-pointer object-cover" 
                       onClick={() => openLightbox(4)} 
                     />
@@ -141,7 +147,8 @@ const GalleryMain = () => {
               <div className="w-1/3 md:w-full">
                 <img 
                   src={images[5]} 
-                  alt="Celebration" 
+                  alt="Akaay Studio"
+                  title='Akaay Studio' 
                   className="w-full h-40 md:h-28 lg:h-32 cursor-pointer object-cover" 
                   onClick={() => openLightbox(5)} 
                 />
@@ -149,7 +156,8 @@ const GalleryMain = () => {
               <div className="w-1/3 md:w-full mt-0 md:mt-0">
                 <img 
                   src={images[6]} 
-                  alt="Party venue" 
+                  alt="Akaay Studio Mumbai"
+                  title="Akaay Studio Mumbai" 
                   className="w-full h-40 md:h-48 lg:h-52 cursor-pointer object-cover" 
                   onClick={() => openLightbox(6)} 
                 />
@@ -157,7 +165,8 @@ const GalleryMain = () => {
               <div className="w-1/3 md:w-full mt-0 md:mt-0 lg:h-[182px]">
                 <img 
                   src={images[7]} 
-                  alt="Birthday party" 
+                  alt="Akaay Studio Mumbai"
+                  title="Akaay Studio Mumbai"
                   className="w-full h-40 md:h-44 lg:h-[182px] cursor-pointer object-cover" 
                   onClick={() => openLightbox(7)} 
                 />
@@ -165,7 +174,6 @@ const GalleryMain = () => {
             </div>
           </div>
         </div>
-
         {/* YouTube Button - Enhanced visibility and responsiveness */}
         <div className="w-[100%] md:py-6 py-2 flex justify-center mt-4 md:mt-8 md:px-4 px-0">
           <button 
