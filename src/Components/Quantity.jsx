@@ -237,7 +237,7 @@ const QuantityBirthday = () => {
 
   return (
     
-    <div className="fontPoppin relative h-auto p-4 flex items-center z-10 justify-center bg-cover bg-center w-[100%]" style={{ backgroundImage: "url('/assets/home-header-01.jpg')" }}>
+    <div className="fontPoppin relative h-auto p-4 flex items-center z-10 justify-center bg-cover bg-center w-[100%]" style={{ backgroundImage: "url('assets/home-header-01.jpg')" }}>
     <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/30 backdrop-blur"></div>
        
       <div className="fontPoppin bg-white rounded-xl shadow-2xl md:w-[500px] max-w-full z-10 mt-[20%] md:mt-[4%] overflow-hidden">

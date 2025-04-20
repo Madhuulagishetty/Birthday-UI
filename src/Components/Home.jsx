@@ -46,9 +46,9 @@ const Home = () => {
   }, []);
 
   const images = [
-    "//assets/delax-01.JPG",
-    "//assets/delax-08.JPG",
-    "//assets/delax-04.JPG",
+    "assets/delax-01.JPG",
+    "assets/delax-08.JPG",
+    "assets/delax-04.JPG",
   ];
 
   const sliderSettings = {
@@ -104,7 +104,7 @@ const Home = () => {
       <motion.div
         className="relative w-full h-screen flex justify-center items-center p-4 bg-cover bg-center"
         style={{
-          backgroundImage: `url('//assets/home-header-01.jpg')`,
+          backgroundImage: `url('assets/home-header-01.jpg')`,
         }}
         initial="hidden"
         animate="visible"

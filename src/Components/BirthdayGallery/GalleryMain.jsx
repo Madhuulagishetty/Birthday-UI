@@ -19,13 +19,13 @@ const GalleryMain = () => {
   }, []);
 
   const images = [
-    "//assets/delax-04.JPG",
-    "//assets/relax-05.jpg",
-    "//assets/relax-04.jpg",
-    "//assets/delax-07.JPG",
-    "//assets/relax-06.jpg",
-    "//assets/delax-05.JPG",
-    "//assets/gallery-08.jpg",
+    "assets/delax-04.JPG",
+    "assets/relax-05.jpg",
+    "assets/relax-04.jpg",
+    "assets/delax-07.JPG",
+    "assets/relax-06.jpg",
+    "assets/delax-05.JPG",
+    "assets/gallery-08.jpg",
  
 
    
@@ -56,7 +56,7 @@ const GalleryMain = () => {
         <div 
           className="bg-cover bg-center h-[60vh] sm:h-[40vh] md:h-[40vh] lg:h-[40vh]" 
           style={{
-            backgroundImage: 'url("//assets/inside-header.jpg")',
+            backgroundImage: 'url("assets/inside-header.jpg")',
           
             filter: 'brightness(0.8)'
           }}

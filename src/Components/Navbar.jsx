@@ -39,7 +39,7 @@ const Navbar = () => {
             <div className="hidden md:flex items-center space-x-0 justify-between hover:cursor-pointer">
                   <div className="w-[17%]" onClick={homeDirect}>
                     
-                     <img src="/assets/logo.png" alt='Akaay Studio Photography'  title='Akaay Studio Photography' />
+                     <img src="assets/logo.png" alt='Akaay Studio Photography'  title='Akaay Studio Photography' />
                   </div>
               <div className="flex items-center">
               {navItems.map((item, index) => (
@@ -72,7 +72,7 @@ const Navbar = () => {
             <div className="md:hidden flex items-center w-full justify-between">
                 <div className="w-[55%]" onClick={homeDirect}>
                     
-                    <img src="/assets/logo.png" alt='Akaay Studio Photography'  title='Akaay Studio Photography' />
+                    <img src="assets/logo.png" alt='Akaay Studio Photography'  title='Akaay Studio Photography' />
                  </div>
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
