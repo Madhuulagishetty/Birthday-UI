@@ -151,9 +151,9 @@ const Deluxe = () => {
   };
 
   const images = [
-    "assets/delax-10.jpg",
-    "assets/delax-11.jpg",
-    "assets/delax-12.jpg"
+    "/assets/delax-10.jpg",
+    "/assets/delax-11.jpg",
+    "/assets/delax-12.jpg"
   ];
 
   const sliderSettings = {
@@ -283,7 +283,7 @@ const Deluxe = () => {
   ).length;
 
   return (
-    <div className="fontPoppin relative w-full min-h-screen p-4 md:p-8 flex items-center justify-center bg-cover bg-center bg-[url('/assets/home-header-01.jpg')]">
+    <div className="fontPoppin relative w-full min-h-screen p-4 md:p-8 flex items-center justify-center bg-cover bg-center bg-[url('//assets/home-header-01.jpg')]">
       <div className="absolute inset-0 bg-black/60"></div>
 
       <motion.div 

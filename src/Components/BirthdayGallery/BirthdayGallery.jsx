@@ -8,14 +8,14 @@ const BirthdayGallery = () => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const images = [
-    "/assets/delax-04.JPG",
-    "/assets/relax-05.jpg",
-    "/assets/relax-04.jpg",
-    "/assets/delax-07.JPG",
-    "/assets/relax-06.jpg",
-    "/assets/delax-05.JPG",
-    "/assets/delax-03.JPG",
-    "/assets/gallery-08.jpg",
+    "//assets/delax-04.JPG",
+    "//assets/relax-05.jpg",
+    "//assets/relax-04.jpg",
+    "//assets/delax-07.JPG",
+    "//assets/relax-06.jpg",
+    "//assets/delax-05.JPG",
+    "//assets/delax-03.JPG",
+    "//assets/gallery-08.jpg",
   ];
 
   const openLightbox = (index) => {

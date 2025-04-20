@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import delaxImg from "../../assets/delax.jpg";
-// import relaxImg from "../../assets/relax.jpg";
+// import delaxImg from "../..//assets/delax.jpg";
+// import relaxImg from "../..//assets/relax.jpg";
 import { ChevronRight, Check, Star } from 'lucide-react';
 
 const Packages = () => {
@@ -107,7 +107,7 @@ const Packages = () => {
           
           <div className="relative overflow-hidden rounded-xl">
             <img
-              src={"assets/relax-13.jpg"}
+              src={"/assets/relax-13.jpg"}
               alt="Akaay Studio Thane"
                title="Akaay Studio Thane"
               className="rounded-xl w-full h-48 md:h-64 object-cover transform transition duration-700 hover:scale-110"
@@ -152,7 +152,7 @@ const Packages = () => {
           
           <div className="relative overflow-hidden rounded-xl">
             <img
-              src={"assets/deluxe-theater-T2.jpg"}
+              src={"/assets/deluxe-theater-T2.jpg"}
               alt="Akaay Studio Thane"
                   title="Akaay Studio Thane"
               className="rounded-xl w-full h-48 md:h-64 object-cover transform transition duration-700 hover:scale-110"

@@ -4,6 +4,6 @@ import react from '@vitejs/plugin-react-swc'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  assetsInclude: ["**/*.JPG", "**/*.jpg"],
+  /assetsInclude: ["**/*.JPG", "**/*.jpg"],
   base: './',
 })
