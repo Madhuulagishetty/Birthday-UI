@@ -180,8 +180,8 @@ For any questions, contact us at:
 
 Thank you for your booking! Enjoy your experience!`;
 
-      const instanceId = 'kmol8bcxdw'; // Replace with your actual Zaply instance ID
-      const authToken = 'fhog27ywnu34qd25jdtkc8ydrtjezo'; // Replace with your actual Zaply token
+      const instanceId = 'mcrtdre2eh'; // Replace with your actual Zaply instance ID
+      const authToken = 'ajhunrv7ff0j7giapl9xuz9olt6uax'; // Replace with your actual Zaply token
   
       const response = await fetch(`https://api.zaply.dev/v1/instance/${instanceId}/message/send`, {
         method: 'POST',

@@ -89,7 +89,7 @@ const Contact = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center h-[60vh] sm:h-[40vh] md:h-[40vh] lg:h-[40vh]"
         style={{
-          backgroundImage: 'url("assets/inside-header.jpg")',
+          backgroundImage: 'url("/assets/inside-header.jpg")',
           filter: 'brightness(0.8)'
         }}
       />

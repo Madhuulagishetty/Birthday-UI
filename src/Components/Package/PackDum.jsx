@@ -94,7 +94,7 @@ const Package = () => {
         >
           <div className="relative overflow-hidden rounded-xl">
             <img
-              src={"assets/rolexe-theater-T1.jpg"}
+              src={"/assets/rolexe-theater-T1.jpg"}
               alt="Akaay Studio Thane"
               title="Akaay Studio Thane"
               className="rounded-xl w-full h-48 md:h-64 object-cover transform transition duration-700 hover:scale-110"
@@ -156,7 +156,7 @@ const Package = () => {
         >
           <div className="relative overflow-hidden rounded-xl">
             <img
-              src={"assets/deluxe-theater-T2.jpg"}
+              src={"/assets/deluxe-theater-T2.jpg"}
               alt="Akaay Studio Thane"
               title="Akaay Studio Thane"
               className="rounded-xl w-full h-48 md:h-64 object-cover transform transition duration-700 hover:scale-110"

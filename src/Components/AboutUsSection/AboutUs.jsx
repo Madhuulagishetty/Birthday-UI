@@ -102,7 +102,7 @@ const AboutUs = () => {
       <div 
         className="bg-cover bg-center h-[50vh] sm:h-[30vh] md:h-[50vh] lg:h-[40vh] relative" 
         style={{
-           backgroundImage: 'url("assets/inside-header.jpg")',
+           backgroundImage: 'url("/assets/inside-header.jpg")',
            backgroundPosition: 'center center'
         }}
       >
@@ -136,7 +136,7 @@ const AboutUs = () => {
             <div className="rounded-2xl overflow-hidden shadow-2xl transform transition-all duration-500 hover:scale-105 relative group">
               <div className="absolute inset-0 bg-gradient-to-r from-pink-600/40 via-purple-600/40 to-blue-600/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
               <img 
-                src="assets/delax.jpg"
+                src="/assets/delax.jpg"
                 alt="Akaay Studio Bhiwandi"
                 title="Akaay Studio Bhiwandi" 
                 className="w-full h-[250px] sm:h-[350px] md:h-[400px] lg:h-[500px] object-cover"

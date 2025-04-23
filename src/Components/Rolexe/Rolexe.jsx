@@ -153,9 +153,9 @@ const Rolexe = () => {
   ];
 
   const images = [
-    "assets/relax-08.jpg",
-    "assets/relax-09.jpg",
-    "assets/relax-07.jpg",
+    "/assets/relax-08.jpg",
+    "/assets/relax-09.jpg",
+    "/assets/relax-07.jpg",
   ];
 
   const sliderSettings = {
@@ -255,7 +255,7 @@ const Rolexe = () => {
   };
 
   return (
-    <div className="fontPoppin relative w-full min-h-screen p-4 flex items-center justify-center bg-cover bg-center bg-[url('assets/home-header-01.jpg')]">
+    <div className="fontPoppin relative w-full min-h-screen p-4 flex items-center justify-center bg-cover bg-center bg-[url('/assets/home-header-01.jpg')]">
       <div className="absolute inset-0 bg-black/60"></div>
 
       <motion.div 

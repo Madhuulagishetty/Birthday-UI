@@ -11,11 +11,11 @@ const ServicesSection = () => {
   const sliderRef = useRef(null);
   const navigate = useNavigate();
   const serviceImages = [
-    'assets/service-bouquet-and-other-gifts.jpg',
-    "assets/atmospheric-fog-entrances.jpg",
-    "assets/service-photoshoot.jpg",
-    "assets/service-private-movie-screening.jpg",
-    "assets/service-snacks-and-beverage.jpg",
+    '/assets/service-bouquet-and-other-gifts.jpg',
+    "/assets/atmospheric-fog-entrances.jpg",
+    "/assets/service-photoshoot.jpg",
+    "/assets/service-private-movie-screening.jpg",
+    "/assets/service-snacks-and-beverage.jpg",
 
    
     

@@ -10,7 +10,7 @@ const serviceData = [
     id: 1,
     title: "Romantic Surprise Packages",
     description: "Transform any occasion into an unforgettable memory with our thoughtfully curated surprise packages. From elegant flower arrangements to personalized gifts, we handle every detail to create a magical experience. Perfect for anniversaries, proposals, or simply showing someone special how much you care. Our team works discreetly to ensure the element of surprise remains intact while delivering an experience that speaks directly to your loved one's heart.",
-    image: 'assets/service-bouquet-and-other-gifts.jpg',
+    image: '/assets/service-bouquet-and-other-gifts.jpg',
     alt: "Romantic gift and flower arrangement",
     buttonText: "Plan Your Surprise",
     icon: <Heart className="w-5 h-5 text-pink-500" />
@@ -19,7 +19,7 @@ const serviceData = [
     id: 2,
     title: "Atmospheric Fog Entrances",
     description: "Make a dramatic statement with our signature fog entrance experience. Create an ethereal, dreamlike atmosphere that transforms any space into something magical. Our professional-grade fog systems produce a beautiful low-lying effect that's perfect for weddings, proposals, or special celebrations. We carefully control the density and flow to ensure the perfect ambiance while maintaining comfort for you and your guests. This unique touch will leave everyone in awe.",
-    image: 'assets/fog-entry-01.PNG',
+    image: '/assets/fog-entry-01.PNG',
     alt: "Atmospheric fog entrance setup",
     buttonText: "Create Magic",
     icon: <Star className="w-5 h-5 text-pink-500" />
@@ -28,7 +28,7 @@ const serviceData = [
     id: 3,
     title: "Professional Photoshoot Sessions",
     description: "Capture your special moments with our professional photography services. Our experienced photographers specialize in romantic settings and intimate moments, ensuring every emotion is preserved beautifully. We offer customized backdrops, professional lighting, and artistic direction to create stunning images you'll cherish forever. Whether it's a proposal, anniversary, or just because, we'll help you document your love story with elegance and style.",
-    image: 'assets/service-photoshoot.jpg',
+    image: '/assets/service-photoshoot.jpg',
     alt: "Professional romantic photoshoot setup",
     buttonText: "Book Your Session",
     icon: <Calendar className="w-5 h-5 text-pink-500" />
@@ -37,7 +37,7 @@ const serviceData = [
     id: 4,
     title: "Private Movie Screenings",
     description: "Experience the magic of cinema in an intimate setting with our private movie screening service. Transform any space into your personal theater with high-definition projection, surround sound, and comfortable seating. Choose from classic romance films, personal favorites, or even custom videos and slideshows. We handle all technical aspects while you focus on enjoying this unique experience with someone special. Add customized decorations and themed elements for an extra special touch.",
-    image: "assets/service-private-movie-screening.jpg",
+    image: "/assets/service-private-movie-screening.jpg",
     alt: "Private movie screening setup",
     buttonText: "Reserve Your Screening",
     icon: <Star className="w-5 h-5 text-pink-500" />
@@ -46,7 +46,7 @@ const serviceData = [
     id: 5,
     title: "Gourmet Snacks & Beverages",
     description: "Elevate your experience with our premium selection of gourmet treats and handcrafted beverages. From artisanal chocolates to fresh fruit platters, elegant canapés to custom mocktails, we offer the perfect refreshments for your special occasion. Our menu can be fully customized to accommodate dietary preferences and create perfect pairings. Each item is beautifully presented and served with attention to detail, ensuring your romantic evening has the perfect finishing touch.",
-    image: "assets/service-snacks-and-beverage.jpg",
+    image: "/assets/service-snacks-and-beverage.jpg",
     alt: "Luxury snacks and beverages arrangement",
     buttonText: "Explore Menu Options",
     icon: <Heart className="w-5 h-5 text-pink-500" />
@@ -177,7 +177,7 @@ const ServicesMain = () => {
         <div 
           className="bg-cover bg-center h-[40vh] sm:h-[40vh] md:h-[40vh] lg:h-[30vh]" 
           style={{
-            backgroundImage: 'url("assets/inside-header.jpg")',
+            backgroundImage: 'url("/assets/inside-header.jpg")',
             filter: 'brightness(0.8)'
           }}
         />
