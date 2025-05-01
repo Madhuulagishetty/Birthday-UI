@@ -46,9 +46,10 @@ const Home = () => {
   }, []);
 
   const images = [
-    "/assets/delax-01.JPG",
-    "/assets/delax-08.JPG",
-    "/assets/delax-04.JPG",
+  
+    "/assets/delax-001.jpg",
+    "/assets/delax-002.jpg",
+    "/assets/delax-003.jpg"
   ];
 
   const sliderSettings = {

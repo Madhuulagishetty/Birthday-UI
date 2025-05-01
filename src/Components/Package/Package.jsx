@@ -152,7 +152,7 @@ const Packages = () => {
           
           <div className="relative overflow-hidden rounded-xl">
             <img
-              src={"/assets/deluxe-theater-T2.jpg"}
+              src={"/assets/package-delux-changed.jpg"}
               alt="Akaay Studio Thane"
                   title="Akaay Studio Thane"
               className="rounded-xl w-full h-48 md:h-64 object-cover transform transition duration-700 hover:scale-110"

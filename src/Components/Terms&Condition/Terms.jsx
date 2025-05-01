@@ -176,7 +176,8 @@ Please remember:
 • Maintain cleanliness in the theater
 
 For any questions, contact us at: 
-📞 +91-98765-43210
+📞 +91-9764535650
+
 
 Thank you for your booking! Enjoy your experience!`;
 
