@@ -64,7 +64,7 @@ const Contact = () => {
       icons: <Mail className="w-8 h-8 text-black z-10" />,
       title: "Email Address",
       content: [
-        "akaaystudio888@gmail.com",
+        "akaaystudio888@gmail.com", 
       ]
     },
     {
