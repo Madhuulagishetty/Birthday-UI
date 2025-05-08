@@ -127,6 +127,7 @@ const TermsMain = () => {
               total_amount: amountWithTax,
               payment_id: bookingData.paymentId,
               extraDecorations: bookingData.extraDecorations,
+               address:bookingData.address,
               bookingName: bookingData.bookingName,
               slotType: bookingData.slotType,
               email: bookingData.email,
