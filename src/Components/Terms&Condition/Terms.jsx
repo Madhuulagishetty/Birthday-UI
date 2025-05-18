@@ -109,7 +109,7 @@ const TermsMain = () => {
 
   const saveBookingToSheet = async (bookingData) => {
     try {
-      return fetch('https://sheetdb.io/api/v1/dqqdhuekivsab', {
+      return fetch('https://sheetdb.io/api/v1/x6sflb64abrf4', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
