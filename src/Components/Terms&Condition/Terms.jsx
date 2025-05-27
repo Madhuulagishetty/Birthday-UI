@@ -18,7 +18,7 @@ const TermsMain = () => {
   // Pre-initialize Razorpay to avoid delay
   const [razorpayInitialized, setRazorpayInitialized] = useState(false);
   // Fixed convenience fee
-  const [convenienceFee] = useState(24.08);
+  const [convenienceFee] = useState(26);
 
   useEffect(() => {
     const data = localStorage.getItem('bookingData');
@@ -109,7 +109,7 @@ const TermsMain = () => {
 
   const saveBookingToSheet = async (bookingData) => {
     try {
-      return fetch('https://sheetdb.io/api/v1/x6sflb64abrf4', {
+      return fetch('https://sheetdb.io/api/v1/s6a0t5omac7jg', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -127,13 +127,15 @@ const TermsMain = () => {
               total_amount: amountWithTax,
               payment_id: bookingData.paymentId,
               extraDecorations: bookingData.extraDecorations,
-               address:bookingData.address,
+              address:bookingData.address,
               bookingName: bookingData.bookingName,
               slotType: bookingData.slotType,
               email: bookingData.email,
               payment_status: "Partial (Advance paid)",
               NameUser: bookingData.NameUser,
-              PaymentMode:"Online"
+              PaymentMode:"Online",
+              occasion:bookingData.occasion
+
             }
           ]
         }),

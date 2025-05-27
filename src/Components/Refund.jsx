@@ -39,7 +39,7 @@ const RefundPolicy = () => {
           <p className="mb-4">
             We collect an advance amount of Rs 1000 for reservation of a slot. This advance amount is fully refundable 
             (except convenience charges of payment gateway, if any) if booking is cancelled or we are informed about 
-            cancellation through WhatsApp chat, at least 72 hours before the slot time.
+            cancellation through WhatsApp chat, at least 48 hours before the slot time.
           </p>
           <p className="mb-4">
             Refund is usually initiated within 24 hours and takes maximum 3-5 days to be completed.
@@ -97,8 +97,8 @@ const RefundPolicy = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 text-center">Full Refund</h3>
-            <p className="mt-2 text-sm text-gray-500 text-center">Get your Rs 750 back (excluding gateway charges)</p>
+            <h3 className="text-lg font-medium text-gray-900 text-center">Rescheduled</h3>
+            
           </motion.div>
           
           <motion.div 
