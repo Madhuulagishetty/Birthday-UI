@@ -65,7 +65,7 @@ const TermsMain = () => {
   ];
   
   const Refund = [
-    "Advance amount is fully refundable if slot is cancelled at least 72 hrs before the slot time. If your slot is less than 72 hrs away from time of payment then advance is non-refundable."
+    "Refund Policy You Will Get 30% of Advance Amount If Slot Is Cancelled at Least 48 Hrs Before the Slot time.If Your Slot Is Less Than 48 hrs away From Time Of Payment Then Advance is Non-Refundable."
   ];
 
   const initializeRazorpay = () => {
