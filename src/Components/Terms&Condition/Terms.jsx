@@ -60,7 +60,7 @@ const TermsMain = () => {
     "Carrying AADHAAR CARD is mandatory. It will be scanned during entry.",
     "Couples under 18 years of age are not allowed to book the theatre",
     "Pets are strictly not allowed inside the theatre",
-    "We collect an advance amount of ₹1000 to book the slot. The remaining amount will be collected after the event.",
+    "We collect an advance amount of ₹1000 to book the slot. The remaining amount will be collected Before The Event .",
     "Customers will be liable to pay in case of any damage to the theater caused by them. Cleaning fees up to Rs 500 will be charged in cases where significant cleaning would be required after check out."
   ];
   
