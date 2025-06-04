@@ -81,7 +81,7 @@ const Package = () => {
       </div>
       
       <div className={`fontCursive text-white mt-[30%] md:mt-[0%] text-3xl md:text-5xl text-center mb-2 transform transition-all duration-1000  ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
-         <p>Decore Will Be Changes In Every 15-20 Days</p>
+         <p>Note:- Decore Will Be Changes In Every 15-20 Days</p>
         <p> Our Packages</p>
       </div>
       
