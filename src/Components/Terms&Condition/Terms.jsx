@@ -107,48 +107,70 @@ const TermsMain = () => {
     }
   };
 
-  const saveBookingToSheet = async (bookingData) => {
-    try {
-      return fetch('https://sheetdb.io/api/v1/s6a0t5omac7jg', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          data: [
-            {
-              booking_date: bookingData.date,
-              booking_time: bookingData.lastItem ? `${bookingData.lastItem.start} - ${bookingData.lastItem.end}` : "Not Available",
-              whatsapp_number: bookingData.whatsapp,
-              num_people: bookingData.people,
-              decoration: bookingData.wantDecoration ? "Yes" : "No",
-              advance_amount: advanceAmount,
-              remaining_amount: remainingAmount,
-              total_amount: amountWithTax,
-              payment_id: bookingData.paymentId,
-              extraDecorations: bookingData.extraDecorations,
-              address:bookingData.address,
-              bookingName: bookingData.bookingName,
-              slotType: bookingData.slotType,
-              email: bookingData.email,
-              payment_status: "Partial (Advance paid)",
-              NameUser: bookingData.NameUser,
-              PaymentMode:"Online",
-              occasion:bookingData.occasion
-
-            }
-          ]
-        }),
-      })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
-        return data;
-      });
-    } catch (error) {
-      console.error('Error saving to sheet:', error);
-    }
-  };
+ const saveBookingToSheet = async (bookingData) => {
+  try {
+    // Get current date and time
+    const now = new Date();
+    const currentDate = now.toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    }); // Format: DD/MM/YYYY
+    
+    const currentTime = now.toLocaleTimeString('en-IN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    }); // Format: HH:MM:SS AM/PM
+    
+    // Alternative: ISO format for precise timestamp
+    const isoTimestamp = now.toISOString(); // Format: 2025-06-10T14:30:25.123Z
+    
+    return fetch('https://sheetdb.io/api/v1/s6a0t5omac7jg', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        data: [
+          {
+            booking_date: bookingData.date,
+            booking_time: bookingData.lastItem ? `${bookingData.lastItem.start} - ${bookingData.lastItem.end}` : "Not Available",
+            whatsapp_number: bookingData.whatsapp,
+            num_people: bookingData.people,
+            decoration: bookingData.wantDecoration ? "Yes" : "No",
+            advance_amount: advanceAmount,
+            remaining_amount: remainingAmount,
+            total_amount: amountWithTax,
+            payment_id: bookingData.paymentId,
+            extraDecorations: bookingData.extraDecorations,
+            address: bookingData.address,
+            bookingName: bookingData.bookingName,
+            slotType: bookingData.slotType,
+            email: bookingData.email,
+            payment_status: "Partial (Advance paid)",
+            NameUser: bookingData.NameUser,
+            PaymentMode: "Online",
+            occasion: bookingData.occasion,
+            // New timestamp fields
+            processed_date: currentDate,
+            processed_time: currentTime,
+            processed_timestamp: isoTimestamp,
+            timezone: 'Asia/Kolkata' // Indian Standard Time
+          }
+        ]
+      }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+      return data;
+    });
+  } catch (error) {
+    console.error('Error saving to sheet:', error);
+  }
+};
 
   const sendWhatsAppReminder = async (params) => {
     console.log('sending whatsapp reminder')
