@@ -16,7 +16,6 @@
   import ContactUs from './Components/ContactUs/Contact'
   import TermsAndCondition from './Components/Terms&Condition/TermsAndCondition'
   import GalleryMain from './Components/BirthdayGallery/GalleryMain'
-
   import TermsMain from './Components/Terms&Condition/Terms'
   import ScrollToTop from './Components/ScrollTop'
   import PrivacyPolicy from './Components/privacy-policy/privacy'
