@@ -147,7 +147,7 @@ const TermsMain = () => {
             processed_date: currentDate,
             processed_time: currentTime,
             processed_timestamp: isoTimestamp,
-            timezone: 'Asia/Kolkata'
+           
           }
         ]
       }),

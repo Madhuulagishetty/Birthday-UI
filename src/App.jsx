@@ -21,8 +21,8 @@ import ScrollToTop from "./Components/ScrollTop";
 import PrivacyPolicy from "./Components/privacy-policy/privacy";
 import RefundPolicy from "./Components/Refund";
 import AboutUs from "./Components/AboutUsSection/AboutUs";
-import ProtectedRoute from "./components/ProtectedRoute";
-import RouteGuard from "./components/RouteGuard";
+import ProtectedRoute from "./Components/ProtectedRoute";
+import RouteGuard from "./Components/RouteGuard";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
