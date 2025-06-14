@@ -1,11 +1,9 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Lottie from 'react-lottie';
-// import successAnimation from '../../assets/Animation - 1741369360851.json';
-import successAnimation from '../../public//assets/Animation - 1741369360851.json'
+import successAnimation from '../../public/assets/Animation - 1741369360851.json'
 
 const ThankYouPage = () => {
-  // Lottie animation options with improved settings
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -15,16 +13,21 @@ const ThankYouPage = () => {
     }
   };
 
-  // Add animation classes to body when component mounts and remove on unmount
   useEffect(() => {
-    // Apply the animation styles when component mounts
     const styleElement = document.createElement('style');
     styleElement.innerHTML = animationStyles;
     document.head.appendChild(styleElement);
     
-    // Clean up function to remove styles when component unmounts
+    // Clear the payment completion flag after a delay to prevent back navigation issues
+    const timer = setTimeout(() => {
+      sessionStorage.removeItem('paymentCompleted');
+    }, 300000); // 5 minutes
+    
     return () => {
-      document.head.removeChild(styleElement);
+      if (document.head.contains(styleElement)) {
+        document.head.removeChild(styleElement);
+      }
+      clearTimeout(timer);
     };
   }, []);
 
@@ -73,7 +76,7 @@ const ThankYouPage = () => {
         </Link>
         
         <p className="mt-6 text-xs text-gray-400 animate-fade-in" style={{ animationDelay: '1s' }}>
-          Having trouble? <Link to="/ContactUs" className="text-purple-600 hover:underline">Contact support</Link>
+          Having trouble? <Link to="/contact-us" className="text-purple-600 hover:underline">Contact support</Link>
         </p>
       </div>
       
@@ -84,7 +87,6 @@ const ThankYouPage = () => {
   );
 };
 
-// Animation styles defined as a constant for use in the useEffect hook
 const animationStyles = `
 @keyframes fade-in-up {
   from {

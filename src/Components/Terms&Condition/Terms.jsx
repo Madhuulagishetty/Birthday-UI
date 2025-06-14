@@ -12,12 +12,10 @@ const TermsMain = () => {
   const [animateIn, setAnimateIn] = useState(false);
   const payButtonRef = useRef(null);
   const [amountWithTax, setAmountWithTax] = useState(0);
-  const [advanceAmount, setAdvanceAmount] = useState(0); // We'll calculate this with tax
-  const [baseAdvanceAmount] = useState(1000); // Fixed base advance amount (before tax)
+  const [advanceAmount, setAdvanceAmount] = useState(0);
+  const [baseAdvanceAmount] = useState(1000);
   const [remainingAmount, setRemainingAmount] = useState(0);
-  // Pre-initialize Razorpay to avoid delay
   const [razorpayInitialized, setRazorpayInitialized] = useState(false);
-  // Fixed convenience fee
   const [convenienceFee] = useState(26);
 
   useEffect(() => {
@@ -26,26 +24,21 @@ const TermsMain = () => {
       const parsedData = JSON.parse(data);
       setBookingData(parsedData);
       
-      // No tax calculation here, just set the total amount
       const baseAmount = parsedData.totalAmount;
       setAmountWithTax(baseAmount);
       
-      // Calculate advance amount with fixed convenience fee
       const advanceWithFee = baseAdvanceAmount + convenienceFee;
       setAdvanceAmount(advanceWithFee);
       
-      // Calculate remaining amount (to be paid after event)
       setRemainingAmount(baseAmount - baseAdvanceAmount);
     } else {
       navigate('/');
     }
     
-    // Trigger animations after component mounts
     setTimeout(() => {
       setAnimateIn(true);
     }, 100);
 
-    // Pre-initialize Razorpay when component mounts
     initializeRazorpay().then(success => {
       setRazorpayInitialized(success);
     });
@@ -109,23 +102,21 @@ const TermsMain = () => {
 
  const saveBookingToSheet = async (bookingData) => {
   try {
-    // Get current date and time
     const now = new Date();
     const currentDate = now.toLocaleDateString('en-IN', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric'
-    }); // Format: DD/MM/YYYY
+    });
     
     const currentTime = now.toLocaleTimeString('en-IN', {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
       hour12: true
-    }); // Format: HH:MM:SS AM/PM
+    });
     
-    // Alternative: ISO format for precise timestamp
-    const isoTimestamp = now.toISOString(); // Format: 2025-06-10T14:30:25.123Z
+    const isoTimestamp = now.toISOString();
     
     return fetch('https://sheetdb.io/api/v1/s6a0t5omac7jg', {
       method: 'POST',
@@ -153,11 +144,10 @@ const TermsMain = () => {
             NameUser: bookingData.NameUser,
             PaymentMode: "Online",
             occasion: bookingData.occasion,
-            // New timestamp fields
             processed_date: currentDate,
             processed_time: currentTime,
             processed_timestamp: isoTimestamp,
-            timezone: 'Asia/Kolkata' // Indian Standard Time
+            timezone: 'Asia/Kolkata'
           }
         ]
       }),
@@ -177,9 +167,8 @@ const TermsMain = () => {
     try {
       const { to, date, time, bookingName, people, location, slotType, decorations, extraDecorations } = params;
   
-      const formattedNumber = to.startsWith('+') ? to.slice(1) : to; // Zaply expects number without "+" (e.g. "91836...")
+      const formattedNumber = to.startsWith('+') ? to.slice(1) : to;
       
-      // Enhanced message with more details and formatting
       const message = 
 `🎬 *BOOKING CONFIRMATION* 🎬
 
@@ -206,8 +195,8 @@ For any questions, contact us at:
 
 Thank you for your booking! Enjoy your experience!`;
 
-      const instanceId = 'mcrtdre2eh'; // Replace with your actual Zaply instance ID
-      const authToken = 'ajhunrv7ff0j7giapl9xuz9olt6uax'; // Replace with your actual Zaply token
+      const instanceId = 'mcrtdre2eh';
+      const authToken = 'ajhunrv7ff0j7giapl9xuz9olt6uax';
   
       const response = await fetch(`https://api.zaply.dev/v1/instance/${instanceId}/message/send`, {
         method: 'POST',
@@ -251,10 +240,8 @@ Thank you for your booking! Enjoy your experience!`;
     return { ...saveData, id: docRef.id };
   };
 
-  // Pre-create the order to speed up the process
   const [preCreatedOrder, setPreCreatedOrder] = useState(null);
   useEffect(() => {
-    // Pre-create order if Razorpay is initialized and booking data is available
     if (razorpayInitialized && bookingData && !preCreatedOrder) {
       createOrder().then(order => {
         setPreCreatedOrder(order);
@@ -273,7 +260,6 @@ Thank you for your booking! Enjoy your experience!`;
     try {
       setIsProcessing(true);
       
-      // If Razorpay isn't initialized yet, initialize it quickly
       if (!razorpayInitialized) {
         const res = await initializeRazorpay();
         if (!res) {
@@ -283,14 +269,12 @@ Thank you for your booking! Enjoy your experience!`;
         }
       }
 
-      // Use pre-created order or create one quickly
       const order = preCreatedOrder || await createOrder();
       
-      // Open Razorpay with minimal delay
       setTimeout(() => {
         const options = {
           key: 'rzp_live_7I7nJJIaq1bIol',
-          amount: advanceAmount * 100, // Razorpay expects amount in paise
+          amount: advanceAmount * 100,
           currency: "INR",
           name: "Birthday Booking",
           description: "Advance Payment for Booking",
@@ -316,10 +300,9 @@ Thank you for your booking! Enjoy your experience!`;
               const savedBooking = await saveToFirebase(response);
               await saveBookingToSheet(savedBooking);
               
-              // Use the enhanced WhatsApp reminder function with additional booking details
               if (bookingData?.lastItem) {
                 await sendWhatsAppReminder({
-                  to: `91${bookingData.whatsapp}`, // Format for Zaply without the '+' prefix
+                  to: `91${bookingData.whatsapp}`,
                   date: bookingData.date,
                   time: `${bookingData.lastItem.start} - ${bookingData.lastItem.end}`,
                   bookingName: bookingData.bookingName || bookingData.NameUser,
@@ -331,7 +314,10 @@ Thank you for your booking! Enjoy your experience!`;
                 });
               }
 
+              // Clear booking data and set payment completion flag
               localStorage.removeItem('bookingData');
+              sessionStorage.setItem('paymentCompleted', 'true');
+              
               toast.success("Booking confirmed! Check your WhatsApp for details.");
               navigate("/thank-you");
             } catch (error) {
@@ -354,7 +340,7 @@ Thank you for your booking! Enjoy your experience!`;
 
         const paymentObject = new window.Razorpay(options);
         paymentObject.open();
-      }, 300); // Open Razorpay dashboard within 0.3 seconds
+      }, 300);
     } catch (error) {
       console.error("Error initiating payment:", error);
       toast.error("Your Internet Connection is Slow. Please try again.");
