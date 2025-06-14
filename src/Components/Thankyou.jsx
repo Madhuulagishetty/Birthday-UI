@@ -1,9 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Download, FileText, CheckCircle, Clock, MapPin, Users } from 'lucide-react';
 import Lottie from 'react-lottie';
-import successAnimation from '../../public/assets/Animation - 1741369360851.json'
+import { toast } from 'react-toastify';
+import successAnimation from '../../public/assets/Animation - 1741369360851.json';
+import { generateBookingPDF } from './utilites/generateBookingPDF';
 
 const ThankYouPage = () => {
+  const [bookingData, setBookingData] = useState(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -14,6 +20,12 @@ const ThankYouPage = () => {
   };
 
   useEffect(() => {
+    // Get booking data from localStorage
+    const storedBookingData = localStorage.getItem('completedBookingData');
+    if (storedBookingData) {
+      setBookingData(JSON.parse(storedBookingData));
+    }
+
     const styleElement = document.createElement('style');
     styleElement.innerHTML = animationStyles;
     document.head.appendChild(styleElement);
@@ -21,6 +33,7 @@ const ThankYouPage = () => {
     // Clear the payment completion flag after a delay to prevent back navigation issues
     const timer = setTimeout(() => {
       sessionStorage.removeItem('paymentCompleted');
+      localStorage.removeItem('completedBookingData'); // Clean up after 5 minutes
     }, 300000); // 5 minutes
     
     return () => {
@@ -31,57 +44,174 @@ const ThankYouPage = () => {
     };
   }, []);
 
+  const handleDownloadPDF = async () => {
+    if (!bookingData) {
+      toast.error('Booking data not available for download');
+      return;
+    }
+
+    try {
+      setIsDownloading(true);
+      
+      // Generate PDF
+      const pdf = generateBookingPDF(bookingData);
+      
+      // Create filename with booking details
+      const filename = `Booking_Confirmation_${bookingData.bookingName?.replace(/\s+/g, '_')}_${bookingData.date?.replace(/\//g, '-')}.pdf`;
+      
+      // Download the PDF
+      pdf.save(filename);
+      
+      toast.success('Booking confirmation downloaded successfully!');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast.error('Failed to download PDF. Please try again.');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-200 flex flex-col items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-8 text-center mt-8 md:mt-0 animate-fade-in-up">
-        <div className="w-48 h-48 mx-auto mb-6">
-          <Lottie 
-            options={defaultOptions}
-            height={190}
-            width={190}
-            isClickToPauseDisabled={true}
-          />
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 flex flex-col items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden mt-8 md:mt-0 animate-fade-in-up">
+        
+        {/* Header Section */}
+        <div className="bg-gradient-to-r from-purple-600 to-pink-500 p-8 text-center relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-10 rounded-full bg-white opacity-10 -mr-10 -mt-10"></div>
+          <div className="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-white opacity-10 -ml-10 -mb-10"></div>
+          
+          <div className="w-32 h-32 mx-auto mb-4 relative z-10">
+            <Lottie 
+              options={defaultOptions}
+              height={128}
+              width={128}
+              isClickToPauseDisabled={true}
+            />
+          </div>
+          
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 relative z-10">
+            🎉 Booking Confirmed!
+          </h1>
+          <p className="text-purple-100 text-lg relative z-10">
+            Your celebration is all set!
+          </p>
         </div>
-        
-        <h1 className="text-3xl font-bold text-gray-800 mb-4 animate-fade-in">
-          Booking Confirmed!
-        </h1>
-        
-        <p className="text-gray-600 mb-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-          Thank you for your booking. We've sent the details to your email and WhatsApp number.
-        </p>
-        
-        <div className="bg-purple-50 p-5 rounded-lg mb-8 text-left animate-fade-in border-l-4 border-purple-400" style={{ animationDelay: '0.4s' }}>
-          <h2 className="font-semibold text-purple-800 mb-3 text-lg">What's Next?</h2>
-          <ul className="text-sm text-gray-700 space-y-3">
-            <li className="flex items-start animate-slide-in" style={{ animationDelay: '0.6s' }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-500 mr-3 mt-0.5 flex-shrink-0">
-                <polyline points="9 11 12 14 22 4"></polyline>
-                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-              </svg>
-              <span>Check your WhatsApp for booking confirmation</span>
-            </li>
-            <li className="flex items-start animate-slide-in" style={{ animationDelay: '0.8s' }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-500 mr-3 mt-0.5 flex-shrink-0">
-                <polyline points="9 11 12 14 22 4"></polyline>
-                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-              </svg>
-              <span>You'll receive a reminder 24 hours before your event</span>
-            </li>
-          </ul>
+
+        {/* Content Section */}
+        <div className="p-8">
+          
+          {/* Quick Summary */}
+          {bookingData && (
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 mb-6 border border-purple-100">
+              <h3 className="text-lg font-semibold text-purple-800 mb-4 flex items-center">
+                <CheckCircle className="w-5 h-5 mr-2 text-green-500" />
+                Booking Summary
+              </h3>
+              
+              <div className="grid md:grid-cols-2 gap-4 text-sm">
+                <div className="flex items-center">
+                  <Users className="w-4 h-4 mr-2 text-purple-600" />
+                  <span className="text-gray-600">Guest:</span>
+                  <span className="ml-2 font-medium">{bookingData.NameUser || bookingData.bookingName}</span>
+                </div>
+                
+                <div className="flex items-center">
+                  <Clock className="w-4 h-4 mr-2 text-purple-600" />
+                  <span className="text-gray-600">Date & Time:</span>
+                  <span className="ml-2 font-medium">
+                    {bookingData.date} | {bookingData.lastItem ? `${bookingData.lastItem.start}-${bookingData.lastItem.end}` : 'N/A'}
+                  </span>
+                </div>
+                
+                <div className="flex items-center">
+                  <MapPin className="w-4 h-4 mr-2 text-purple-600" />
+                  <span className="text-gray-600">Package:</span>
+                  <span className="ml-2 font-medium capitalize">{bookingData.slotType} Theater</span>
+                </div>
+                
+                <div className="flex items-center">
+                  <FileText className="w-4 h-4 mr-2 text-purple-600" />
+                  <span className="text-gray-600">Total Amount:</span>
+                  <span className="ml-2 font-medium text-green-600">₹{bookingData.totalAmount}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Download Section */}
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-6 border border-blue-100">
+            <h3 className="text-lg font-semibold text-blue-800 mb-3 flex items-center">
+              <FileText className="w-5 h-5 mr-2" />
+              Download Your Confirmation
+            </h3>
+            <p className="text-gray-600 text-sm mb-4">
+              Get a detailed PDF with all your booking information, payment details, and important instructions.
+            </p>
+            
+            <button
+              onClick={handleDownloadPDF}
+              disabled={isDownloading || !bookingData}
+              className="w-full md:w-auto bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-3 rounded-lg hover:from-blue-600 hover:to-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            >
+              {isDownloading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Generating PDF...
+                </>
+              ) : (
+                <>
+                  <Download className="w-5 h-5 mr-2" />
+                  Download Booking Confirmation
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* What's Next Section */}
+          <div className="bg-purple-50 p-6 rounded-xl mb-6 border-l-4 border-purple-400">
+            <h2 className="font-semibold text-purple-800 mb-4 text-lg flex items-center">
+              <Clock className="w-5 h-5 mr-2" />
+              What's Next?
+            </h2>
+            <ul className="text-sm text-gray-700 space-y-3">
+
+              <li className="flex items-start animate-slide-in" style={{ animationDelay: '0.6s' }}>
+                <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                <span>Arrive 15 minutes early with your AADHAAR card</span>
+              </li>
+              <li className="flex items-start animate-slide-in" style={{ animationDelay: '0.8s' }}>
+                <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                <span>Remaining amount will be collected before the event</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col md:flex-row gap-4">
+            <Link 
+              to="/" 
+              className="flex-1 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-pink-600 transition-all duration-300 font-medium text-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            >
+              Return to Home
+            </Link>
+            
+            <Link 
+              to="/contact-us" 
+              className="flex-1 border-2 border-purple-200 text-purple-600 px-8 py-3 rounded-lg hover:bg-purple-50 transition-all duration-300 font-medium text-center"
+            >
+              Contact Support
+            </Link>
+          </div>
+
+          {/* Footer Note */}
+          <p className="mt-6 text-center text-xs text-gray-400">
+            Need help? Call us at <span className="text-purple-600 font-medium">+91-9764535650</span>
+          </p>
         </div>
-        
-        <Link to="/" className="inline-block bg-[#5D0072] text-white px-8 py-3 rounded-lg hover:bg-purple-700 hover:scale-105 transition-all duration-300 font-medium animate-bounce-subtle shadow-lg">
-          Return to Home
-        </Link>
-        
-        <p className="mt-6 text-xs text-gray-400 animate-fade-in" style={{ animationDelay: '1s' }}>
-          Having trouble? <Link to="/contact-us" className="text-purple-600 hover:underline">Contact support</Link>
-        </p>
       </div>
       
-      <div className="w-full max-w-md text-center mt-4 text-gray-400 text-xs animate-fade-in" style={{ animationDelay: '1.2s' }}>
-        © 2025 Your Company. All rights reserved.
+      <div className="w-full max-w-2xl text-center mt-4 text-gray-400 text-xs">
+        © 2025 Akaay Studio. All rights reserved.
       </div>
     </div>
   );
