@@ -6,7 +6,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { contextApi } from "../ContextApi/Context";
 import { db } from "../../index";
-import { collection, query, where, getDocs, onSnapshot } from "firebase/firestore";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { motion, AnimatePresence } from "framer-motion";
@@ -77,57 +77,109 @@ const Deluxe = () => {
     ),
   };
 
+  // Improved function to extract booked slots from Firebase documents
+  const extractBookedSlots = (documents) => {
+    const bookedSlotIds = new Set();
+    const bookedSlots = [];
+
+    documents.forEach((doc) => {
+      const data = doc.data();
+      console.log('Processing document:', doc.id, data);
+
+      // Only process documents with confirmed bookings (status: "booked" and payment completed)
+      if (data.status !== "booked") {
+        console.log('Skipping document - not confirmed booking:', doc.id);
+        return;
+      }
+
+      let slotToAdd = null;
+
+      // Priority 1: Check selectedTimeSlot (most reliable)
+      if (data.selectedTimeSlot && data.selectedTimeSlot.id) {
+        slotToAdd = data.selectedTimeSlot;
+        console.log('Found selectedTimeSlot:', slotToAdd);
+      }
+      // Priority 2: Check cartData array
+      else if (data.cartData && Array.isArray(data.cartData) && data.cartData.length > 0) {
+        const slot = data.cartData[data.cartData.length - 1]; // Get the last item (most recent)
+        if (slot && slot.id && slot.start && slot.end) {
+          slotToAdd = slot;
+          console.log('Found slot in cartData:', slotToAdd);
+        }
+      }
+      // Priority 3: Check lastItem directly
+      else if (data.lastItem && data.lastItem.id) {
+        slotToAdd = data.lastItem;
+        console.log('Found lastItem:', slotToAdd);
+      }
+
+      // Add the slot if found and not already added
+      if (slotToAdd && !bookedSlotIds.has(slotToAdd.id)) {
+        bookedSlotIds.add(slotToAdd.id);
+        bookedSlots.push(slotToAdd);
+        console.log('Added booked slot:', slotToAdd);
+      }
+    });
+
+    return bookedSlots;
+  };
+
   // Fetch booked slots with real-time updates
   useEffect(() => {
-    if (!date) return;
+    if (!date) {
+      setIsLoading(false);
+      return;
+    }
 
     setIsLoading(true);
+    console.log('Setting up real-time listener for date:', date);
     
     const bookingsRef = collection(db, "deluxe");
     const q = query(bookingsRef, where("date", "==", date));
 
-    // Use real-time listener instead of one-time fetch
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      try {
-        const booked = [];
-        querySnapshot.docs.forEach((doc) => {
-          const data = doc.data();
-          console.log('Document data:', data); // Debug log
+    // Use real-time listener for immediate updates
+    const unsubscribe = onSnapshot(q, 
+      (querySnapshot) => {
+        try {
+          console.log('Received snapshot update, documents:', querySnapshot.size);
           
-          // Check if cartData exists and has the slot information
-          if (data.cartData && Array.isArray(data.cartData) && data.cartData.length > 0) {
-            const slot = data.cartData[0];
-            // Ensure the slot has required properties
-            if (slot && slot.id && slot.start && slot.end) {
-              booked.push(slot);
-            }
-          }
+          const documents = querySnapshot.docs;
+          const extractedSlots = extractBookedSlots(documents);
           
-          // Also check if there's a direct slot reference
-          if (data.selectedTimeSlot && data.selectedTimeSlot.id) {
-            booked.push(data.selectedTimeSlot);
-          }
-        });
-
-        console.log('Booked slots found:', booked);
-        setBookedSlots(booked);
+          console.log('Final booked slots:', extractedSlots);
+          setBookedSlots(extractedSlots);
+          setIsLoading(false);
+        } catch (error) {
+          console.error("Error processing booked slots:", error);
+          setIsLoading(false);
+          toast.error("Error loading booked slots. Please refresh the page.");
+        }
+      }, 
+      (error) => {
+        console.error("Error fetching booked slots:", error);
         setIsLoading(false);
-      } catch (error) {
-        console.error("Error processing booked slots:", error);
-        setIsLoading(false);
+        toast.error("Error connecting to database. Please check your internet connection.");
       }
-    }, (error) => {
-      console.error("Error fetching booked slots:", error);
-      setIsLoading(false);
-    });
+    );
 
-    // Cleanup subscription on component unmount
-    return () => unsubscribe();
+    // Cleanup subscription on component unmount or date change
+    return () => {
+      console.log('Cleaning up listener for date:', date);
+      unsubscribe();
+    };
   }, [date, bookingRefresh]);
 
   const handleBooking = () => {
     if (!selectedTimeSlot) {
       toast.error("Please select a time slot before proceeding.");
+      return;
+    }
+
+    // Check if the slot is already booked (double-check)
+    const isSlotBooked = bookedSlots.some(booked => booked.id === selectedTimeSlot.id);
+    if (isSlotBooked) {
+      toast.error("This slot has been booked by someone else. Please select another slot.");
+      setSelectedTimeSlot(null);
       return;
     }
     
@@ -263,7 +315,13 @@ const Deluxe = () => {
               className="inline-flex justify-center"
               whileHover={{ scale: 1.05 }}
             >
-              <div className="px-3 py-1 bg-green-50 text-green-500 rounded-full border border-green-500 text-[12px] md:text-sm">
+              <div className={`px-3 py-1 rounded-full border text-[12px] md:text-sm ${
+                isLoading 
+                  ? 'bg-gray-50 text-gray-500 border-gray-300' 
+                  : availableSlots > 0 
+                    ? 'bg-green-50 text-green-500 border-green-500'
+                    : 'bg-red-50 text-red-500 border-red-500'
+              }`}>
                 <span>
                   {isLoading ? 'Loading...' : `${availableSlots} Slots Available`}
                 </span>

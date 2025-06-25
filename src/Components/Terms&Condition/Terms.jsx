@@ -224,34 +224,57 @@ Thank you for your booking! Enjoy your experience!`;
   const saveToFirebase = async (paymentDetails) => {
     if (!bookingData) return;
 
-    // Enhanced booking data with better structure
+    // Create a robust booking data structure for Firebase
     const saveData = {
-      ...bookingData,
-      status: "booked",
+      // Basic booking information
+      bookingName: bookingData.bookingName,
+      NameUser: bookingData.NameUser,
+      email: bookingData.email,
+      address: bookingData.address,
+      whatsapp: bookingData.whatsapp,
+      date: bookingData.date,
+      people: bookingData.people,
+      
+      // Booking preferences
+      wantDecoration: bookingData.wantDecoration,
+      occasion: bookingData.occasion,
+      extraDecorations: bookingData.extraDecorations || [],
+      
+      // Slot information - Store in multiple formats for reliability
+      selectedTimeSlot: bookingData.lastItem || bookingData.cartData?.[0] || null,
+      lastItem: bookingData.lastItem || bookingData.cartData?.[0] || null,
+      cartData: bookingData.cartData || [],
+      slotType: bookingData.slotType,
+      
+      // Payment information
+      status: "booked", // This is the key field for filtering booked slots
       paymentId: paymentDetails.razorpay_payment_id,
-      timestamp: new Date(),
+      orderId: paymentDetails.razorpay_order_id,
       paymentStatus: 'partial',
       advancePaid: advanceAmount,
       remainingAmount: remainingAmount,
       totalAmount: amountWithTax,
-      orderId: paymentDetails.razorpay_order_id,
-      // Ensure cartData is properly structured
-      cartData: bookingData.cartData || [],
-      // Add the selected time slot explicitly
-      selectedTimeSlot: bookingData.lastItem || bookingData.cartData?.[0] || null,
-      // Add booking metadata
+      
+      // Timestamps
+      timestamp: new Date(),
+      createdAt: new Date(),
+      
+      // Metadata
       bookingMeta: {
         createdAt: new Date(),
         source: 'web',
-        version: '1.0'
+        version: '1.0',
+        paymentMethod: 'razorpay'
       }
     };
 
-    console.log('Saving to Firebase:', saveData); // Debug log
+    console.log('Saving to Firebase with structure:', saveData);
 
     try {
-      const docRef = await addDoc(collection(db, bookingData.slotType), saveData);
-      console.log('Booking saved with ID:', docRef.id);
+      const collectionName = bookingData.slotType; // 'deluxe' or 'rolexe'
+      const docRef = await addDoc(collection(db, collectionName), saveData);
+      console.log('Booking saved successfully with ID:', docRef.id);
+      
       return { ...saveData, id: docRef.id };
     } catch (error) {
       console.error('Error saving to Firebase:', error);
@@ -316,7 +339,7 @@ Thank you for your booking! Enjoy your experience!`;
                 throw new Error('Payment verification failed');
               }
 
-              // Save booking to Firebase with enhanced data
+              // Save booking to Firebase with enhanced data structure
               const savedBooking = await saveToFirebase(response);
               
               // Save to Google Sheets
@@ -347,10 +370,12 @@ Thank you for your booking! Enjoy your experience!`;
               localStorage.removeItem('bookingData');
               sessionStorage.setItem('paymentCompleted', 'true');
               
-              // Trigger refresh in slot components
+              // Trigger refresh in slot components to update availability
               triggerBookingRefresh();
               
               toast.success("Booking confirmed! Check your WhatsApp for details.");
+              
+              // Navigate to thank you page
               navigate("/thank-you");
             } catch (error) {
               console.error("Error processing payment:", error);
