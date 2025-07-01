@@ -97,11 +97,11 @@ const QuantityBirthday = () => {
     NameUser
   ]);
   
-  const basePrice = slotType === "deluxe" ? 2000 : slotType === "rolexe" ? 1500 : 2000;
+  const basePrice = slotType === "deluxe" ? 1 : slotType === "rolexe" ? 1 : 1;
   console.log("Selected SlotType:", slotType);
 
   console.log(basePrice);
-  const decorationPrice = 500;
+  const decorationPrice = 1;
   const lastItem = cartData.length > 0 ? cartData[cartData.length - 1] : null;
 
   const calculateTotal = () => {
@@ -113,39 +113,39 @@ const QuantityBirthday = () => {
 
     // Handle all decoration types with their proper prices
     if (extraDecorations.includes("fog-01")) {
-      total += 750; // Fog price (02 Pots)
+      total += 1; // Fog price (02 Pots)
     }
     if (extraDecorations.includes("fog-02")) {
-      total += 1000; // Fog price (04 Pots)
+      total += 1; // Fog price (04 Pots)
     }
     if (extraDecorations.includes("candle_light")) {
-      total += 499; // Candle Light Dinner price
+      total += 1; // Candle Light Dinner price
     }
     if (extraDecorations.includes("photo_clipping")) {
-      total += 149; // Photo Clipping price
+      total += 1; // Photo Clipping price
     }
     if (extraDecorations.includes("led_numbers")) {
-      total += 99; // LED Numbers price
+      total += 1; // LED Numbers price
     }
     if (extraDecorations.includes("led_hbd")) {
-      total += 99; // LED HBD price
+      total += 1; // LED HBD price
     }
     if (extraDecorations.includes("candle_pathway")) {
-      total += 249; // Candle Pathway price
+      total += 1; // Candle Pathway price
     }
     if (extraDecorations.includes("cold_piros")) {
-      total += 499; // Cold Piros price
+      total += 1; // Cold Piros price
     }
     if (extraDecorations.includes("reel")) {
-      total += 999; // Reel price
+      total += 1; // Reel price
     }
     if (extraDecorations.includes("photography")) {
-      total += 1499; // Photography price
+      total += 1; // Photography price
     }
     
     // Apply different logic based on package type
     if (people > baseLimit) {
-      total += (people - baseLimit) * 150;
+      total += (people - baseLimit) * 1;
     }
 
     return total;
@@ -252,7 +252,7 @@ const QuantityBirthday = () => {
               <Star className="w-4 h-4 mr-1 fill-amber-300 text-amber-200" />
               <span className="text-lg capitalize font-semibold">{slotType} package</span>
             </div>
-            <span className="ml-3 text-white/90 font-medium">₹{basePrice} base price</span>
+            <span className="ml-3 text-white/90 font-medium">${basePrice} base price</span>
           </div>
           
           <div className="mt-4 flex flex-col sm:flex-row gap-3">
@@ -340,7 +340,7 @@ const QuantityBirthday = () => {
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Additional charge of ₹150 per person beyond {baseLimit} people
+                    Additional charge of $1 per person beyond {baseLimit} people
                   </div>
                 )}
               </div>
@@ -459,7 +459,7 @@ const QuantityBirthday = () => {
                     } transition-colors`}
                   >
                     <Gift className="w-5 h-5 mr-2" />
-                    <span>Yes, Decorate (₹500)</span>
+                    <span>Yes, Decorate ($1)</span>
                   </button>
                   
                   <button
@@ -484,16 +484,16 @@ const QuantityBirthday = () => {
                 
                 <div className="space-y-2">
                   {[
-                    { id: "fog-01", name: "Fog Entry (02 Pots)", price: 750, icon: "🌫️" },
-                    { id: "fog-02", name: "Fog Entry (04 Pots)", price: 1000, icon: "🌫️" },
-                    { id: "candle_light", name: "Candle Light Dinner", price: 499, icon: "🕯️" },
-                    { id: "photo_clipping", name: "Photo Clipping", price: 149, icon: "📸" },
-                    { id: "led_numbers", name: "LED Numbers", price: 99, icon: "🔢" },
-                    { id: "led_hbd", name: "LED HBD", price: 99, icon: "✨" },
-                    { id: "candle_pathway", name: "Candle Pathway", price: 249, icon: "🕯️" },
-                    { id: "cold_piros", name: "Cold Piros (02 pcs)", price: 499, icon: "❄️" },
-                    { id: "reel", name: "Reel", price: 999, icon: "📹" },
-                    { id: "photography", name: "Photography (1 hour Unlimited Clicks)", price: 1499, icon: "📷" }
+                    { id: "fog-01", name: "Fog Entry (02 Pots)", price: 1, icon: "🌫️" },
+                    { id: "fog-02", name: "Fog Entry (04 Pots)", price: 1, icon: "🌫️" },
+                    { id: "candle_light", name: "Candle Light Dinner", price: 1, icon: "🕯️" },
+                    { id: "photo_clipping", name: "Photo Clipping", price: 1, icon: "📸" },
+                    { id: "led_numbers", name: "LED Numbers", price: 1, icon: "🔢" },
+                    { id: "led_hbd", name: "LED HBD", price: 1, icon: "✨" },
+                    { id: "candle_pathway", name: "Candle Pathway", price: 1, icon: "🕯️" },
+                    { id: "cold_piros", name: "Cold Piros (02 pcs)", price: 1, icon: "❄️" },
+                    { id: "reel", name: "Reel", price: 1, icon: "📹" },
+                    { id: "photography", name: "Photography (1 hour Unlimited Clicks)", price: 1, icon: "📷" }
                   ].map(item => (
                     <label key={item.id} className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-all ${
                       extraDecorations.includes(item.id) ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-gray-300'
@@ -504,7 +504,7 @@ const QuantityBirthday = () => {
                       </div>
                       
                       <div className="flex items-center">
-                        <span className="text-gray-700 mr-3">₹{item.price}</span>
+                        <span className="text-gray-700 mr-3">${item.price}</span>
                         <input 
                           type="checkbox"
                           className="w-5 h-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
@@ -530,13 +530,13 @@ const QuantityBirthday = () => {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span>{slotType.charAt(0).toUpperCase() + slotType.slice(1)} Package</span>
-                      <span>₹{basePrice}</span>
+                      <span>${basePrice}</span>
                     </div>
                     
                     {wantDecoration === "Yes" && (
                       <div className="flex justify-between">
                         <span>Standard Decoration</span>
-                        <span>₹{decorationPrice}</span>
+                        <span>${decorationPrice}</span>
                       </div>
                     )}
                     
@@ -546,61 +546,61 @@ const QuantityBirthday = () => {
                         {extraDecorations.includes("fog-01") && (
                           <div className="flex justify-between text-sm">
                             <span>Fog Entry (02 Pots)</span>
-                            <span>₹750</span>
+                            <span>$1</span>
                           </div>
                         )}
                          {extraDecorations.includes("fog-02") && (
                           <div className="flex justify-between text-sm">
                             <span>Fog Entry (04 Pots)</span>
-                            <span>₹1000</span>
+                            <span>$1</span>
                           </div>
                         )}
                         {extraDecorations.includes("candle_light") && (
                           <div className="flex justify-between text-sm">
                             <span>Candle Light Dinner</span>
-                            <span>₹499</span>
+                            <span>$1</span>
                           </div>
                         )}
                         {extraDecorations.includes("photo_clipping") && (
                           <div className="flex justify-between text-sm">
                             <span>Photo Clipping</span>
-                            <span>₹149</span>
+                            <span>$1</span>
                           </div>
                         )}
                         {extraDecorations.includes("led_numbers") && (
                           <div className="flex justify-between text-sm">
                             <span>LED Numbers</span>
-                            <span>₹99</span>
+                            <span>$1</span>
                           </div>
                         )}
                         {extraDecorations.includes("led_hbd") && (
                           <div className="flex justify-between text-sm">
                             <span>LED HBD</span>
-                            <span>₹99</span>
+                            <span>$1</span>
                           </div>
                         )}
                         {extraDecorations.includes("candle_pathway") && (
                           <div className="flex justify-between text-sm">
                             <span>Candle Pathway</span>
-                            <span>₹249</span>
+                            <span>$1</span>
                           </div>
                         )}
                         {extraDecorations.includes("cold_piros") && (
                           <div className="flex justify-between text-sm">
                             <span>Cold Piros</span>
-                            <span>₹499</span>
+                            <span>$1</span>
                           </div>
                         )}
                         {extraDecorations.includes("reel") && (
                           <div className="flex justify-between text-sm">
                             <span>Reel</span>
-                            <span>₹999</span>
+                            <span>$1</span>
                           </div>
                         )}
                         {extraDecorations.includes("photography") && (
                           <div className="flex justify-between text-sm">
                             <span>Photography (1 hr)</span>
-                            <span>₹1499</span>
+                            <span>$1</span>
                           </div>
                         )}
                       </div>
@@ -608,15 +608,15 @@ const QuantityBirthday = () => {
                     
                     {people > baseLimit && (
                       <div className="flex justify-between">
-                        <span>Extra People ({people - baseLimit} × ₹150)</span>
-                        <span>₹{(people - baseLimit) * 150}</span>
+                        <span>Extra People ({people - baseLimit} × $1)</span>
+                        <span>${(people - baseLimit) * 1}</span>
                       </div>
                     )}
                     
                     <div className="pt-2 border-t border-purple-200 mt-2">
                       <div className="flex justify-between font-bold text-lg">
                         <span className="text-purple-800">Total</span>
-                        <span className="text-pink-600">₹{calculateTotal()}</span>
+                        <span className="text-pink-600">${calculateTotal()}</span>
                       </div>
                     </div>
                   </div>
@@ -634,8 +634,7 @@ const QuantityBirthday = () => {
                     onClick={handleProceed}
                     className="flex-1 py-3 px-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-lg hover:from-purple-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
                   >
-                    <CreditCard className="w-5 h-5 mr-2" />
-                    Proceed to Book
+                    <CreditCard className="w-5 h-5 mr-2" />Proceed to Payment
                   </button>
                 </div>
               </div>
@@ -644,21 +643,17 @@ const QuantityBirthday = () => {
         </div>
       </div>
       
-      
-      
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
+      <ToastContainer 
+        position="top-right"
+        autoClose={3000}
         hideProgressBar={false}
-        toastStyle={{
-          marginTop: window.innerWidth < 768 ? "15%" : "10%",
-          borderRadius: "10px",
-          background: "#fff",
-          color: "#333",
-          boxShadow: "0 8px 16px rgba(0,0,0,0.1)",
-          padding: "16px",
-          fontSize: "14px",
-        }}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
       />
     </div>
   );
