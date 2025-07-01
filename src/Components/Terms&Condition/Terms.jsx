@@ -15,10 +15,10 @@ const TermsMain = () => {
   const payButtonRef = useRef(null);
   const [amountWithTax, setAmountWithTax] = useState(0);
   const [advanceAmount, setAdvanceAmount] = useState(0);
-  const [baseAdvanceAmount] = useState(1000);
+  const [baseAdvanceAmount] = useState(0); // Changed from 1000 to 0
   const [remainingAmount, setRemainingAmount] = useState(0);
   const [razorpayInitialized, setRazorpayInitialized] = useState(false);
-  const [convenienceFee] = useState(26);
+  const [convenienceFee] = useState(0); // Changed from 26 to 0
 
   useEffect(() => {
     const data = localStorage.getItem('bookingData');
@@ -26,13 +26,13 @@ const TermsMain = () => {
       const parsedData = JSON.parse(data);
       setBookingData(parsedData);
 
-      const baseAmount = parsedData.totalAmount;
+      const baseAmount = 20; // Fixed amount of 20rs
       setAmountWithTax(baseAmount);
       
-      const advanceWithFee = baseAdvanceAmount + convenienceFee;
+      const advanceWithFee = baseAdvanceAmount + convenienceFee; // This will be 0 + 0 = 0
       setAdvanceAmount(advanceWithFee);
       
-      setRemainingAmount(baseAmount - baseAdvanceAmount);
+      setRemainingAmount(baseAmount - baseAdvanceAmount); // This will be 20 - 0 = 20
     } else {
       navigate('/');
     }
@@ -55,7 +55,7 @@ const TermsMain = () => {
     "Carrying AADHAAR CARD is mandatory. It will be scanned during entry.",
     "Couples under 18 years of age are not allowed to book the theatre",
     "Pets are strictly not allowed inside the theatre",
-    "We collect an advance amount of ₹1000 to book the slot. The remaining amount will be collected Before The Event .",
+    "We collect an advance amount of ₹0 to book the slot. The remaining amount will be collected Before The Event .", // Updated text
     "Customers will be liable to pay in case of any damage to the theater caused by them. Cleaning fees up to Rs 500 will be charged in cases where significant cleaning would be required after check out."
   ];
 
@@ -302,6 +302,56 @@ Thank you for your booking! Enjoy your experience!`;
     try {
       setIsProcessing(true);
       
+      // Since advance amount is 0, we'll skip the payment process and directly save the booking
+      if (advanceAmount === 0) {
+        // Create a mock payment response for zero amount
+        const mockResponse = {
+          razorpay_payment_id: 'ZERO_AMOUNT_' + Date.now(),
+          razorpay_order_id: 'ORDER_' + Date.now(),
+          razorpay_signature: 'ZERO_AMOUNT_SIGNATURE'
+        };
+
+        // Save booking to Firebase with enhanced data structure
+        const savedBooking = await saveToFirebase(mockResponse);
+        
+        // Save to Google Sheets
+        await saveBookingToSheet({
+          ...savedBooking,
+          paymentId: mockResponse.razorpay_payment_id
+        });
+        
+        // Send WhatsApp confirmation
+        if (bookingData?.lastItem) {
+          await sendWhatsAppReminder({
+            to: `91${bookingData.whatsapp}`,
+            date: bookingData.date,
+            time: `${bookingData.lastItem.start} - ${bookingData.lastItem.end}`,
+            bookingName: bookingData.bookingName || bookingData.NameUser,
+            people: bookingData.people,
+            location: bookingData.location || '',
+            slotType: bookingData.slotType,
+            decorations: bookingData.wantDecoration,
+            extraDecorations: bookingData.extraDecorations
+          });
+        }
+
+        // Store completed booking data for thank you page
+        localStorage.setItem('completedBookingData', JSON.stringify(savedBooking));
+        
+        // Clear booking data and set payment completion flag
+        localStorage.removeItem('bookingData');
+        sessionStorage.setItem('paymentCompleted', 'true');
+        
+        // Trigger refresh in slot components to update availability
+        triggerBookingRefresh();
+        
+        toast.success("Booking confirmed! Check your WhatsApp for details.");
+        
+        // Navigate to thank you page
+        navigate("/thank-you");
+        return;
+      }
+
       if (!razorpayInitialized) {
         const res = await initializeRazorpay();
         if (!res) {
@@ -539,6 +589,8 @@ Thank you for your booking! Enjoy your experience!`;
                           </svg>
                           Processing...
                         </span>
+                      ) : advanceAmount === 0 ? (
+                        `Confirm Booking`
                       ) : (
                         `Pay Advance ₹${formatCurrency(advanceAmount)}`
                       )}
