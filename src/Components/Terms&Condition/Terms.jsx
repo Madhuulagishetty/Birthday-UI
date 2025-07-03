@@ -80,7 +80,7 @@ const TermsMain = () => {
 
   const createOrder = async () => {
     try {
-      const response = await fetch('https://backend-kf6u.onrender.com/create-order', {
+      const response = await fetch('https://birthday-backend-tau.vercel.app/create-order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -320,10 +320,12 @@ Thank you for your booking! Enjoy your experience!`;
           currency: "INR",
           name: "Birthday Booking",
           description: "Advance Payment for Booking",
+          callback_url: "https://birthday-backend-tau.vercel.app//api/verify-payment",
           order_id: order.id,
+          redirect: true,
           handler: async function (response) {
             try {
-              const verifyResponse = await fetch('https://backend-kf6u.onrender.com/verify-payment', {
+              const verifyResponse = await fetch('https://birthday-backend-tau.vercel.app/verify-payment', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
