@@ -320,7 +320,7 @@ Thank you for your booking! Enjoy your experience!`;
           currency: "INR",
           name: "Birthday Booking",
           description: "Advance Payment for Booking",
-          callback_url: "https://birthday-backend-tau.vercel.app//api/verify-payment",
+          callback_url: "https://birthday-ui.vercel.app/terms-conditions",
           order_id: order.id,
           redirect: true,
           handler: async function (response) {
