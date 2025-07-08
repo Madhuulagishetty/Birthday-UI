@@ -19,6 +19,9 @@ const TermsMain = () => {
   const [remainingAmount, setRemainingAmount] = useState(0);
   const [razorpayInitialized, setRazorpayInitialized] = useState(false);
   const [convenienceFee] = useState(2);
+  const [paymentStatus, setPaymentStatus] = useState("pending");
+  const [orderId, setOrderId] = useState(null);
+  const [pollingInterval, setPollingInterval] = useState(null);
 
   useEffect(() => {
     const data = localStorage.getItem("bookingData");
@@ -44,6 +47,13 @@ const TermsMain = () => {
     initializeRazorpay().then((success) => {
       setRazorpayInitialized(success);
     });
+
+    // Clean up any existing polling interval
+    return () => {
+      if (pollingInterval) {
+        clearInterval(pollingInterval);
+      }
+    };
   }, [navigate, baseAdvanceAmount, convenienceFee]);
 
   const termsItems = [
@@ -80,24 +90,23 @@ const TermsMain = () => {
 
   const createOrder = async () => {
     try {
-      const response = await fetch(
-        "https://birthday-backend-tau.vercel.app/create-order",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            amount: advanceAmount,
-          }),
-        }
-      );
+      const response = await fetch("http://localhost:3000/create-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: advanceAmount,
+          bookingData: bookingData,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to create order");
       }
 
       const order = await response.json();
+      setOrderId(order.id);
       return order;
     } catch (error) {
       console.error("Error creating order:", error);
@@ -105,207 +114,77 @@ const TermsMain = () => {
     }
   };
 
-  const saveBookingToSheet = async (bookingData) => {
+  // Polling function to check payment status
+  const checkPaymentStatus = async (orderId) => {
     try {
-      const now = new Date();
-      const currentDate = now.toLocaleDateString("en-IN", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
-
-      const currentTime = now.toLocaleTimeString("en-IN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true,
-      });
-
-      const isoTimestamp = now.toISOString();
-
-      return fetch("https://sheetdb.io/api/v1/s6a0t5omac7jg", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          data: [
-            {
-              booking_date: bookingData.date,
-              booking_time: bookingData.lastItem
-                ? `${bookingData.lastItem.start} - ${bookingData.lastItem.end}`
-                : "Not Available",
-              whatsapp_number: bookingData.whatsapp,
-              num_people: bookingData.people,
-              decoration: bookingData.wantDecoration ? "Yes" : "No",
-              advance_amount: advanceAmount,
-              remaining_amount: remainingAmount,
-              total_amount: amountWithTax,
-              payment_id: bookingData.paymentId,
-              extraDecorations: bookingData.extraDecorations,
-              address: bookingData.address,
-              bookingName: bookingData.bookingName,
-              slotType: bookingData.slotType,
-              email: bookingData.email,
-              payment_status: "Partial (Advance paid)",
-              NameUser: bookingData.NameUser,
-              PaymentMode: "Online",
-              occasion: bookingData.occasion,
-              processed_date: currentDate,
-              processed_time: currentTime,
-              processed_timestamp: isoTimestamp,
-            },
-          ],
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Success:", data);
-          return data;
-        });
-    } catch (error) {
-      console.error("Error saving to sheet:", error);
-    }
-  };
-
-  const sendWhatsAppReminder = async (params) => {
-    console.log("sending whatsapp reminder");
-    try {
-      const {
-        to,
-        date,
-        time,
-        bookingName,
-        people,
-        location,
-        slotType,
-        decorations,
-        extraDecorations,
-      } = params;
-
-      const formattedNumber = to.startsWith("+") ? to.slice(1) : to;
-
-      const message = `🎬 BOOKING CONFIRMATION 🎬
-
-Hello ${bookingName || "there"}!
-
-Your theater booking is confirmed!
-
-📅 Date: ${date}
-⏰ Time: ${time}
-👥 Guests: ${people || "(not specified)"}
-🏠 Venue: Mini Theater ${location || ""}
-🎫 Slot Type: ${slotType || "Standard"}
-${
-  decorations
-    ? `✨ *Decorations:* Yes${
-        extraDecorations ? `\n   Details: ${extraDecorations}` : ""
-      }`
-    : ""
-}
-
-Please remember:
-• Arrive 15 minutes early
-• Bring your AADHAAR card for verification
-• No smoking/drinking allowed inside
-• Maintain cleanliness in the theater
-
-For any questions, contact us at:
-📞 +91-9764535650
-
-Thank you for your booking! Enjoy your experience!`;
-
-      const instanceId = "mcrtdre2eh";
-      const authToken = "ajhunrv7ff0j7giapl9xuz9olt6uax";
-
       const response = await fetch(
-        `https://api.zaply.dev/v1/instance/${instanceId}/message/send`,
+        `http://localhost:3000/check-payment-status/${orderId}`,
         {
-          method: "POST",
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${authToken}`,
           },
-          body: JSON.stringify({
-            number: formattedNumber,
-            message,
-          }),
         }
       );
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          `Failed to send WhatsApp reminder: ${response.status} - ${errorData.message}`
-        );
+        throw new Error("Failed to check payment status");
       }
 
-      console.log("WhatsApp reminder sent successfully!");
+      const result = await response.json();
+      return result;
     } catch (error) {
-      console.error("Error sending WhatsApp reminder:", error);
+      console.error("Error checking payment status:", error);
+      return { status: "pending" };
     }
   };
 
-  const saveToFirebase = async (paymentDetails) => {
-    if (!bookingData) return;
+  // Start polling for payment status
+  const startPolling = (orderId) => {
+    let pollCount = 0;
+    const maxPolls = 150; // 5 minutes at 2-second intervals
 
-    // Create a robust booking data structure for Firebase
-    const saveData = {
-      // Basic booking information
-      bookingName: bookingData.bookingName,
-      NameUser: bookingData.NameUser,
-      email: bookingData.email,
-      address: bookingData.address,
-      whatsapp: bookingData.whatsapp,
-      date: bookingData.date,
-      people: bookingData.people,
+    const interval = setInterval(async () => {
+      pollCount++;
+      const result = await checkPaymentStatus(orderId);
 
-      // Booking preferences
-      wantDecoration: bookingData.wantDecoration,
-      occasion: bookingData.occasion,
-      extraDecorations: bookingData.extraDecorations || [],
+      if (result.status === "success") {
+        clearInterval(interval);
+        setPollingInterval(null);
+        setPaymentStatus("success");
 
-      // Slot information - Store in multiple formats for reliability
-      selectedTimeSlot:
-        bookingData.lastItem || bookingData.cartData?.[0] || null,
-      lastItem: bookingData.lastItem || bookingData.cartData?.[0] || null,
-      cartData: bookingData.cartData || [],
-      slotType: bookingData.slotType,
+        // Store booking data and redirect
+        localStorage.setItem(
+          "completedBookingData",
+          JSON.stringify(result.bookingData)
+        );
+        localStorage.removeItem("bookingData");
+        sessionStorage.setItem("paymentCompleted", "true");
 
-      // Payment information
-      status: "booked", // This is the key field for filtering booked slots
-      paymentId: paymentDetails.razorpay_payment_id,
-      orderId: paymentDetails.razorpay_order_id,
-      paymentStatus: "partial",
-      advancePaid: advanceAmount,
-      remainingAmount: remainingAmount,
-      totalAmount: amountWithTax,
+        triggerBookingRefresh();
+        toast.success("Booking confirmed! Check your WhatsApp for details.");
 
-      // Timestamps
-      timestamp: new Date(),
-      createdAt: new Date(),
+        setTimeout(() => {
+          navigate("/thank-you");
+        }, 2000);
+      } else if (result.status === "failed") {
+        clearInterval(interval);
+        setPollingInterval(null);
+        setPaymentStatus("failed");
+        setIsProcessing(false);
+        toast.error("Payment failed. Please try again.");
+      } else if (pollCount >= maxPolls) {
+        // Timeout after 5 minutes
+        clearInterval(interval);
+        setPollingInterval(null);
+        setIsProcessing(false);
+        toast.error(
+          "Payment verification timeout. If payment was deducted, it will be processed automatically."
+        );
+      }
+    }, 2000); // Check every 2 seconds
 
-      // Metadata
-      bookingMeta: {
-        createdAt: new Date(),
-        source: "web",
-        version: "1.0",
-        paymentMethod: "razorpay",
-      },
-    };
-
-    console.log("Saving to Firebase with structure:", saveData);
-
-    try {
-      const collectionName = bookingData.slotType; // 'deluxe' or 'rolexe'
-      const docRef = await addDoc(collection(db, collectionName), saveData);
-      console.log("Booking saved successfully with ID:", docRef.id);
-
-      return { ...saveData, id: docRef.id };
-    } catch (error) {
-      console.error("Error saving to Firebase:", error);
-      throw error;
-    }
+    setPollingInterval(interval);
   };
 
   const [preCreatedOrder, setPreCreatedOrder] = useState(null);
@@ -329,6 +208,7 @@ Thank you for your booking! Enjoy your experience!`;
 
     try {
       setIsProcessing(true);
+      setPaymentStatus("pending");
 
       if (!razorpayInitialized) {
         const res = await initializeRazorpay();
@@ -341,6 +221,9 @@ Thank you for your booking! Enjoy your experience!`;
 
       const order = preCreatedOrder || (await createOrder());
 
+      // Start polling for payment status
+      startPolling(order.id);
+
       setTimeout(() => {
         const options = {
           key: "rzp_live_7I7nJJIaq1bIol",
@@ -349,11 +232,15 @@ Thank you for your booking! Enjoy your experience!`;
           name: "Birthday Booking",
           description: "Advance Payment for Booking",
           order_id: order.id,
-          // Replace the handler function in your frontend code
+
           handler: async function (response) {
+            console.log("Payment response received:", response);
+            toast.info("Payment successful! Verifying booking...");
+
+            // Try to verify payment immediately as fallback
             try {
               const verifyResponse = await fetch(
-                "https://birthday-backend-tau.vercel.app/verify-payment",
+                "http://localhost:3000/verify-payment",
                 {
                   method: "POST",
                   headers: {
@@ -363,7 +250,7 @@ Thank you for your booking! Enjoy your experience!`;
                     razorpay_order_id: response.razorpay_order_id,
                     razorpay_payment_id: response.razorpay_payment_id,
                     razorpay_signature: response.razorpay_signature,
-                    bookingData: bookingData, // Send booking data to backend
+                    bookingData: bookingData,
                     advanceAmount: advanceAmount,
                     remainingAmount: remainingAmount,
                     amountWithTax: amountWithTax,
@@ -371,58 +258,93 @@ Thank you for your booking! Enjoy your experience!`;
                 }
               );
 
-              if (!verifyResponse.ok) {
-                throw new Error("Payment verification failed");
+              if (verifyResponse.ok) {
+                const result = await verifyResponse.json();
+                if (result.status === "success") {
+                  // Stop polling
+                  if (pollingInterval) {
+                    clearInterval(pollingInterval);
+                    setPollingInterval(null);
+                  }
+
+                  setPaymentStatus("success");
+
+                  // Store booking data and redirect
+                  localStorage.setItem(
+                    "completedBookingData",
+                    JSON.stringify(result.savedBooking)
+                  );
+                  localStorage.removeItem("bookingData");
+                  sessionStorage.setItem("paymentCompleted", "true");
+
+                  triggerBookingRefresh();
+                  toast.success(
+                    "Booking confirmed! Check your WhatsApp for details."
+                  );
+
+                  setTimeout(() => {
+                    navigate("/thank-you");
+                  }, 2000);
+                }
               }
-
-              const result = await verifyResponse.json();
-
-              // Store completed booking data for thank you page
-              localStorage.setItem(
-                "completedBookingData",
-                JSON.stringify(result.savedBooking)
-              );
-
-              // Clear booking data and set payment completion flag
-              localStorage.removeItem("bookingData");
-              sessionStorage.setItem("paymentCompleted", "true");
-
-              // Trigger refresh in slot components to update availability
-              triggerBookingRefresh();
-
-              toast.success(
-                "Booking confirmed! Check your WhatsApp for details."
-              );
-
-              // Navigate to thank you page
-              navigate("/thank-you");
             } catch (error) {
-              console.error("Error processing payment:", error);
-              toast.error(
-                "Payment verification failed. Please contact support."
-              );
+              console.error("Error verifying payment:", error);
+              // Continue with polling as fallback
             }
           },
+
           prefill: {
             contact: bookingData?.whatsapp || "",
+            email: bookingData?.email || "",
           },
+
           theme: {
             color: "#5D0072",
           },
+
           modal: {
             ondismiss: function () {
+              // Stop polling if user closes the modal
+              if (pollingInterval) {
+                clearInterval(pollingInterval);
+                setPollingInterval(null);
+              }
               setIsProcessing(false);
+              setPaymentStatus("pending");
             },
+
+            // Handle payment failure
+            escape: true,
+            backdropclose: false,
+          },
+
+          retry: {
+            enabled: true,
+            max_count: 3,
           },
         };
 
         const paymentObject = new window.Razorpay(options);
+
+        // Handle payment failure
+        paymentObject.on("payment.failed", function (response) {
+          console.log("Payment failed:", response);
+          if (pollingInterval) {
+            clearInterval(pollingInterval);
+            setPollingInterval(null);
+          }
+          setIsProcessing(false);
+          setPaymentStatus("failed");
+          toast.error("Payment failed. Please try again.");
+        });
+
         paymentObject.open();
       }, 300);
     } catch (error) {
       console.error("Error initiating payment:", error);
       toast.error("Your Internet Connection is Slow. Please try again.");
       setIsProcessing(false);
+      setPaymentStatus("pending");
     }
   };
 
@@ -436,6 +358,19 @@ Thank you for your booking! Enjoy your experience!`;
 
   const formatCurrency = (amount) => {
     return amount.toFixed(2);
+  };
+
+  const getPaymentStatusMessage = () => {
+    switch (paymentStatus) {
+      case "pending":
+        return isProcessing ? "Processing payment..." : "";
+      case "success":
+        return "Payment successful! Redirecting...";
+      case "failed":
+        return "Payment failed. Please try again.";
+      default:
+        return "";
+    }
   };
 
   return (
@@ -467,7 +402,7 @@ Thank you for your booking! Enjoy your experience!`;
                   {termsItems.map((item, index) => (
                     <li
                       key={index}
-                      className="text-gray-800  border-b border-gray-100 last:border-0 transition-all duration-300"
+                      className="text-gray-800 border-b border-gray-100 last:border-0 transition-all duration-300"
                       style={{
                         transitionDelay: `${300 + index * 50}ms`,
                         opacity: animateIn ? 1 : 0,
@@ -529,6 +464,68 @@ Thank you for your booking! Enjoy your experience!`;
                     </span>
                   </label>
                 </div>
+
+                {/* Payment Status Display */}
+                {(paymentStatus !== "pending" || isProcessing) && (
+                  <div
+                    className={`mt-4 p-4 rounded-lg ${
+                      paymentStatus === "success"
+                        ? "bg-green-50 text-green-800 border border-green-200"
+                        : paymentStatus === "failed"
+                        ? "bg-red-50 text-red-800 border border-red-200"
+                        : isProcessing
+                        ? "bg-blue-50 text-blue-800 border border-blue-200"
+                        : "bg-yellow-50 text-yellow-800 border border-yellow-200"
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      {paymentStatus === "success" && (
+                        <svg
+                          className="w-5 h-5 mr-2"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                      {paymentStatus === "failed" && (
+                        <svg
+                          className="w-5 h-5 mr-2"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                      <span className="font-medium">
+                        {getPaymentStatusMessage()}
+                      </span>
+
+                      {isProcessing && paymentStatus === "pending" && (
+                        <div className="mt-3">
+                          <div className="flex items-center space-x-2">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                            <span className="text-sm">
+                              Verifying payment...
+                            </span>
+                          </div>
+                          <p className="text-xs mt-2 text-blue-600">
+                            If this takes too long, the payment was successful
+                            and will be processed shortly.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 {bookingData && (
                   <div
@@ -599,9 +596,13 @@ Thank you for your booking! Enjoy your experience!`;
                     <button
                       ref={payButtonRef}
                       onClick={handlePayment}
-                      disabled={!isChecked || isProcessing}
+                      disabled={
+                        !isChecked ||
+                        isProcessing ||
+                        paymentStatus === "success"
+                      }
                       className={`w-full rounded-lg py-4 font-medium text-lg transition-all duration-300 transform ${
-                        isChecked
+                        isChecked && paymentStatus !== "success"
                           ? "bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:shadow-lg hover:-translate-y-1"
                           : "bg-gray-300 text-gray-500 cursor-not-allowed"
                       }`}
@@ -628,8 +629,10 @@ Thank you for your booking! Enjoy your experience!`;
                               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                             ></path>
                           </svg>
-                          Processing...
+                          {getPaymentStatusMessage() || "Processing..."}
                         </span>
+                      ) : paymentStatus === "success" ? (
+                        "Payment Successful!"
                       ) : (
                         `Pay Advance ₹${formatCurrency(advanceAmount)}`
                       )}
