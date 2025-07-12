@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { 
   AlertCircle, 
   CheckCircle, 
@@ -15,6 +15,7 @@ import {
 
 const TermsMain = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [isChecked, setIsChecked] = useState(false);
   const [bookingData, setBookingData] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -160,9 +161,8 @@ const TermsMain = () => {
 
   const startPolling = (orderId) => {
     let pollCount = 0;
-    const maxPolls = 150; // 5 minutes at 2-second intervals
+    const maxPolls = 150;
     
-    // Show user-friendly message for mobile payments
     if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
       addNotification("info", "💳 Payment processing... Please return to this page after completing payment in your payment app.");
     }
@@ -177,7 +177,6 @@ const TermsMain = () => {
         setPaymentStatus("success");
         setCompletedBooking(result.bookingData);
 
-        // Store booking data locally but don't remove original data
         localStorage.setItem(
           "completedBookingData",
           JSON.stringify(result.bookingData)
@@ -186,7 +185,6 @@ const TermsMain = () => {
 
         addNotification("success", "🎉 Payment successful! Booking confirmed and saved automatically. Check your WhatsApp for details.");
         
-        // Stop processing state
         setIsProcessing(false);
       } else if (result.status === "failed") {
         clearInterval(interval);
@@ -241,6 +239,10 @@ const TermsMain = () => {
       const order = preCreatedOrder || (await createOrder());
       startPolling(order.id);
 
+      // Get current domain for callback URL
+      const currentDomain = window.location.origin;
+      const callbackUrl = `${currentDomain}/payment-callback`;
+
       setTimeout(() => {
         const options = {
           key: "rzp_live_7I7nJJIaq1bIol",
@@ -253,6 +255,12 @@ const TermsMain = () => {
           handler: async function (response) {
             console.log("Payment response received:", response);
             setPaymentId(response.razorpay_payment_id);
+            
+            // Mark payment as completed immediately
+            sessionStorage.setItem('paymentCompleted', 'true');
+            sessionStorage.setItem('paymentId', response.razorpay_payment_id);
+            sessionStorage.setItem('orderId', response.razorpay_order_id);
+            
             addNotification("info", "Payment successful! Verifying booking...");
 
             try {
@@ -287,17 +295,19 @@ const TermsMain = () => {
                   setCompletedBooking(result.savedBooking);
                   setPaymentId(response.razorpay_payment_id);
 
-                  // Store booking data locally
                   localStorage.setItem(
                     "completedBookingData",
                     JSON.stringify(result.savedBooking)
                   );
-                  sessionStorage.setItem("paymentCompleted", "true");
 
                   addNotification("success", "🎉 Booking confirmed! Data saved to Firebase and Google Sheets. Check your WhatsApp for details.");
                   
-                  // Stop processing state
                   setIsProcessing(false);
+                  
+                  // Redirect to thank you page
+                  setTimeout(() => {
+                    navigate(`/thank-you?payment_id=${response.razorpay_payment_id}&order_id=${response.razorpay_order_id}`, { replace: true });
+                  }, 2000);
                 }
               }
             } catch (error) {
@@ -316,6 +326,7 @@ const TermsMain = () => {
             color: "#5D0072",
           },
 
+          // Enhanced mobile support
           modal: {
             ondismiss: function () {
               if (pollingInterval) {
@@ -329,10 +340,37 @@ const TermsMain = () => {
             backdropclose: false,
           },
 
+          // Add callback URL for mobile payments
+          callback_url: callbackUrl,
+          redirect: true,
+
           retry: {
             enabled: true,
             max_count: 3,
           },
+
+          // Mobile payment options
+          config: {
+            display: {
+              blocks: {
+                banks: {
+                  name: "Pay using Bank Account",
+                  instruments: [
+                    {
+                      method: "netbanking"
+                    },
+                    {
+                      method: "upi"
+                    }
+                  ]
+                }
+              },
+              sequence: ["block.banks"],
+              preferences: {
+                show_default_blocks: true
+              }
+            }
+          }
         };
 
         const paymentObject = new window.Razorpay(options);
@@ -359,10 +397,11 @@ const TermsMain = () => {
   };
 
   const handleNewBooking = () => {
-    // Clear all booking data and start fresh
     localStorage.removeItem("bookingData");
     localStorage.removeItem("completedBookingData");
     sessionStorage.removeItem("paymentCompleted");
+    sessionStorage.removeItem("paymentId");
+    sessionStorage.removeItem("orderId");
     setPaymentStatus("pending");
     setCompletedBooking(null);
     setPaymentId(null);
@@ -825,6 +864,24 @@ Generated on: ${new Date().toLocaleString()}
                       <p className="text-center text-sm text-gray-500 mt-4">
                         Secure payment powered by Razorpay • Data automatically saved to Firebase & Google Sheets
                       </p>
+                      
+                      {/* Mobile Payment Notice */}
+                      {/iPhone|iPad|iPod|Android/i.test(navigator.userAgent) && (
+                        <div className="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                          <div className="flex items-start space-x-2">
+                            <Info className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                            <div className="text-sm text-blue-800">
+                              <p className="font-semibold mb-1">Mobile Payment Notice:</p>
+                              <ul className="space-y-1 text-xs">
+                                <li>• You'll be redirected to your payment app (PhonePe/GPay/etc.)</li>
+                                <li>• After payment, you'll automatically return to our website</li>
+                                <li>• If stuck in payment app, manually return to this page</li>
+                                <li>• Your booking will be confirmed automatically</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

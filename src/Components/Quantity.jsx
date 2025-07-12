@@ -1,12 +1,14 @@
 import React, { useContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { contextApi } from "./ContextApi/Context";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Star, Calendar, Clock, Minus, Plus, Users, Gift, Check, PlusCircle, CreditCard, MapPin } from 'lucide-react';
+import { Star, Calendar, Clock, Minus, Plus, Users, Gift, Check, PlusCircle, CreditCard, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from "framer-motion";
 
 const QuantityBirthday = () => { 
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { date, cartData, setDate, slotType } = useContext(contextApi);
   
   // Initialize state with default values
@@ -16,30 +18,38 @@ const QuantityBirthday = () => {
   const [bookingName, setBookingName] = useState("");
   const [NameUser, SetNameUser] = useState("");
   const [email, setEmail] = useState("");
-  const [address, setAddress] = useState(""); // New state for address
+  const [address, setAddress] = useState("");
   const [wantDecoration, setWantDecoration] = useState("Yes");
   const [occasion, setOccasion] = useState("Anniversary");
   const [extraDecorations, setExtraDecorations] = useState([]);
-  const [activeSection, setActiveSection] = useState("details"); // For tabs: details, decorations
+  const [activeSection, setActiveSection] = useState("details");
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  // Update URL with current state
+  useEffect(() => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    if (date) newSearchParams.set('date', date);
+    if (slotType) newSearchParams.set('package', slotType);
+    if (people > 1) newSearchParams.set('people', people.toString());
+    if (occasion !== 'Anniversary') newSearchParams.set('occasion', occasion);
+    setSearchParams(newSearchParams);
+  }, [date, slotType, people, occasion, setSearchParams]);
 
   // Get package-specific limits
   const packageLimits = {
-    deluxe: { baseLimit: 10, maxLimit: 25 },
-    rolexe: { baseLimit: 6, maxLimit: 12 },
-    default: { baseLimit: 6, maxLimit: 12 }
+    deluxe: { baseLimit: 10, maxLimit: 25, basePrice: 2500 },
+    rolexe: { baseLimit: 6, maxLimit: 12, basePrice: 2000 },
+    default: { baseLimit: 6, maxLimit: 12, basePrice: 2000 }
   };
 
   const currentPackage = packageLimits[slotType] || packageLimits.default;
-  const { baseLimit, maxLimit } = currentPackage;
+  const { baseLimit, maxLimit, basePrice } = currentPackage;
 
   // Add a session identifier to track if this is a fresh page load or refresh
   useEffect(() => {
-    // Check for a session ID in sessionStorage (will be lost on refresh)
     const sessionId = sessionStorage.getItem('formSessionId');
     
     if (!sessionId) {
-      // This is a new session (page was refreshed or newly opened)
-      // Generate a new session ID
       const newSessionId = Date.now().toString();
       sessionStorage.setItem('formSessionId', newSessionId);
       
@@ -48,26 +58,12 @@ const QuantityBirthday = () => {
       localStorage.removeItem("whatsapp");
       localStorage.removeItem("bookingName");
       localStorage.removeItem("email");
-      localStorage.removeItem("address"); // Add address to localStorage clear
+      localStorage.removeItem("address");
       localStorage.removeItem("wantDecoration");
       localStorage.removeItem("occasion");
       localStorage.removeItem("extraDecorations");
-      
-      // We keep the default state values set above
     }
   }, []);
-    
-  const resetFormFields = () => {
-    setPeople(1);
-    setWhatsapp("");
-    setDecoration(false);
-    setBookingName("");
-    setEmail("");
-    setAddress(""); // Add address to reset
-    setWantDecoration("Yes");
-    setOccasion("Anniversary");
-    setExtraDecorations([]);
-  };
 
   // Save to localStorage when values change
   useEffect(() => {
@@ -75,7 +71,7 @@ const QuantityBirthday = () => {
     localStorage.setItem("whatsapp", whatsapp);
     localStorage.setItem("bookingName", bookingName);
     localStorage.setItem("email", email);
-    localStorage.setItem("address", address); // Add address to localStorage save
+    localStorage.setItem("address", address);
     localStorage.setItem("wantDecoration", wantDecoration);
     localStorage.setItem("occasion", occasion);
     localStorage.setItem("extraDecorations", JSON.stringify(extraDecorations));
@@ -83,25 +79,11 @@ const QuantityBirthday = () => {
     localStorage.setItem("cartData", JSON.stringify(cartData)); 
     localStorage.setItem("slotType", slotType);
   }, [
-    people,
-    whatsapp,
-    bookingName,
-    email,
-    address, // Add address to dependencies
-    wantDecoration,
-    occasion,
-    extraDecorations,
-    date,
-    cartData,
-    slotType,
-    NameUser
+    people, whatsapp, bookingName, email, address, wantDecoration,
+    occasion, extraDecorations, date, cartData, slotType, NameUser
   ]);
   
-  const basePrice = slotType === "deluxe" ? 1 : slotType === "rolexe" ? 1 : 1;
-  console.log("Selected SlotType:", slotType);
-
-  console.log(basePrice);
-  const decorationPrice = 1;
+  const decorationPrice = 0;
   const lastItem = cartData.length > 0 ? cartData[cartData.length - 1] : null;
 
   const calculateTotal = () => {
@@ -112,40 +94,26 @@ const QuantityBirthday = () => {
     }
 
     // Handle all decoration types with their proper prices
-    if (extraDecorations.includes("fog-01")) {
-      total += 1; // Fog price (02 Pots)
-    }
-    if (extraDecorations.includes("fog-02")) {
-      total += 1; // Fog price (04 Pots)
-    }
-    if (extraDecorations.includes("candle_light")) {
-      total += 1; // Candle Light Dinner price
-    }
-    if (extraDecorations.includes("photo_clipping")) {
-      total += 1; // Photo Clipping price
-    }
-    if (extraDecorations.includes("led_numbers")) {
-      total += 1; // LED Numbers price
-    }
-    if (extraDecorations.includes("led_hbd")) {
-      total += 1; // LED HBD price
-    }
-    if (extraDecorations.includes("candle_pathway")) {
-      total += 1; // Candle Pathway price
-    }
-    if (extraDecorations.includes("cold_piros")) {
-      total += 1; // Cold Piros price
-    }
-    if (extraDecorations.includes("reel")) {
-      total += 1; // Reel price
-    }
-    if (extraDecorations.includes("photography")) {
-      total += 1; // Photography price
-    }
+    const decorationPrices = {
+      "fog-01": 500,
+      "fog-02": 800,
+      "candle_light": 300,
+      "photo_clipping": 200,
+      "led_numbers": 400,
+      "led_hbd": 350,
+      "candle_pathway": 250,
+      "cold_piros": 600,
+      "reel": 1000,
+      "photography": 1500
+    };
+
+    extraDecorations.forEach(decoration => {
+      total += decorationPrices[decoration] || 0;
+    });
     
     // Apply different logic based on package type
     if (people > baseLimit) {
-      total += (people - baseLimit) * 1;
+      total += (people - baseLimit) * 150;
     }
 
     return total;
@@ -165,9 +133,23 @@ const QuantityBirthday = () => {
     }
   };
 
+  const handleSectionChange = (section) => {
+    if (section === activeSection) return;
+    
+    setIsAnimating(true);
+    setTimeout(() => {
+      setActiveSection(section);
+      setIsAnimating(false);
+    }, 150);
+  };
+
   const handleProceed = () => {
     if (!bookingName.trim()) {
       toast.error("Please enter your booking name.");
+      return;
+    }
+    if (!NameUser.trim()) {
+      toast.error("Please enter the celebration person's name.");
       return;
     }
     if (!email.trim()) {
@@ -198,7 +180,7 @@ const QuantityBirthday = () => {
     const bookingData = {
       bookingName,
       email,
-      address, // Include address in booking data
+      address,
       date,
       people,
       whatsapp,
@@ -214,437 +196,548 @@ const QuantityBirthday = () => {
     };
     
     localStorage.setItem('bookingData', JSON.stringify(bookingData));
-    navigate('/terms-conditions');
+    
+    // Add search params to navigation
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('total', calculateTotal().toString());
+    newSearchParams.set('step', 'payment');
+    
+    navigate(`/terms-conditions?${newSearchParams.toString()}`);
   };
   
   // Get icons for occasions
   const getOccasionIcon = (occ) => {
-    switch(occ) {
-      case "Anniversary 👩‍❤️‍👨": return "💑";
-      case "Birthday 🎂": return "🎂";
-      case "Surprise  🥰": return "🎁";
-      case "Proposal 🧡": return "💍";
-      case "Kitty Party": return "👯";
-      case "Groom To Be 🤴": return "🤴";
-      case "Break-Up Party": return "💔";
-      case "Bride To Be 🤴": return "👰";
-      case "Batchelor Party": return "🍻";
-      case "Conference Meeting": return "💼";
-      case "Baby shower": return "👶";
-      default: return "🎉";
+    const icons = {
+      "Anniversary 👩‍❤️‍👨": "💑",
+      "Birthday 🎂": "🎂",
+      "Surprise  🥰": "🎁",
+      "Proposal 🧡": "💍",
+      "Kitty Party": "👯",
+      "Groom To Be 🤴": "🤴",
+      "Break-Up Party": "💔",
+      "Bride To Be 🤴": "👰",
+      "Batchelor Party": "🍻",
+      "Conference Meeting": "💼",
+      "Baby shower": "👶"
+    };
+    return icons[occ] || "🎉";
+  };
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" }
+    }
+  };
+
+  const sectionVariants = {
+    hidden: { opacity: 0, x: 20 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.4, ease: "easeOut" }
+    },
+    exit: {
+      opacity: 0,
+      x: -20,
+      transition: { duration: 0.3, ease: "easeIn" }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.3 }
     }
   };
 
   return (
-    
-    <div className="fontPoppin relative h-auto p-4 flex items-center z-10 justify-center bg-cover bg-center w-[100%]" style={{ backgroundImage: "url('/assets/home-header-01.jpg')" }}>
-    <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/30 backdrop-blur"></div>
+    <motion.div 
+      className="fontPoppin relative min-h-screen p-4 flex items-center z-10 justify-center bg-cover bg-center w-full" 
+      style={{ backgroundImage: "url('/assets/home-header-01.jpg')" }}
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/50 backdrop-blur-sm"></div>
        
-      <div className="fontPoppin bg-white rounded-xl shadow-2xl md:w-[500px] max-w-full z-10 mt-[20%] md:mt-[4%] overflow-hidden">
-        {/* Header with festive design */}
-        <div className="bg-gradient-to-r from-purple-600 to-pink-500 text-white p-6 relative overflow-hidden">
+      <motion.div 
+        className="fontPoppin bg-white rounded-2xl shadow-2xl md:w-[600px] max-w-full z-10 mt-[20%] md:mt-[4%] overflow-hidden border border-white/20"
+        variants={containerVariants}
+      >
+        {/* Enhanced Header with festive design */}
+        <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 text-white p-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-white opacity-10 -mr-10 -mt-10"></div>
           <div className="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-white opacity-10 -ml-10 -mb-10"></div>
           
-          <h2 className="text-2xl font-bold mb-1 relative z-10">Book Your Celebration</h2>
-          <div className="md:flex  md:gap-2 items-center flex-col md:flex-row">
-            <div className="flex items-center bg-white/30 text-white px-3 py-1.5 rounded-full backdrop-blur-sm mb-2">
-              <Star className="w-4 h-4 mr-1 fill-amber-300 text-amber-200" />
-              <span className="text-lg capitalize font-semibold">{slotType} package</span>
-            </div>
-            <span className="ml-3 text-white/90 font-medium">${basePrice} base price</span>
+          <motion.h2 
+            className="text-2xl md:text-3xl font-bold mb-2 relative z-10"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            🎉 Book Your Celebration
+          </motion.h2>
+          
+          <div className="flex flex-col md:flex-row md:gap-4 items-start md:items-center">
+            <motion.div 
+              className="flex items-center bg-white/20 text-white px-4 py-2 rounded-full backdrop-blur-sm mb-2 md:mb-0"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Star className="w-5 h-5 mr-2 fill-amber-300 text-amber-200" />
+              <span className="text-lg capitalize font-semibold">{slotType} Package</span>
+            </motion.div>
+            <motion.span 
+              className="text-white/90 font-medium text-lg"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              ₹{basePrice.toLocaleString()} base price
+            </motion.span>
           </div>
           
-          <div className="mt-4 flex flex-col sm:flex-row gap-3">
-            <div className="flex items-center bg-white/10 rounded-lg p-2 backdrop-blur-sm">
-              <Calendar className="w-4 h-4 mr-2 text-white" />
-              <span className="text-sm">{date || "Select date"}</span>
+          <motion.div 
+            className="mt-4 flex flex-col sm:flex-row gap-3"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <div className="flex items-center bg-white/15 rounded-lg p-3 backdrop-blur-sm flex-1">
+              <Calendar className="w-5 h-5 mr-2 text-white" />
+              <span className="text-sm font-medium">{date || "Select date"}</span>
             </div>
             
-            <div className="flex items-center bg-white/10 rounded-lg p-2 backdrop-blur-sm">
-              <Clock className="w-4 h-4 mr-2 text-white" />
-              <span className="text-sm">
+            <div className="flex items-center bg-white/15 rounded-lg p-3 backdrop-blur-sm flex-1">
+              <Clock className="w-5 h-5 mr-2 text-white" />
+              <span className="text-sm font-medium">
                 {lastItem ? `${lastItem.start} - ${lastItem.end}` : "Select time"}
               </span>
             </div>
-          </div>
+          </motion.div>
         </div>
         
-        {/* Tabs */}
-        <div className="flex border-b">
-          <button 
-            className={`flex-1 py-3 font-medium text-center ${activeSection === 'details' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500'}`}
-            onClick={() => setActiveSection('details')}
+        {/* Enhanced Tabs */}
+        <div className="flex border-b bg-gray-50">
+          <motion.button 
+            className={`flex-1 py-4 font-semibold text-center transition-all duration-300 ${
+              activeSection === 'details' 
+                ? 'text-purple-600 border-b-3 border-purple-600 bg-white' 
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+            onClick={() => handleSectionChange('details')}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            Personal Details
-          </button>
-          <button 
-            className={`flex-1 py-3 font-medium text-center ${activeSection === 'decorations' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-500'}`}
-            onClick={() => setActiveSection('decorations')}
+            <div className="flex items-center justify-center">
+              <Users className="w-5 h-5 mr-2" />
+              Personal Details
+            </div>
+          </motion.button>
+          <motion.button 
+            className={`flex-1 py-4 font-semibold text-center transition-all duration-300 ${
+              activeSection === 'decorations' 
+                ? 'text-purple-600 border-b-3 border-purple-600 bg-white' 
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+            onClick={() => handleSectionChange('decorations')}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            Decorations & Add-ons
-          </button>
+            <div className="flex items-center justify-center">
+              <Gift className="w-5 h-5 mr-2" />
+              Decorations & Add-ons
+            </div>
+          </motion.button>
         </div>
         
-        <div className="p-6">
-          {/* Personal Details Section */}
-          {activeSection === 'details' && (
-            <div className="space-y-5">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Booking Name <span className="text-rose-500">*</span>
-                </label>
-                <input 
-                  type="text" 
-                  value={bookingName}
-                  onChange={(e) => setBookingName(e.target.value)}
-                  placeholder="Enter your full name"
-                  className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition" 
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Number of people <span className="text-rose-500">*</span>
-                </label>
-                <div className="flex items-center">
-                  <button 
-                    onClick={decrement}
-                    className="p-2 border border-gray-300 rounded-l-lg hover:bg-gray-100 transition-colors"
-                  >
-                    <Minus className="w-4 h-4 text-gray-600" />
-                  </button>
+        <div className="p-6 md:p-8">
+          <AnimatePresence mode="wait">
+            {/* Personal Details Section */}
+            {activeSection === 'details' && (
+              <motion.div 
+                key="details"
+                className="space-y-6"
+                variants={sectionVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    Booking Name <span className="text-rose-500">*</span>
+                  </label>
                   <input 
                     type="text" 
-                    value={people}
-                    className="w-16 text-center border-t border-b border-gray-300 p-2" 
-                    readOnly
+                    value={bookingName}
+                    onChange={(e) => setBookingName(e.target.value)}
+                    placeholder="Enter your full name"
+                    className="w-full border-2 border-gray-200 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:border-gray-300" 
                   />
-                  <button 
-                    onClick={increment}
-                    className="p-2 border border-gray-300 rounded-r-lg hover:bg-gray-100 transition-colors"
-                  >
-                    <Plus className="w-4 h-4 text-gray-600" />
-                  </button>
+                </motion.div>
+                
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    Number of people <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center bg-gray-50 rounded-xl p-2">
+                      <motion.button 
+                        onClick={decrement}
+                        className="p-3 border border-gray-300 rounded-lg hover:bg-white hover:shadow-md transition-all duration-200"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Minus className="w-5 h-5 text-gray-600" />
+                      </motion.button>
+                      <input 
+                        type="text" 
+                        value={people}
+                        className="w-20 text-center border-0 bg-transparent p-3 font-bold text-lg" 
+                        readOnly
+                      />
+                      <motion.button 
+                        onClick={increment}
+                        className="p-3 border border-gray-300 rounded-lg hover:bg-white hover:shadow-md transition-all duration-200"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Plus className="w-5 h-5 text-gray-600" />
+                      </motion.button>
+                    </div>
+                    
+                    <div className="flex items-center bg-blue-50 px-4 py-2 rounded-lg">
+                      <Users className="w-5 h-5 text-blue-600 mr-2" />
+                      <span className="text-sm font-medium text-blue-700">
+                        Max: {maxLimit} people
+                      </span>
+                    </div>
+                  </div>
                   
-                  <div className="ml-3 flex items-center">
-                    <Users className="w-4 h-4 text-gray-500 mr-1" />
-                    <span className="text-sm text-gray-500">
-                      Max: {maxLimit} people
+                  {people > baseLimit && (
+                    <motion.div 
+                      className="mt-3 text-sm text-amber-700 bg-amber-50 p-4 rounded-xl border border-amber-200 flex items-start"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <div>
+                        <p className="font-medium">Additional charges apply</p>
+                        <p>₹150 per person beyond {baseLimit} people = ₹{(people - baseLimit) * 150}</p>
+                      </div>
+                    </motion.div>
+                  )}
+                </motion.div>
+                
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    WhatsApp Number <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500 font-medium">+91</span>
+                    <input 
+                      type="tel" 
+                      value={whatsapp}
+                      onChange={(e) => setWhatsapp(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                      placeholder="10-digit number"
+                      className="w-full pl-16 border-2 border-gray-200 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:border-gray-300" 
+                    />
+                  </div>
+                </motion.div>
+                
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    Celebration Person Name <span className="text-rose-500">*</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    value={NameUser}
+                    onChange={(e) => SetNameUser(e.target.value)}
+                    placeholder="Name of the person celebrating"
+                    className="w-full border-2 border-gray-200 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:border-gray-300" 
+                  />
+                </motion.div>
+                
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    Email ID <span className="text-rose-500">*</span>
+                  </label>
+                  <input 
+                    type="email" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    className="w-full border-2 border-gray-200 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:border-gray-300" 
+                  />
+                </motion.div>
+                
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    Address <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <MapPin className="absolute top-4 left-4 w-5 h-5 text-gray-400" />
+                    <textarea 
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      placeholder="Enter your full address"
+                      rows={3}
+                      className="w-full pl-12 border-2 border-gray-200 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:border-gray-300 resize-none" 
+                    />
+                  </div>
+                </motion.div>
+                
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    Select the Occasion <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {[
+                      "Anniversary 👩‍❤️‍👨", "Birthday 🎂", "Surprise  🥰", "Proposal 🧡", 
+                      "Kitty Party", "Groom To Be 🤴", "Break-Up Party", 
+                      "Bride To Be 🤴", "Batchelor Party", "Conference Meeting", "Baby shower"
+                    ].map((occ) => (
+                      <motion.button
+                        key={occ}
+                        type="button"
+                        onClick={() => setOccasion(occ)}
+                        className={`flex items-center px-3 py-3 rounded-xl border-2 transition-all duration-300 ${
+                          occasion === occ 
+                            ? 'bg-purple-50 border-purple-500 text-purple-700 shadow-md' 
+                            : 'border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+                        }`}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <span className="mr-2 text-lg">{getOccasionIcon(occ)}</span>
+                        <span className="text-sm font-medium truncate">{occ}</span>
+                      </motion.button>
+                    ))}
+                  </div>
+                </motion.div>
+                
+                <motion.button
+                  onClick={() => handleSectionChange('decorations')}
+                  className="w-full py-4 px-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl"
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <PlusCircle className="w-6 h-6 mr-3" />
+                  Continue to Add Decorations
+                  <ChevronRight className="w-5 h-5 ml-2" />
+                </motion.button>
+              </motion.div>
+            )}
+            
+            {/* Decorations Section */}
+            {activeSection === 'decorations' && (
+              <motion.div 
+                key="decorations"
+                className="space-y-6"
+                variants={sectionVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
+                <motion.div variants={itemVariants}>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    Do you want decoration? <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <motion.button
+                      type="button"
+                      onClick={() => setWantDecoration("Yes")}
+                      className={`py-4 px-6 rounded-xl border-2 flex items-center justify-center transition-all duration-300 ${
+                        wantDecoration === "Yes" 
+                          ? 'bg-purple-50 border-purple-500 text-purple-700 shadow-md' 
+                          : 'border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+                      }`}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Gift className="w-6 h-6 mr-3" />
+                      <span className="font-semibold">Yes, Decorate (Included)</span>
+                    </motion.button>
+                    
+                    <motion.button
+                      type="button"
+                      onClick={() => setWantDecoration("No")}
+                      className={`py-4 px-6 rounded-xl border-2 flex items-center justify-center transition-all duration-300 ${
+                        wantDecoration === "No" 
+                          ? 'bg-purple-50 border-purple-500 text-purple-700 shadow-md' 
+                          : 'border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+                      }`}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <span className="font-semibold">No Decoration</span>
+                    </motion.button>
+                  </div>
+                </motion.div>
+                
+                <motion.div variants={itemVariants}>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-800">Premium Add-ons</h3>
+                    <span className="text-sm text-purple-600 font-medium bg-purple-50 px-3 py-1 rounded-full">
+                      Select multiple
                     </span>
                   </div>
-                </div>
-                
-                {people > baseLimit && (
-                  <div className="mt-2 text-xs text-amber-600 bg-amber-50 p-2 rounded-lg flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Additional charge of $1 per person beyond {baseLimit} people
-                  </div>
-                )}
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  WhatsApp Number <span className="text-rose-500">*</span>
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">+91</span>
-                  <input 
-                    type="tel" 
-                    value={whatsapp}
-                    onChange={(e) => setWhatsapp(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                    placeholder="10-digit number"
-                    className="w-full pl-12 border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition" 
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Celebrations Person Name / "नाम उत्सव व्यक्ति" <span className="text-rose-500">*</span>
-                </label>
-                <input 
-                  type="text" 
-                  value={NameUser}
-                  onChange={(e) => SetNameUser(e.target.value)}
-                  placeholder="Name of the person celebrating"
-                  className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition" 
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email ID <span className="text-rose-500">*</span>
-                </label>
-                <input 
-                  type="email" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition" 
-                />
-              </div>
-              
-              {/* New Address Field */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Address <span className="text-rose-500">*</span>
-                </label>
-                <div className="relative">
-                  <MapPin className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
-                  <textarea 
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    placeholder="Enter your full address"
-                    rows={3}
-                    className="w-full pl-10 border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition" 
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Select the Occasion <span className="text-rose-500">*</span>
-                </label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {[
-                    "Anniversary 👩‍❤️‍👨", "Birthday 🎂", "Surprise  🥰", "Proposal 🧡", 
-                    "Kitty Party", "Groom To Be 🤴", "Break-Up Party", 
-                    "Bride To Be 🤴", "Batchelor Party", "Conference Meeting", "Baby shower"
-                  ].map((occ) => (
-                    <button
-                      key={occ}
-                      type="button"
-                      onClick={() => setOccasion(occ)}
-                      className={`flex items-center  px-1 py-1 rounded-lg border ${
-                        occasion === occ 
-                          ? 'bg-purple-50 border-purple-500 text-purple-700' 
-                          : 'border-gray-300 hover:bg-gray-50'
-                      } transition-colors`}
-                    >
-                      <span className="mr-2">{getOccasionIcon(occ)}</span>
-                      <span className="text-sm truncate">{occ}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-              
-              <button
-                onClick={() => setActiveSection('decorations')}
-                className="w-full py-3 px-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 flex items-center justify-center"
-              >
-                <PlusCircle className="w-[50px] h-[50px] mr-2 md:w-[30px] md:h-[30px]" />
-                Continue to Add Decorations
-              </button>
-            </div>
-          )}
-          
-          {/* Decorations Section */}
-          {activeSection === 'decorations' && (
-            <div className="space-y-5">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Do you want decoration? <span className="text-rose-500">*</span>
-                </label>
-                <div className="md:flex gap-3 flex flex-col  md:flex-row">
-                  <button
-                    type="button"
-                    onClick={() => setWantDecoration("Yes")}
-                    className={`flex-1 py-3 px-4 rounded-lg border flex items-center justify-center  ${
-                      wantDecoration === "Yes" 
-                        ? 'bg-purple-50 border-purple-500 text-purple-700' 
-                        : 'border-gray-300 hover:bg-gray-50'
-                    } transition-colors`}
-                  >
-                    <Gift className="w-5 h-5 mr-2" />
-                    <span>Yes, Decorate ($1)</span>
-                  </button>
                   
-                  <button
-                    type="button"
-                    onClick={() => setWantDecoration("No")}
-                    className={`flex-1 py-3 px-4 rounded-lg border flex items-center justify-center ${
-                      wantDecoration === "No" 
-                        ? 'bg-purple-50 border-purple-500 text-purple-700' 
-                        : 'border-gray-300 hover:bg-gray-50'
-                    } transition-colors`}
-                  >
-                    <span>No Decoration</span>
-                  </button>
-                </div>
-              </div>
-              
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-medium text-gray-700">Premium Add-ons</h3>
-                  <span className="text-xs text-purple-600 font-medium">Select multiple</span>
-                </div>
+                  <div className="space-y-3">
+                    {[
+                      { id: "fog-01", name: "Fog Entry (02 Pots)", price: 500, icon: "🌫️" },
+                      { id: "fog-02", name: "Fog Entry (04 Pots)", price: 800, icon: "🌫️" },
+                      { id: "candle_light", name: "Candle Light Dinner", price: 300, icon: "🕯️" },
+                      { id: "photo_clipping", name: "Photo Clipping", price: 200, icon: "📸" },
+                      { id: "led_numbers", name: "LED Numbers", price: 400, icon: "🔢" },
+                      { id: "led_hbd", name: "LED HBD", price: 350, icon: "✨" },
+                      { id: "candle_pathway", name: "Candle Pathway", price: 250, icon: "🕯️" },
+                      { id: "cold_piros", name: "Cold Piros (02 pcs)", price: 600, icon: "❄️" },
+                      { id: "reel", name: "Reel", price: 1000, icon: "📹" },
+                      { id: "photography", name: "Photography (1 hour Unlimited)", price: 1500, icon: "📷" }
+                    ].map((item, index) => (
+                      <motion.label 
+                        key={item.id} 
+                        className={`flex items-center justify-between p-4 border-2 rounded-xl cursor-pointer transition-all duration-300 ${
+                          extraDecorations.includes(item.id) 
+                            ? 'border-purple-500 bg-purple-50 shadow-md' 
+                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                        }`}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        whileHover={{ scale: 1.01 }}
+                      >
+                        <div className="flex items-center">
+                          <span className="text-2xl mr-3">{item.icon}</span>
+                          <span className="font-semibold text-gray-800">{item.name}</span>
+                        </div>
+                        
+                        <div className="flex items-center">
+                          <span className="text-lg font-bold text-gray-700 mr-4">₹{item.price}</span>
+                          <input 
+                            type="checkbox"
+                            className="w-6 h-6 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                            checked={extraDecorations.includes(item.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setExtraDecorations([...extraDecorations, item.id]);
+                              } else {
+                                setExtraDecorations(extraDecorations.filter(d => d !== item.id));
+                              }
+                            }}
+                          />
+                        </div>
+                      </motion.label>
+                    ))}
+                  </div>
+                </motion.div>
                 
-                <div className="space-y-2">
-                  {[
-                    { id: "fog-01", name: "Fog Entry (02 Pots)", price: 1, icon: "🌫️" },
-                    { id: "fog-02", name: "Fog Entry (04 Pots)", price: 1, icon: "🌫️" },
-                    { id: "candle_light", name: "Candle Light Dinner", price: 1, icon: "🕯️" },
-                    { id: "photo_clipping", name: "Photo Clipping", price: 1, icon: "📸" },
-                    { id: "led_numbers", name: "LED Numbers", price: 1, icon: "🔢" },
-                    { id: "led_hbd", name: "LED HBD", price: 1, icon: "✨" },
-                    { id: "candle_pathway", name: "Candle Pathway", price: 1, icon: "🕯️" },
-                    { id: "cold_piros", name: "Cold Piros (02 pcs)", price: 1, icon: "❄️" },
-                    { id: "reel", name: "Reel", price: 1, icon: "📹" },
-                    { id: "photography", name: "Photography (1 hour Unlimited Clicks)", price: 1, icon: "📷" }
-                  ].map(item => (
-                    <label key={item.id} className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-all ${
-                      extraDecorations.includes(item.id) ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-gray-300'
-                    }`}>
-                      <div className="flex items-center">
-                        <span className="text-lg mr-2">{item.icon}</span>
-                        <span className="font-medium">{item.name}</span>
+                <motion.div className="mt-8" variants={itemVariants}>
+                  <div className="bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50 rounded-2xl p-6 border-2 border-purple-100 shadow-inner">
+                    <h4 className="text-xl font-bold mb-6 text-purple-800 flex items-center">
+                      <CreditCard className="w-6 h-6 mr-3" />
+                      Price Breakdown
+                    </h4>
+                    
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center py-2">
+                        <span className="font-medium">{slotType.charAt(0).toUpperCase() + slotType.slice(1)} Package</span>
+                        <span className="font-bold">₹{basePrice.toLocaleString()}</span>
                       </div>
                       
-                      <div className="flex items-center">
-                        <span className="text-gray-700 mr-3">${item.price}</span>
-                        <input 
-                          type="checkbox"
-                          className="w-5 h-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                          checked={extraDecorations.includes(item.id)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setExtraDecorations([...extraDecorations, item.id]);
-                            } else {
-                              setExtraDecorations(extraDecorations.filter(d => d !== item.id));
-                            }
-                          }}
-                        />
-                      </div>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="mt-6">
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
-                  <h4 className="text-lg font-semibold mb-4 text-purple-800">Price Breakdown</h4>
-                  
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span>{slotType.charAt(0).toUpperCase() + slotType.slice(1)} Package</span>
-                      <span>${basePrice}</span>
-                    </div>
-                    
-                    {wantDecoration === "Yes" && (
-                      <div className="flex justify-between">
-                        <span>Standard Decoration</span>
-                        <span>${decorationPrice}</span>
-                      </div>
-                    )}
-                    
-                    {extraDecorations.length > 0 && (
-                      <div className="pt-2 border-t border-purple-100">
-                        <div className="text-sm font-medium text-purple-800 mb-1">Add-ons</div>
-                        {extraDecorations.includes("fog-01") && (
-                          <div className="flex justify-between text-sm">
-                            <span>Fog Entry (02 Pots)</span>
-                            <span>$1</span>
-                          </div>
-                        )}
-                         {extraDecorations.includes("fog-02") && (
-                          <div className="flex justify-between text-sm">
-                            <span>Fog Entry (04 Pots)</span>
-                            <span>$1</span>
-                          </div>
-                        )}
-                        {extraDecorations.includes("candle_light") && (
-                          <div className="flex justify-between text-sm">
-                            <span>Candle Light Dinner</span>
-                            <span>$1</span>
-                          </div>
-                        )}
-                        {extraDecorations.includes("photo_clipping") && (
-                          <div className="flex justify-between text-sm">
-                            <span>Photo Clipping</span>
-                            <span>$1</span>
-                          </div>
-                        )}
-                        {extraDecorations.includes("led_numbers") && (
-                          <div className="flex justify-between text-sm">
-                            <span>LED Numbers</span>
-                            <span>$1</span>
-                          </div>
-                        )}
-                        {extraDecorations.includes("led_hbd") && (
-                          <div className="flex justify-between text-sm">
-                            <span>LED HBD</span>
-                            <span>$1</span>
-                          </div>
-                        )}
-                        {extraDecorations.includes("candle_pathway") && (
-                          <div className="flex justify-between text-sm">
-                            <span>Candle Pathway</span>
-                            <span>$1</span>
-                          </div>
-                        )}
-                        {extraDecorations.includes("cold_piros") && (
-                          <div className="flex justify-between text-sm">
-                            <span>Cold Piros</span>
-                            <span>$1</span>
-                          </div>
-                        )}
-                        {extraDecorations.includes("reel") && (
-                          <div className="flex justify-between text-sm">
-                            <span>Reel</span>
-                            <span>$1</span>
-                          </div>
-                        )}
-                        {extraDecorations.includes("photography") && (
-                          <div className="flex justify-between text-sm">
-                            <span>Photography (1 hr)</span>
-                            <span>$1</span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                    
-                    {people > baseLimit && (
-                      <div className="flex justify-between">
-                        <span>Extra People ({people - baseLimit} × $1)</span>
-                        <span>${(people - baseLimit) * 1}</span>
-                      </div>
-                    )}
-                    
-                    <div className="pt-2 border-t border-purple-200 mt-2">
-                      <div className="flex justify-between font-bold text-lg">
-                        <span className="text-purple-800">Total</span>
-                        <span className="text-pink-600">${calculateTotal()}</span>
+                      {wantDecoration === "Yes" && (
+                        <div className="flex justify-between items-center py-2">
+                          <span className="font-medium">Standard Decoration</span>
+                          <span className="font-bold text-green-600">Included</span>
+                        </div>
+                      )}
+                      
+                      {extraDecorations.length > 0 && (
+                        <div className="pt-3 border-t border-purple-200">
+                          <div className="text-sm font-semibold text-purple-800 mb-2">Premium Add-ons</div>
+                          {extraDecorations.map(decorationId => {
+                            const decoration = [
+                              { id: "fog-01", name: "Fog Entry (02 Pots)", price: 500 },
+                              { id: "fog-02", name: "Fog Entry (04 Pots)", price: 800 },
+                              { id: "candle_light", name: "Candle Light Dinner", price: 300 },
+                              { id: "photo_clipping", name: "Photo Clipping", price: 200 },
+                              { id: "led_numbers", name: "LED Numbers", price: 400 },
+                              { id: "led_hbd", name: "LED HBD", price: 350 },
+                              { id: "candle_pathway", name: "Candle Pathway", price: 250 },
+                              { id: "cold_piros", name: "Cold Piros", price: 600 },
+                              { id: "reel", name: "Reel", price: 1000 },
+                              { id: "photography", name: "Photography (1 hr)", price: 1500 }
+                            ].find(d => d.id === decorationId);
+                            
+                            return decoration ? (
+                              <div key={decorationId} className="flex justify-between text-sm py-1">
+                                <span>{decoration.name}</span>
+                                <span className="font-semibold">₹{decoration.price}</span>
+                              </div>
+                            ) : null;
+                          })}
+                        </div>
+                      )}
+                      
+                      {people > baseLimit && (
+                        <div className="flex justify-between items-center py-2 text-amber-700">
+                          <span className="font-medium">Extra People ({people - baseLimit} × ₹150)</span>
+                          <span className="font-bold">₹{((people - baseLimit) * 150).toLocaleString()}</span>
+                        </div>
+                      )}
+                      
+                      <div className="pt-4 border-t-2 border-purple-200 mt-4">
+                        <div className="flex justify-between items-center font-bold text-xl">
+                          <span className="text-purple-800">Total Amount</span>
+                          <span className="text-pink-600">₹{calculateTotal().toLocaleString()}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                
-                <div className="md:flex flex-col gap-3 mt-6  flex gap-3">
-                  <button
-                    onClick={() => setActiveSection('details')}
-                    className="flex-1 py-3 px-4 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    Back to Details
-                  </button>
                   
-                  <button 
-                    onClick={handleProceed}
-                    className="flex-1 py-3 px-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-lg hover:from-purple-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
-                  >
-                    <CreditCard className="w-5 h-5 mr-2" />Proceed to Payment
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                    <motion.button
+                      onClick={() => handleSectionChange('details')}
+                      className="py-4 px-6 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 flex items-center justify-center"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <ChevronLeft className="w-5 h-5 mr-2" />
+                      Back to Details
+                    </motion.button>
+                    
+                    <motion.button 
+                      onClick={handleProceed}
+                      className="py-4 px-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <CreditCard className="w-6 h-6 mr-3" />
+                      Proceed to Payment
+                      <ChevronRight className="w-5 h-5 ml-2" />
+                    </motion.button>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </div>
+      </motion.div>
       
       <ToastContainer 
-        position="top-right"
+        position="top-center"
         autoClose={3000}
         hideProgressBar={false}
         newestOnTop={false}
@@ -654,8 +747,11 @@ const QuantityBirthday = () => {
         draggable
         pauseOnHover
         theme="light"
+        toastStyle={{
+          marginTop: "5%",
+        }}
       />
-    </div>
+    </motion.div>
   );
 };
 

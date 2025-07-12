@@ -6,4 +6,13 @@ export default defineConfig({
   plugins: [react()],
   assetsInclude: ["**/*.JPG", "**/*.jpg"],
   base: './',
+   server: {
+    proxy: {
+      '/api': {
+        target: 'https://birthday-backend-tau.vercel.app',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
+  }
 })

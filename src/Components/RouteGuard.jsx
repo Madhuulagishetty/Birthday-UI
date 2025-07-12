@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { contextApi } from './ContextApi/Context';
 import { toast } from 'react-toastify';
 
@@ -7,9 +7,33 @@ const RouteGuard = ({ children }) => {
   const { date, cartData, slotType } = useContext(contextApi);
   const location = useLocation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     const currentPath = location.pathname;
+    
+    // Check if this is a payment callback URL
+    const isPaymentCallback = currentPath.includes('payment-callback') || 
+                             currentPath.includes('payment-success') ||
+                             searchParams.get('payment_id') || 
+                             searchParams.get('razorpay_payment_id');
+
+    // Check if user has valid payment session
+    const hasValidPaymentSession = () => {
+      const paymentCompleted = sessionStorage.getItem('paymentCompleted');
+      const paymentId = sessionStorage.getItem('paymentId');
+      const completedBookingData = localStorage.getItem('completedBookingData');
+      
+      return paymentCompleted === 'true' && (paymentId || completedBookingData);
+    };
+
+    // Skip validation for payment callbacks and thank-you page with valid session
+    if (isPaymentCallback || 
+        (currentPath === '/thank-you' && hasValidPaymentSession()) ||
+        currentPath === '/payment-callback' ||
+        currentPath === '/payment-success') {
+      return;
+    }
     
     // Get stored data
     const storedDate = date || localStorage.getItem('date');
@@ -23,6 +47,17 @@ const RouteGuard = ({ children }) => {
 
     // Route validation logic
     const validateRoute = () => {
+      // Allow access to public routes
+      const publicRoutes = [
+        '/', '/menu', '/services', '/contact-us', '/akkay-studio-packages',
+        '/akkay-studio-gallery', '/refund-policy', '/terms-condition',
+        '/about-us', '/privacy-policy'
+      ];
+
+      if (publicRoutes.includes(currentPath)) {
+        return true;
+      }
+
       switch (currentPath) {
         case '/packages':
           if (!storedDate) {
@@ -33,7 +68,7 @@ const RouteGuard = ({ children }) => {
           break;
 
         case '/delux-package':
-        case '/rolexe-pakage':
+        case '/rolexe-package':
           if (!storedDate) {
             toast.error('Please select a date first');
             navigate('/', { replace: true });
@@ -73,26 +108,23 @@ const RouteGuard = ({ children }) => {
           break;
 
         case '/thank-you':
-          const paymentCompleted = sessionStorage.getItem('paymentCompleted');
-          if (!paymentCompleted) {
-            toast.error('Invalid access');
+          // Allow access if user has valid payment session or booking data
+          if (!hasValidPaymentSession() && !localStorage.getItem('completedBookingData')) {
+            toast.error('Invalid access to confirmation page');
             navigate('/', { replace: true });
             return false;
           }
           break;
 
         default:
-          // Allow access to other routes (home, contact, etc.)
+          // Allow access to other routes
           break;
       }
       return true;
     };
 
-    // Only validate if not on home page
-    if (currentPath !== '/') {
-      validateRoute();
-    }
-  }, [location.pathname, date, cartData, slotType, navigate]);
+    validateRoute();
+  }, [location.pathname, date, cartData, slotType, navigate, searchParams]);
 
   return children;
 };

@@ -23,6 +23,7 @@ import RefundPolicy from "./Components/Refund";
 import AboutUs from "./Components/AboutUsSection/AboutUs";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import RouteGuard from "./Components/RouteGuard";
+import PaymentCallback from "./Components/PaymentCallback";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -34,7 +35,7 @@ const App = () => {
           <Navbar />
           <ScrollToTop />
           <Routes>
-            {/* Public routes - no protection needed */}
+            {/* Public routes */}
             <Route path="/" element={<Home />} />
             <Route path="/menu" element={<Menu />} />
             <Route path="/services" element={<ServicesMain />} />
@@ -46,7 +47,11 @@ const App = () => {
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
-            {/* Protected booking workflow routes */}
+            {/* Payment callback route for mobile payments */}
+            <Route path="/payment-callback" element={<PaymentCallback />} />
+            <Route path="/payment-success" element={<PaymentCallback />} />
+
+            {/* Protected booking workflow routes with search params */}
             <Route 
               path="/packages" 
               element={
@@ -57,9 +62,18 @@ const App = () => {
             />
             
             <Route 
-              path="/rolexe-pakage" 
+              path="/theater/:theaterType" 
               element={
-                <ProtectedRoute requiredStep="rolexe-pakage">
+                <ProtectedRoute requiredStep="theater-selection">
+                  <TheaterSelection />
+                </ProtectedRoute>
+              } 
+            />
+            
+            <Route 
+              path="/rolexe-package" 
+              element={
+                <ProtectedRoute requiredStep="rolexe-package">
                   <Rolexe />
                 </ProtectedRoute>
               } 
@@ -94,21 +108,15 @@ const App = () => {
             
             <Route 
               path="/thank-you" 
-              element={
-                <ProtectedRoute requiredStep="thank-you">
-                  <ThankYouPage />
-                </ProtectedRoute>
-              } 
+              element={<ThankYouPage />} 
             />
 
-            {/* Legacy routes - you can remove these if not needed */}
+            {/* Legacy routes */}
             <Route path="/booking-card" element={<BookingCard />} />
-            <Route path="/terms-conditions" element={<TermsMain />} />
           </Routes>
           <Footer />
         </RouteGuard>
         
-        {/* Global Toast Container */}
         <ToastContainer
           position="top-center"
           autoClose={3000}
@@ -127,6 +135,20 @@ const App = () => {
       </BrowserRouter>
     </Context>
   );
+};
+
+// Theater Selection Component with dynamic routing
+const TheaterSelection = () => {
+  const { useParams } = require('react-router-dom');
+  const { theaterType } = useParams();
+  
+  if (theaterType === 'rolexe') {
+    return <Rolexe />;
+  } else if (theaterType === 'deluxe') {
+    return <Deluxe />;
+  } else {
+    return <Packages />;
+  }
 };
 
 export default App;

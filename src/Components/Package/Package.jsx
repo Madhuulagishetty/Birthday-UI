@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import delaxImg from "../../assets/delax.jpg";
-// import relaxImg from "../../assets/relax.jpg";
 import { ChevronRight, Check, Star } from 'lucide-react';
 
 const Packages = () => {
-  // State to track the selected package and animation visibility
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  // Set visibility after component mounts for animations and scroll to top smoothly
   useEffect(() => {
+    // Check for package selection from URL params
+    const packageFromUrl = searchParams.get('package');
+    if (packageFromUrl && (packageFromUrl === 'delax' || packageFromUrl === 'Relexe')) {
+      setSelectedPackage(packageFromUrl);
+    }
+
     // Smooth scroll to top when component loads
     window.scrollTo({
       top: 0,
@@ -23,13 +26,18 @@ const Packages = () => {
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, 100);
-   
-  }, []);
 
-  // Handler when a package card is clicked.
+    return () => clearTimeout(timer);
+  }, [searchParams]);
+
   const handlePackageSelect = (pkg) => {
     setSelectedPackage(pkg);
-    // Show a toast confirmation when package is selected
+    
+    // Update URL with selected package
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('package', pkg);
+    setSearchParams(newSearchParams);
+    
     toast.success(`${pkg === "delax" ? "Deluxe Theater T2" : "Rolexe Theater T1"} selected!`, {
       position: "top-center",
       autoClose: 1500,
@@ -37,33 +45,27 @@ const Packages = () => {
     });
   };
 
-  // Handler for the Book Now button.
   const handleBookNow = () => {
     if (!selectedPackage) {
-      // Show a toast error if no package is selected.
       toast.error("Please select a package before booking!", {
         position: "top-center",
         autoClose: 3000,
       });
     } else {
-      // Add a loading toast before navigation
       toast.info("Preparing your booking...", {
         position: "top-center",
         autoClose: 1500,
       });
       
-      // Navigate based on the selected package after a short delay
       setTimeout(() => {
         if (selectedPackage === "delax") {
-          navigate("/delux-package");
+          navigate("/delux-package?package=delax&from=packages");
         } else if (selectedPackage === "Relexe") {
-          navigate("/rolexe-pakage");
+          navigate("/rolexe-package?package=Relexe&from=packages");
         }
       }, 1600);
     }
   };
-console.log(selectedPackage,'selectedPackage');
-
 
   return (
     <div className="bg-gradient-to-r from-blue-700 via-purple-600 to-pink-700 py-14 px-5 w-full min-h-[95vh] flex justify-center items-center flex-col pt-[7%] overflow-hidden">
@@ -84,7 +86,6 @@ console.log(selectedPackage,'selectedPackage');
         ))}
       </div>
       
-      {/* Title with animation */}
       <div className={`transform transition-all duration-1000 flex flex-col items-center mt-[25%] md:mt-[0%] ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}>
         <h2 className="fontCursive text-white text-3xl md:text-5xl text-center mb-2">
           Our Packages
@@ -111,7 +112,7 @@ console.log(selectedPackage,'selectedPackage');
             <img
               src={"/assets/relax-13.jpg"}
               alt="Akaay Studio Thane"
-               title="Akaay Studio Thane"
+              title="Akaay Studio Thane"
               className="rounded-xl w-full h-48 md:h-64 object-cover transform transition duration-700 hover:scale-110"
             />
             <div className="absolute top-3 left-3 bg-red-600 text-white text-xs px-2 py-1 rounded-full flex items-center">
@@ -134,8 +135,6 @@ console.log(selectedPackage,'selectedPackage');
               2.30 hours duration
             </p>
           </div>
-          
-         
         </div>
 
         {/* Deluxe Theater Package */}
@@ -156,7 +155,7 @@ console.log(selectedPackage,'selectedPackage');
             <img
               src={"/assets/package-delux-changed.jpg"}
               alt="Akaay Studio Thane"
-                  title="Akaay Studio Thane"
+              title="Akaay Studio Thane"
               className="rounded-xl w-full h-48 md:h-64 object-cover transform transition duration-700 hover:scale-110"
             />
             <div className="absolute top-3 left-3 bg-purple-600 text-white text-xs px-2 py-1 rounded-full flex items-center">
@@ -179,12 +178,9 @@ console.log(selectedPackage,'selectedPackage');
               2.30 hours duration
             </p>
           </div>
-          
-         
         </div>
       </div>
 
-      {/* Book Now button with animation */}
       <div className={`flex justify-center mt-8 md:mt-12 transform transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
         style={{ transitionDelay: "0.6s" }}>
         <button 
@@ -198,14 +194,12 @@ console.log(selectedPackage,'selectedPackage');
         </button>
       </div>
       
-      {/* ToastContainer displays toast notifications */}
       <ToastContainer
-  toastStyle={{
-    marginTop: window.innerWidth < 768 ? "10%" : "10%",
-  }}
-/>
+        toastStyle={{
+          marginTop: window.innerWidth < 768 ? "10%" : "10%",
+        }}
+      />
 
-      {/* CSS for animations */}
       <style jsx>{`
         @keyframes twinkle {
           0%, 100% { opacity: 0.1; }

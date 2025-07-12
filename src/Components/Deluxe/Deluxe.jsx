@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Users, PartyPopper } from 'lucide-react';
-import { useNavigate } from "react-router-dom";
+import { Users, PartyPopper, Calendar, Clock, Star, CheckCircle } from 'lucide-react';
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -16,6 +16,7 @@ const Deluxe = () => {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
   const [bookedSlots, setBookedSlots] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const timeSlots = [
@@ -25,6 +26,17 @@ const Deluxe = () => {
     { id: 4, start: "7:00 PM", end: "9:30 PM" },
     { id: 5, start: "10:00 PM", end: "12:30 AM" }
   ];
+
+  // Update URL with selected package info
+  useEffect(() => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('package', 'deluxe');
+    newSearchParams.set('from', 'packages');
+    if (date) {
+      newSearchParams.set('date', date);
+    }
+    setSearchParams(newSearchParams);
+  }, [date, setSearchParams]);
 
   // Function to check if a time slot has passed for today
   const isTimeSlotPassed = (slot) => {
@@ -196,7 +208,12 @@ const Deluxe = () => {
     toast.success("Time slot selected successfully!");
     setSlotType('deluxe');
     
-    navigate("/user-details", {
+    // Add search params to navigation
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('slot_id', selectedTimeSlot.id);
+    newSearchParams.set('slot_time', `${selectedTimeSlot.start}-${selectedTimeSlot.end}`);
+    
+    navigate(`/user-details?${newSearchParams.toString()}`, {
       state: {
         timeSlot: selectedTimeSlot,
       },
@@ -273,13 +290,23 @@ const Deluxe = () => {
         initial="hidden" 
         animate="visible" 
         variants={fadeIn}
-        className="relative md:max-w-[30rem] mt-20 w-full bg-white rounded-2xl shadow-xl overflow-hidden p-3 md:p-4 z-10 md:mt-[7%] md:mb-[3%]"
+        className="relative md:max-w-[32rem] mt-20 w-full bg-white rounded-3xl shadow-2xl overflow-hidden p-4 md:p-6 z-10 md:mt-[7%] md:mb-[3%]"
       >
+        {/* Breadcrumb */}
+        <motion.div 
+          variants={itemAnimation}
+          className="flex items-center text-sm text-gray-500 mb-4"
+        >
+          <span>Packages</span>
+          <span className="mx-2">›</span>
+          <span className="text-purple-600 font-medium">Deluxe Theater T2</span>
+        </motion.div>
+
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.8 }}
-          className="relative rounded-xl overflow-hidden"
+          className="relative rounded-xl overflow-hidden mb-4"
         >
           <Slider {...sliderSettings} className="theater-slider">
             {images.map((img, index) => (
@@ -299,200 +326,267 @@ const Deluxe = () => {
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
-          className="space-y-2 mt-3"
+          className="space-y-4"
         >
-          <motion.div variants={itemAnimation} className="flex justify-between items-start flex-col md:flex-row gap-3">
-            <motion.h4 
-              variants={pulseAnimation}
-              initial="initial"
-              animate="animate"
-              className="text-[1.2rem] font-semibold text-[#B3153D]"
-            >
-              Deluxe Theater T2
-            </motion.h4>
+          {/* Header Section */}
+          <motion.div variants={itemAnimation} className="flex justify-between items-start">
+            <div className="flex-1">
+              <motion.h4 
+                variants={pulseAnimation}
+                initial="initial"
+                animate="animate"
+                className="text-2xl font-bold text-purple-600 mb-2"
+              >
+                Deluxe Theater T2
+              </motion.h4>
+              
+              {/* Date and Time Display */}
+              <div className="flex flex-wrap gap-2 mb-3">
+                <div className="flex items-center bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-sm">
+                  <Calendar className="w-4 h-4 mr-1" />
+                  <span>{date}</span>
+                </div>
+                <div className="flex items-center bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm">
+                  <Clock className="w-4 h-4 mr-1" />
+                  <span>2.5 hours duration</span>
+                </div>
+              </div>
+            </div>
+            
             <motion.div 
               variants={itemAnimation} 
-              className="inline-flex justify-center"
+              className="flex flex-col items-end"
               whileHover={{ scale: 1.05 }}
             >
-              <div className={`px-3 py-1 rounded-full border text-[12px] md:text-sm ${
+              <div className={`px-4 py-2 rounded-full border text-sm font-medium ${
                 isLoading 
                   ? 'bg-gray-50 text-gray-500 border-gray-300' 
                   : availableSlots > 0 
-                    ? 'bg-green-50 text-green-500 border-green-500'
-                    : 'bg-red-50 text-red-500 border-red-500'
+                    ? 'bg-green-50 text-green-600 border-green-300'
+                    : 'bg-red-50 text-red-600 border-red-300'
               }`}>
                 <span>
-                  {isLoading ? 'Loading...' : `${availableSlots} Slots Available`}
+                  {isLoading ? 'Loading...' : `${availableSlots} Available`}
                 </span>
               </div>
+              <div className="text-2xl font-bold text-purple-600 mt-2">₹2,500</div>
             </motion.div>
           </motion.div>
           
+          {/* Features Section */}
           <motion.div 
             variants={itemAnimation}
-            className="flex flex-col sm:flex-row items-start sm:items-center gap-3 text-gray-700 font-medium py-2 px-2 max-w-sm"
+            className="grid grid-cols-2 gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100"
           >
             <motion.div 
               className="flex items-center space-x-2"
               whileHover={{ scale: 1.05, x: 5 }}
               transition={{ type: "spring", stiffness: 400 }}
             >
-              <Users size={25} className="text-gray-600" />
-              <span className="text-sm text-gray-600">Max 25 People</span>
+              <Users className="w-6 h-6 text-purple-600" />
+              <div>
+                <div className="text-sm font-medium text-gray-800">Capacity</div>
+                <div className="text-xs text-gray-600">Up to 25 people</div>
+              </div>
             </motion.div>
       
             <motion.div 
-              className="flex items-center space-x-2 mt-2 sm:mt-0"
+              className="flex items-center space-x-2"
               whileHover={{ scale: 1.05, x: 5 }}
               transition={{ type: "spring", stiffness: 400 }}
             >
-              <PartyPopper size={25} className="text-gray-600" />
-              <span className="text-sm text-gray-600">Decoration Included</span>
+              <PartyPopper className="w-6 h-6 text-pink-600" />
+              <div>
+                <div className="text-sm font-medium text-gray-800">Decorations</div>
+                <div className="text-xs text-gray-600">Included</div>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="flex items-center space-x-2"
+              whileHover={{ scale: 1.05, x: 5 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              <Star className="w-6 h-6 text-yellow-500" />
+              <div>
+                <div className="text-sm font-medium text-gray-800">Premium</div>
+                <div className="text-xs text-gray-600">Theater experience</div>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="flex items-center space-x-2"
+              whileHover={{ scale: 1.05, x: 5 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              <CheckCircle className="w-6 h-6 text-green-600" />
+              <div>
+                <div className="text-sm font-medium text-gray-800">Facilities</div>
+                <div className="text-xs text-gray-600">AC & Sound</div>
+              </div>
             </motion.div>
           </motion.div>
           
-          <motion.h3 
-            variants={itemAnimation} 
-            className="text-[16px] font-semibold text-[#055085] mt-2"
-          >
-            Select Time Slot
-          </motion.h3>
+          {/* Time Slot Selection */}
+          <motion.div variants={itemAnimation}>
+            <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+              <Clock className="w-5 h-5 mr-2 text-purple-600" />
+              Select Time Slot
+            </h3>
 
-          <AnimatePresence>
-            {isLoading ? (
-              <motion.div
-                key="loader"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex justify-center py-6"
-              >
+            <AnimatePresence>
+              {isLoading ? (
                 <motion.div
-                  animate={{ 
-                    rotate: 360,
-                    borderColor: ["#B1153C", "#055085", "#4CAF50", "#B1153C"]
-                  }}
-                  transition={{ 
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "linear"
-                  }}
-                  className="w-8 h-8 border-t-2 border-b-2 rounded-full"
-                />
-              </motion.div>
-            ) : (
-              <motion.div 
-                key="time-slots"
-                variants={itemAnimation}
-                className="flex flex-wrap gap-1 justify-start md:justify-center sm:justify-start"
-                exit={{ opacity: 0 }}
-              >
-                {timeSlots.map((slot, index) => {
-                  const isBooked = bookedSlots.some((booked) => booked.id === slot.id);
-                  const isPassed = isTimeSlotPassed(slot);
-                  const isDisabled = isBooked || isPassed;
-                  
-                  return (
-                    <motion.button
-                      key={slot.id}
-                      onClick={() => {
-                        if (!isDisabled) {
-                          setSelectedTimeSlot(slot);
-                          AddtoSlot(slot);
-                        }
-                      }}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ 
-                        opacity: 1, 
-                        y: 0,  
-                        backgroundColor: selectedTimeSlot && selectedTimeSlot.id === slot.id ? "#3b82f6" : undefined, 
-                        color: selectedTimeSlot && selectedTimeSlot.id === slot.id ? "#fff" : undefined
-                      }}
-                      transition={{ delay: 0.1 * index, duration: 0.3 }}
-                      whileHover={
-                        !isDisabled
-                          ? { 
-                              scale: 1.08, 
-                              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-                              backgroundColor: "#f0f7ff"
-                            } 
-                          : {}
-                      }
-                      whileTap={
-                        !isDisabled
-                          ? { scale: 0.95 }
-                          : {}
-                      }
-                      disabled={isDisabled}
-                      className={`rounded-xl border text-sm transition-all px-1 py-2 md:px-2 md:py-2 ${
-                        selectedTimeSlot && selectedTimeSlot.id === slot.id
-                          ? "border-[#055085] bg-blue-500 text-white shadow-md"
-                          : isBooked
-                          ? "bg-red-300 cursor-not-allowed text-red-800 border-red-400"
-                          : isPassed
-                          ? "bg-gray-200 cursor-not-allowed text-gray-400 line-through border-gray-400"
-                          : "border-gray-200 hover:border-purple-200"
-                      }`}
-                    >
-                      <div className="font-medium text-[12px] w-15 text-center">
-                        <p>{slot.start} To</p>
-                        <p>{slot.end}</p>
-                        {isBooked && <p className="text-[10px] text-red-600">Booked</p>}
-                        {isPassed && <p className="text-[10px] text-red-400">Passed</p>}
-                      </div>
-                    </motion.button>
-                  );
-                })}
-              </motion.div>
-            )}
-          </AnimatePresence>
-          
-          <motion.div variants={itemAnimation} className="pt-4">
-            <motion.div 
-              className="flex items-baseline gap-1 mb-1"
-              whileHover={{ x: 3 }}
-            >
-              <span className="text-1xl font-semibold">₹2500</span>
-              <span className="text-sm capitalize">For 10 or less: Rs 2500 with decoration for 2.30 hrs</span>
-            </motion.div>
-            <motion.p 
-              className="text-sm text-black mb-4 capitalize"
-              whileHover={{ x: 3 }}
-            >
-              If more than 10 peoples then Rs 150/ extra per person. Maximum 25 peoples can book.
-            </motion.p>
-            <div className="w-[100%] flex justify-center ">
-              <motion.button
-                onClick={handleBooking}
-                variants={buttonAnimation}
-                initial="initial"
-                whileHover="hover"
-                whileTap="tap"
-                disabled={!selectedTimeSlot || isLoading}
-                className={`w-[90%] sm:w-[90%] button-name bg-[#B1153C] text-white px-6 py-3 rounded-md transition-all ${
-                  selectedTimeSlot && !isLoading
-                    ? "bg-[#B1153C] text-white"
-                    : "bg-[#B1153C] opacity-80 cursor-not-allowed text-white"
-                }`}
-              >
-                <motion.span
-                  initial={{ opacity: 1 }}
-                  animate={{
-                    opacity: [1, 0.8, 1],
-                    scale: [1, 1.03, 1]
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    repeatType: "reverse"
-                  }}
-                  className="inline-block"
+                  key="loader"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex justify-center py-8"
                 >
-                  {isLoading ? 'Loading...' : 'Book Now'}
-                </motion.span>
-              </motion.button>
+                  <motion.div
+                    animate={{ 
+                      rotate: 360,
+                      borderColor: ["#B1153C", "#055085", "#4CAF50", "#B1153C"]
+                    }}
+                    transition={{ 
+                      duration: 1.5,
+                      repeat: Infinity,
+                      ease: "linear"
+                    }}
+                    className="w-10 h-10 border-t-3 border-b-3 rounded-full"
+                  />
+                </motion.div>
+              ) : (
+                <motion.div 
+                  key="time-slots"
+                  variants={itemAnimation}
+                  className="grid grid-cols-2 md:grid-cols-3 gap-3"
+                  exit={{ opacity: 0 }}
+                >
+                  {timeSlots.map((slot, index) => {
+                    const isBooked = bookedSlots.some((booked) => booked.id === slot.id);
+                    const isPassed = isTimeSlotPassed(slot);
+                    const isDisabled = isBooked || isPassed;
+                    const isSelected = selectedTimeSlot && selectedTimeSlot.id === slot.id;
+                    
+                    return (
+                      <motion.button
+                        key={slot.id}
+                        onClick={() => {
+                          if (!isDisabled) {
+                            setSelectedTimeSlot(slot);
+                            AddtoSlot(slot);
+                          }
+                        }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ 
+                          opacity: 1, 
+                          y: 0,
+                          scale: isSelected ? 1.05 : 1
+                        }}
+                        transition={{ delay: 0.1 * index, duration: 0.3 }}
+                        whileHover={
+                          !isDisabled
+                            ? { 
+                                scale: 1.08, 
+                                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)",
+                              } 
+                            : {}
+                        }
+                        whileTap={
+                          !isDisabled
+                            ? { scale: 0.95 }
+                            : {}
+                        }
+                        disabled={isDisabled}
+                        className={`relative p-4 rounded-xl border-2 text-sm transition-all duration-300 ${
+                          isSelected
+                            ? "border-purple-500 bg-purple-500 text-white shadow-lg"
+                            : isBooked
+                            ? "bg-red-100 border-red-300 text-red-700 cursor-not-allowed"
+                            : isPassed
+                            ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed line-through"
+                            : "border-gray-200 hover:border-purple-300 hover:bg-purple-50"
+                        }`}
+                      >
+                        {isSelected && (
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center"
+                          >
+                            <CheckCircle className="w-4 h-4 text-white" />
+                          </motion.div>
+                        )}
+                        
+                        <div className="font-medium text-center">
+                          <div className="text-sm">{slot.start}</div>
+                          <div className="text-xs opacity-75">to</div>
+                          <div className="text-sm">{slot.end}</div>
+                          {isBooked && <div className="text-xs mt-1 font-bold">BOOKED</div>}
+                          {isPassed && <div className="text-xs mt-1">PASSED</div>}
+                        </div>
+                      </motion.button>
+                    );
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+          
+          {/* Pricing Information */}
+          <motion.div variants={itemAnimation} className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-200">
+            <h4 className="font-semibold text-blue-800 mb-2">Pricing Details</h4>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span>Base price (up to 10 people):</span>
+                <span className="font-semibold">₹2,500</span>
+              </div>
+              <div className="flex justify-between text-orange-600">
+                <span>Extra person (above 10):</span>
+                <span className="font-semibold">₹150 each</span>
+              </div>
+              <div className="flex justify-between text-green-600">
+                <span>Decorations:</span>
+                <span className="font-semibold">Included</span>
+              </div>
+              <div className="pt-2 border-t border-blue-200 text-xs text-blue-600">
+                Maximum capacity: 25 people
+              </div>
             </div>
+          </motion.div>
+
+          {/* Book Now Button */}
+          <motion.div className="pt-4">
+            <motion.button
+              onClick={handleBooking}
+              variants={buttonAnimation}
+              initial="initial"
+              whileHover="hover"
+              whileTap="tap"
+              disabled={!selectedTimeSlot || isLoading}
+              className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-300 ${
+                selectedTimeSlot && !isLoading
+                  ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
+            >
+              <motion.span
+                initial={{ opacity: 1 }}
+                animate={selectedTimeSlot ? {
+                  opacity: [1, 0.8, 1],
+                  scale: [1, 1.02, 1]
+                } : {}}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatType: "reverse"
+                }}
+                className="inline-block"
+              >
+                {isLoading ? 'Loading Slots...' : selectedTimeSlot ? 'Continue Booking' : 'Select Time Slot'}
+              </motion.span>
+            </motion.button>
           </motion.div>
         </motion.div>
       </motion.div>
