@@ -169,7 +169,7 @@ const TermsMain = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount: 10, // Advance amount ₹10
+          amount: 1, // Advance amount ₹10
           bookingData: bookingData
         }),
       });
