@@ -47,9 +47,11 @@ const App = () => {
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
-            {/* Payment callback route for mobile payments */}
+            {/* Payment callback and thank you routes */}
             <Route path="/payment-callback" element={<PaymentCallback />} />
             <Route path="/payment-success" element={<PaymentCallback />} />
+            <Route path="/thank-you" element={<ThankYouPage />} />
+            <Route path="/thank-you" element={<ThankYouPage />} />
 
             {/* Protected booking workflow routes with search params */}
             <Route 
@@ -100,18 +102,12 @@ const App = () => {
             <Route 
               path="/terms-conditions" 
               element={
-                <ProtectedRoute requiredStep="terms-conditions">
+                 <ProtectedRoute requiredStep="terms-conditions">
                   <TermsMain />
                 </ProtectedRoute>
-              } 
-            />
-            
-            <Route 
-              path="/thank-you" 
-              element={<ThankYouPage />} 
-            />
+              }/>
 
-            {/* Legacy routes */}
+       
             <Route path="/booking-card" element={<BookingCard />} />
           </Routes>
           <Footer />
