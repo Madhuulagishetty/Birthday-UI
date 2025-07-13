@@ -22,6 +22,7 @@ const TermsMain = () => {
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState(null);
   const [verificationStatus, setVerificationStatus] = useState(null);
+  const [currentOrderDetails, setCurrentOrderDetails] = useState(null);
 
   const addNotification = (type, message) => {
     const id = Date.now();
@@ -66,16 +67,23 @@ const TermsMain = () => {
     try {
       console.log("🚀 Starting immediate payment verification...");
       
+      // Prepare the verification payload to match your existing backend
+      const verificationPayload = {
+        razorpay_order_id: paymentResponse.razorpay_order_id,
+        razorpay_payment_id: paymentResponse.razorpay_payment_id,
+        razorpay_signature: paymentResponse.razorpay_signature,
+        bookingData: bookingData,
+        advanceAmount: 10,
+        remainingAmount: bookingData.totalAmount - 10,
+        amountWithTax: bookingData.totalAmount,
+      };
+
       const response = await fetch('https://birthday-backend-tau.vercel.app/verify-payment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          razorpay_order_id: paymentResponse.razorpay_order_id,
-          razorpay_payment_id: paymentResponse.razorpay_payment_id,
-          razorpay_signature: paymentResponse.razorpay_signature,
-        }),
+        body: JSON.stringify(verificationPayload),
       });
 
       const result = await response.json();
@@ -92,12 +100,11 @@ const TermsMain = () => {
           ...bookingData,
           paymentId: paymentResponse.razorpay_payment_id,
           orderId: paymentResponse.razorpay_order_id,
-          advancePaid: 1,
-          remainingAmount: bookingData.totalAmount - 1,
+          advancePaid: 10,
+          remainingAmount: bookingData.totalAmount - 10,
           paymentStatus: 'advance_paid',
           bookingConfirmed: true,
-          dataStored: result.dataStored,
-          processingTime: result.processingTime,
+          savedBooking: result.savedBooking,
           verificationTime: `${processingTime}ms`
         };
 
@@ -105,7 +112,7 @@ const TermsMain = () => {
         
         // Show success notification with processing time
         addNotification("success", 
-          `Payment verified in ${result.processingTime}! Booking confirmed and data saved.`
+          `Payment verified in ${processingTime}ms! Booking confirmed and data saved.`
         );
         
         // Navigate to success page immediately
@@ -169,7 +176,7 @@ const TermsMain = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount: 1, // Advance amount ₹10
+          amount: 10, // Advance amount ₹10
           bookingData: bookingData
         }),
       });
@@ -180,6 +187,11 @@ const TermsMain = () => {
 
       const order = await response.json();
       setCurrentOrderId(order.id);
+      setCurrentOrderDetails({
+        orderId: order.id,
+        amount: 10,
+        bookingData: bookingData
+      });
       
       console.log("Order created:", order.id);
 
