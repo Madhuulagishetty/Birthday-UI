@@ -117,7 +117,7 @@ const TermsMain = () => {
         
         // Navigate to success page immediately
         setTimeout(() => {
-          navigate('/booking-success');
+          navigate('/thank-you');
         }, 1500);
         
       } else {
@@ -176,7 +176,7 @@ const TermsMain = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount: 10, // Advance amount ₹10
+          amount: 1, // Advance amount ₹10
           bookingData: bookingData
         }),
       });
@@ -189,7 +189,7 @@ const TermsMain = () => {
       setCurrentOrderId(order.id);
       setCurrentOrderDetails({
         orderId: order.id,
-        amount: 10,
+        amount: 1,
         bookingData: bookingData
       });
       
