@@ -66,7 +66,7 @@ const TermsMain = () => {
     try {
       console.log("🚀 Starting immediate payment verification...");
       
-      const response = await fetch('http://localhost:3000/verify-payment', {
+      const response = await fetch('https://birthday-backend-tau.vercel.app/verify-payment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -92,8 +92,8 @@ const TermsMain = () => {
           ...bookingData,
           paymentId: paymentResponse.razorpay_payment_id,
           orderId: paymentResponse.razorpay_order_id,
-          advancePaid: 1,
-          remainingAmount: bookingData.totalAmount - 1,
+          advancePaid: 10,
+          remainingAmount: bookingData.totalAmount - 10,
           paymentStatus: 'advance_paid',
           bookingConfirmed: true,
           dataStored: result.dataStored,
@@ -110,7 +110,7 @@ const TermsMain = () => {
         
         // Navigate to success page immediately
         setTimeout(() => {
-          navigate('/thank-you');
+          navigate('/booking-success');
         }, 1500);
         
       } else {
@@ -163,13 +163,13 @@ const TermsMain = () => {
       console.log("Creating order for payment...");
       
       // Create order on backend
-      const response = await fetch('http://localhost:3000/create-order', {
+      const response = await fetch('https://birthday-backend-tau.vercel.app/create-order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount: 1, // Advance amount ₹10
+          amount: 10, // Advance amount ₹10
           bookingData: bookingData
         }),
       });
