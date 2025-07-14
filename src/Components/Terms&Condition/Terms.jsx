@@ -9,8 +9,12 @@ import {
   CreditCard,
   Loader,
   Clock,
-  Zap
+  Zap,
+  ExternalLink,
+  ArrowRight
 } from "lucide-react";
+
+const serverUrl =  'https://birthday-backend-tau.vercel.app';
 
 const TermsMain = () => {
   const navigate = useNavigate();
@@ -20,9 +24,11 @@ const TermsMain = () => {
   const [amountWithTax, setAmountWithTax] = useState(0);
   const [notifications, setNotifications] = useState([]);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-  const [currentOrderId, setCurrentOrderId] = useState(null);
+  const [currentPaymentLinkId, setCurrentPaymentLinkId] = useState(null);
   const [verificationStatus, setVerificationStatus] = useState(null);
-  const [currentOrderDetails, setCurrentOrderDetails] = useState(null);
+  const [paymentLinkUrl, setPaymentLinkUrl] = useState(null);
+  const [countdown, setCountdown] = useState(null);
+  const [buttonState, setButtonState] = useState('ready'); // ready, creating, redirecting, success
 
   const addNotification = (type, message) => {
     const id = Date.now();
@@ -46,92 +52,136 @@ const TermsMain = () => {
       setAnimateIn(true);
     }, 100);
 
-    // Load Razorpay script
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    document.body.appendChild(script);
-
-    return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
+    // Check for incomplete payments on page load
+    checkForIncompletePayments();
+    
+    // Check for payment link ID in localStorage
+    const storedPaymentLinkId = localStorage.getItem('currentPaymentLinkId');
+    if (storedPaymentLinkId) {
+      setCurrentPaymentLinkId(storedPaymentLinkId);
+      checkPaymentStatus(storedPaymentLinkId);
+    }
   }, [navigate]);
 
-  // OPTIMIZED: Immediate payment verification
-  const verifyPaymentImmediately = async (paymentResponse) => {
-    const startTime = Date.now();
-    setVerificationStatus("verifying");
+  // Check for incomplete payments from previous sessions
+  const checkForIncompletePayments = () => {
+    const incompletePaymentLinkId = localStorage.getItem('currentPaymentLinkId');
+    const incompleteBookingData = localStorage.getItem('bookingData');
     
-    try {
-      console.log("🚀 Starting immediate payment verification...");
-      
-      // Prepare the verification payload to match your existing backend
-      const verificationPayload = {
-        razorpay_order_id: paymentResponse.razorpay_order_id,
-        razorpay_payment_id: paymentResponse.razorpay_payment_id,
-        razorpay_signature: paymentResponse.razorpay_signature,
-        bookingData: bookingData,
-        advanceAmount: 10,
-        remainingAmount: bookingData.totalAmount - 10,
-        amountWithTax: bookingData.totalAmount,
-      };
+    if (incompletePaymentLinkId && incompleteBookingData) {
+      addNotification("info", "Found incomplete payment. Checking status...");
+      checkPaymentStatus(incompletePaymentLinkId);
+    }
+  };
 
-      const response = await fetch('https://birthday-backend-tau.vercel.app/verify-payment', {
-        method: 'POST',
+  // Enhanced payment status check with retry logic
+  const checkPaymentStatus = async (paymentLinkId, retryCount = 0) => {
+    try {
+      console.log(`🔍 Checking payment status for: ${paymentLinkId} (Attempt ${retryCount + 1})`);
+      
+      const response = await fetch(`${serverUrl}/payment-status/${paymentLinkId}`, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(verificationPayload),
       });
-
-      const result = await response.json();
-      const processingTime = Date.now() - startTime;
       
-      console.log(`⚡ Verification completed in ${processingTime}ms`);
-      console.log("📊 Result:", result);
-
-      if (result.status === 'success') {
-        setVerificationStatus("success");
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      console.log(`📊 Payment status result:`, result);
+      
+      if (result.status === 'paid') {
+        // Payment was completed
+        setVerificationStatus('success');
+        setButtonState('success');
+        setIsProcessingPayment(false);
         
-        // Store completed booking data immediately
         const completedBooking = {
           ...bookingData,
-          paymentId: paymentResponse.razorpay_payment_id,
-          orderId: paymentResponse.razorpay_order_id,
+          paymentId: result.paymentDetails?.id,
+          paymentLinkId: paymentLinkId,
           advancePaid: 10,
           remainingAmount: bookingData.totalAmount - 10,
           paymentStatus: 'advance_paid',
           bookingConfirmed: true,
-          savedBooking: result.savedBooking,
-          verificationTime: `${processingTime}ms`
+          savedBooking: result.bookingData
         };
-
+        
         localStorage.setItem('completedBookingData', JSON.stringify(completedBooking));
+        localStorage.removeItem('currentPaymentLinkId');
         
-        // Show success notification with processing time
-        addNotification("success", 
-          `Payment verified in ${processingTime}ms! Booking confirmed and data saved.`
-        );
-        
-        // Navigate to success page immediately
+        addNotification("success", "Payment completed! Data saved successfully. Redirecting...");
+        setTimeout(() => navigate('/thank-you'), 2000);
+      } else if (result.needsRecovery) {
+        // Payment was made but data wasn't saved - recover it
+        addNotification("warning", "Payment completed but data needs recovery. Processing...");
+        await recoverPayment(paymentLinkId);
+      } else if (result.status === 'created' || result.status === 'issued') {
+        // Payment link exists but not paid yet
+        console.log(`⏳ Payment link status: ${result.status}`);
+        addNotification("info", "Payment link is active. Complete payment to proceed.");
+      }
+    } catch (error) {
+      console.error('Payment status check failed:', error);
+      
+      // Retry logic for network issues
+      if (retryCount < 3) {
+        console.log(`🔄 Retrying payment status check in 2 seconds...`);
         setTimeout(() => {
-          navigate('/thank-you');
-        }, 1500);
-        
+          checkPaymentStatus(paymentLinkId, retryCount + 1);
+        }, 2000);
       } else {
-        setVerificationStatus("failed");
-        addNotification("error", result.message || "Payment verification failed");
-        setIsProcessingPayment(false);
+        addNotification("error", "Unable to check payment status. Please refresh the page.");
+      }
+    }
+  };
+
+  // Enhanced payment recovery with better error handling
+  const recoverPayment = async (paymentLinkId) => {
+    try {
+      console.log(`🔄 Starting payment recovery for: ${paymentLinkId}`);
+      
+      const response = await fetch(`${serverUrl}/recover-payment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentLinkId, bookingData })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Recovery failed: ${response.status}`);
       }
       
+      const result = await response.json();
+      console.log(`✅ Recovery result:`, result);
+      
+      if (result.status === 'recovered') {
+        addNotification("success", "Payment recovered successfully! Data saved.");
+        setVerificationStatus('success');
+        setButtonState('success');
+        localStorage.removeItem('currentPaymentLinkId');
+        
+        const completedBooking = {
+          ...bookingData,
+          paymentId: result.paymentId,
+          paymentLinkId: paymentLinkId,
+          advancePaid: 10,
+          remainingAmount: bookingData.totalAmount - 10,
+          paymentStatus: 'advance_paid',
+          bookingConfirmed: true,
+          dataStored: result.dataStored
+        };
+        
+        localStorage.setItem('completedBookingData', JSON.stringify(completedBooking));
+        setTimeout(() => navigate('/thank-you'), 1500);
+      } else {
+        addNotification("error", "Payment recovery failed. Please contact support.");
+      }
     } catch (error) {
-      const processingTime = Date.now() - startTime;
-      console.error(`❌ Verification failed after ${processingTime}ms:`, error);
-      setVerificationStatus("failed");
-      addNotification("error", "Payment verification failed. Please contact support.");
-      setIsProcessingPayment(false);
+      console.error('Payment recovery failed:', error);
+      addNotification("error", "Payment recovery failed. Please contact support.");
     }
   };
 
@@ -152,95 +202,177 @@ const TermsMain = () => {
     "Refund Policy: If Slot Is Cancelled Advance Amount Non-Refundable. Then You Get The Chance To Reschedule Your Slot.",
   ];
 
+  // Enhanced payment initialization with better error handling
   const initializePayment = async () => {
     if (!isChecked) {
       addNotification("error", "Please accept the terms and conditions");
       return;
-    }
-
+    } 
     if (!bookingData) {
       addNotification("error", "Booking data not found");
       return;
     }
 
     setIsProcessingPayment(true);
+    setButtonState('creating');
     setVerificationStatus(null);
+    setPaymentLinkUrl(null);
+    setCountdown(null);
 
     try {
-      console.log("Creating order for payment...");
+      console.log("🔗 Creating payment link...");
+      addNotification("info", "Creating secure payment link...");
       
-      // Create order on backend
-      const response = await fetch('https://birthday-backend-tau.vercel.app/create-order', {
+      // Enhanced booking data with additional fields
+      const enhancedBookingData = {
+        ...bookingData,
+        totalAmount: amountWithTax,
+        advanceAmount: 10,
+        remainingAmount: amountWithTax - 10,
+        paymentMethod: 'razorpay_payment_link',
+        createdAt: new Date().toISOString(),
+        source: 'web_app'
+      };
+      
+      const response = await fetch(`${serverUrl}/create-payment-link`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           amount: 1, // Advance amount ₹10
-          bookingData: bookingData
+          bookingData: enhancedBookingData
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create order');
+        const errorText = await response.text();
+        throw new Error(`Server error: ${response.status} - ${errorText}`);
       }
 
-      const order = await response.json();
-      setCurrentOrderId(order.id);
-      setCurrentOrderDetails({
-        orderId: order.id,
-        amount: 1,
-        bookingData: bookingData
-      });
+      const result = await response.json();
+      console.log("✅ Payment link created successfully:", result);
       
-      console.log("Order created:", order.id);
-
-      // Initialize Razorpay payment
-      const options = {
-        key: 'rzp_live_7I7nJJIaq1bIol', // Replace with your Razorpay key ID
-        amount: order.amount,
-        currency: order.currency,
-        name: 'Mini Theater Booking',
-        description: 'Advance Payment for Theater Booking',
-        order_id: order.id,
-        handler: async function (response) {
-          console.log("💳 Payment completed:", response);
+      if (!result.paymentLink || !result.paymentLink.short_url) {
+        throw new Error('Invalid payment link response');
+      }
+      
+      const paymentLink = result.paymentLink;
+      
+      // Store payment link data
+      setCurrentPaymentLinkId(paymentLink.id);
+      setPaymentLinkUrl(paymentLink.short_url);
+      localStorage.setItem('currentPaymentLinkId', paymentLink.id);
+      
+      setButtonState('redirecting');
+      addNotification("success", "Payment link created! Redirecting in 3 seconds...");
+      
+      // Countdown before redirect
+      let countdownValue = 3;
+      setCountdown(countdownValue);
+      
+      const countdownInterval = setInterval(() => {
+        countdownValue--;
+        setCountdown(countdownValue);
+        
+        if (countdownValue <= 0) {
+          clearInterval(countdownInterval);
+          setCountdown(null);
           
-          // IMMEDIATE VERIFICATION - No polling needed!
-          await verifyPaymentImmediately(response);
-        },
-        prefill: {
-          name: bookingData.bookingName || bookingData.NameUser,
-          email: bookingData.email,
-          contact: bookingData.whatsapp
-        },
-        theme: {
-          color: '#9333ea'
-        },
-        modal: {
-          ondismiss: function() {
-            console.log("Payment modal dismissed");
-            setIsProcessingPayment(false);
-            setVerificationStatus(null);
-            addNotification("warning", "Payment cancelled");
-          }
+          // Open payment link
+          window.open(paymentLink.short_url, '_blank');
+          
+          // Start enhanced monitoring
+          startEnhancedPaymentMonitoring(paymentLink.id);
         }
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      }, 1000);
 
     } catch (error) {
-      console.error('Payment initialization error:', error);
-      addNotification("error", "Failed to initialize payment. Please try again.");
+      console.error('Payment link creation error:', error);
+      addNotification("error", `Failed to create payment link: ${error.message}`);
       setIsProcessingPayment(false);
+      setButtonState('ready');
       setVerificationStatus(null);
+      setPaymentLinkUrl(null);
+      setCountdown(null);
     }
+  };
+
+  // Enhanced payment monitoring with better intervals and error handling
+  const startEnhancedPaymentMonitoring = (paymentLinkId) => {
+    console.log(`🔍 Starting enhanced payment monitoring for: ${paymentLinkId}`);
+    addNotification("info", "Payment monitoring started. Complete payment in the new tab.");
+    
+    let checkCount = 0;
+    const maxChecks = 200; // 200 checks over 10 minutes
+    
+    const checkInterval = setInterval(async () => {
+      checkCount++;
+      
+      try {
+        console.log(`🔍 Payment check ${checkCount}/${maxChecks} for ${paymentLinkId}`);
+        
+        const response = await fetch(`${serverUrl}/payment-status/${paymentLinkId}`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const result = await response.json();
+        console.log(`📊 Payment status (${checkCount}):`, result);
+        
+        if (result.status === 'paid') {
+          clearInterval(checkInterval);
+          
+          console.log(`✅ Payment completed! Processing data...`);
+          setVerificationStatus('success');
+          setButtonState('success');
+          setIsProcessingPayment(false);
+          
+          const completedBooking = {
+            ...bookingData,
+            paymentId: result.paymentDetails?.id,
+            paymentLinkId: paymentLinkId,
+            advancePaid: 10,
+            remainingAmount: bookingData.totalAmount - 10,
+            paymentStatus: 'advance_paid',
+            bookingConfirmed: true,
+            savedBooking: result.bookingData,
+            dataStored: result.dataStored
+          };
+          
+          localStorage.setItem('completedBookingData', JSON.stringify(completedBooking));
+          localStorage.removeItem('currentPaymentLinkId');
+          
+          addNotification("success", "Payment completed! Data saved automatically. Redirecting...");
+          setTimeout(() => navigate('/thank-you'), 2000);
+        }
+      } catch (error) {
+        console.error(`❌ Payment status check ${checkCount} failed:`, error);
+        
+        // Don't show error notification for every failed check
+        if (checkCount % 10 === 0) {
+          addNotification("warning", `Payment monitoring active (${checkCount}/${maxChecks})...`);
+        }
+      }
+      
+      // Stop monitoring after max checks
+      if (checkCount >= maxChecks) {
+        clearInterval(checkInterval);
+        if (verificationStatus !== 'success') {
+          console.log(`⏰ Payment monitoring stopped after ${maxChecks} checks`);
+          addNotification("warning", "Payment monitoring stopped. Return anytime to check status.");
+          setIsProcessingPayment(false);
+          setButtonState('ready');
+        }
+      }
+    }, 3000); // Check every 3 seconds
   };
 
   const handleNewBooking = () => {
     localStorage.removeItem("bookingData");
     localStorage.removeItem("completedBookingData");
+    localStorage.removeItem("currentPaymentLinkId");
     navigate("/");
   };
 
@@ -433,32 +565,43 @@ const TermsMain = () => {
                         <div className="bg-blue-50 p-4 rounded-xl border border-blue-200">
                           <h4 className="font-semibold text-blue-800 mb-2 flex items-center">
                             <Zap className="w-4 h-4 mr-2" />
-                            Instant Payment Verification:
+                            Enhanced Payment System:
                           </h4>
                           <ul className="text-sm text-blue-700 space-y-1">
-                            <li>• Lightning-fast verification within 0.5 seconds</li>
-                            <li>• Immediate booking confirmation</li>
-                            <li>• Instant data storage in Firebase & Google Sheets</li>
-                            <li>• No waiting or manual processing required</li>
-                            <li>• Secure payment powered by Razorpay</li>
+                            <li>• 100% server-side webhook processing</li>
+                            <li>• Automatic data saving to Firebase & Sheets</li>
+                            <li>• Enhanced payment monitoring system</li>
+                            <li>• Works even if you close the app</li>
+                            <li>• Automatic payment recovery system</li>
+                            <li>• Real-time status updates</li>
                           </ul>
                         </div>
 
-                        {/* Verification Status */}
-                        {verificationStatus && (
+                        {/* Payment Status */}
+                        {(verificationStatus || countdown !== null) && (
                           <div className={`p-4 rounded-xl border ${
-                            verificationStatus === "verifying" 
+                            buttonState === "creating" 
                               ? "bg-blue-50 border-blue-200"
+                              : buttonState === "redirecting"
+                              ? "bg-yellow-50 border-yellow-200"
                               : verificationStatus === "success"
                               ? "bg-green-50 border-green-200"
                               : "bg-red-50 border-red-200"
                           }`}>
                             <div className="flex items-center space-x-2">
-                              {verificationStatus === "verifying" && (
+                              {buttonState === "creating" && (
                                 <>
-                                  <Zap className="w-5 h-5 text-blue-600 animate-pulse" />
+                                  <Loader className="w-5 h-5 text-blue-600 animate-spin" />
                                   <span className="text-blue-800 font-medium">
-                                    ⚡ Verifying payment instantly...
+                                    🔗 Creating secure payment link...
+                                  </span>
+                                </>
+                              )}
+                              {buttonState === "redirecting" && countdown !== null && (
+                                <>
+                                  <Clock className="w-5 h-5 text-yellow-600" />
+                                  <span className="text-yellow-800 font-medium">
+                                    🚀 Redirecting to payment in {countdown} seconds...
                                   </span>
                                 </>
                               )}
@@ -466,7 +609,7 @@ const TermsMain = () => {
                                 <>
                                   <CheckCircle className="w-5 h-5 text-green-600" />
                                   <span className="text-green-800 font-medium">
-                                    ✅ Payment verified! Booking confirmed and data saved.
+                                    ✅ Payment completed! Data saved automatically.
                                   </span>
                                 </>
                               )}
@@ -474,11 +617,35 @@ const TermsMain = () => {
                                 <>
                                   <XCircle className="w-5 h-5 text-red-600" />
                                   <span className="text-red-800 font-medium">
-                                    ❌ Verification failed. Please try again.
+                                    ❌ Payment failed. Please try again.
                                   </span>
                                 </>
                               )}
                             </div>
+                          </div>
+                        )}
+                        
+                        {/* Payment Link URL */}
+                        {paymentLinkUrl && buttonState !== 'success' && (
+                          <div className="bg-purple-50 p-4 rounded-xl border border-purple-200">
+                            <h4 className="font-semibold text-purple-800 mb-2 flex items-center">
+                              <ExternalLink className="w-4 h-4 mr-2" />
+                              Payment Link Created:
+                            </h4>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-sm text-purple-700 font-mono bg-white px-2 py-1 rounded border">
+                                {paymentLinkUrl}
+                              </span>
+                              <button
+                                onClick={() => window.open(paymentLinkUrl, '_blank')}
+                                className="bg-purple-600 text-white px-3 py-1 rounded text-sm hover:bg-purple-700 transition-colors"
+                              >
+                                Open Link
+                              </button>
+                            </div>
+                            <p className="text-xs text-purple-600 mt-2">
+                              💡 Complete payment and your data will be saved automatically
+                            </p>
                           </div>
                         )}
                       </div>
@@ -487,42 +654,62 @@ const TermsMain = () => {
                     {/* Payment Button */}
                     <button
                       onClick={initializePayment}
-                      disabled={!isChecked || isProcessingPayment}
+                      disabled={!isChecked || isProcessingPayment || buttonState === 'success'}
                       className={`w-full rounded-2xl py-6 font-bold text-xl transition-all duration-300 transform ${
-                        isChecked && !isProcessingPayment
+                        buttonState === 'success'
+                          ? "bg-gradient-to-r from-green-600 to-green-700 text-white"
+                          : isChecked && !isProcessingPayment
                           ? "bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 text-white hover:shadow-2xl hover:-translate-y-1 hover:scale-[1.02]"
                           : "bg-gray-300 text-gray-500 cursor-not-allowed"
                       }`}
                     >
                       <span className="flex items-center justify-center space-x-3">
-                        {isProcessingPayment ? (
+                        {buttonState === 'creating' && (
                           <>
                             <Loader className="w-6 h-6 animate-spin" />
-                            <span>
-                              {verificationStatus === "verifying" 
-                                ? "⚡ Verifying Payment..." 
-                                : "Processing Payment..."
-                              }
-                            </span>
+                            <span>Creating Payment Link...</span>
                           </>
-                        ) : (
+                        )}
+                        {buttonState === 'redirecting' && countdown !== null && (
+                          <>
+                            <Clock className="w-6 h-6" />
+                            <span>Redirecting in {countdown}...</span>
+                          </>
+                        )}
+                        {buttonState === 'success' && (
+                          <>
+                            <CheckCircle className="w-6 h-6" />
+                            <span>Payment Completed!</span>
+                          </>
+                        )}
+                        {buttonState === 'ready' && (
                           <>
                             <CreditCard className="w-6 h-6" />
-                            <Zap className="w-5 h-5" />
-                            <span>Pay ₹10 & Get Instant Confirmation</span>
+                            <ExternalLink className="w-5 h-5" />
+                            <span>Pay ₹10 via Secure Link</span>
+                            <ArrowRight className="w-5 h-5" />
                           </>
                         )}
                       </span>
                     </button>
                     
                     <p className="text-center text-sm text-gray-500 mt-4">
-                      ⚡ Instant verification • Secure Razorpay payment • Data saved automatically
+                      🔗 Enhanced payment system • Auto-saves data • Real-time monitoring
                     </p>
                   </div>
                 )}
 
-                {/* New Booking Button */}
-                <div className="text-center pt-6 border-t border-gray-200">
+                {/* Action Buttons */}
+                <div className="text-center pt-6 border-t border-gray-200 space-y-4">
+                  {paymentLinkUrl && buttonState !== 'success' && (
+                    <button
+                      onClick={() => window.open(paymentLinkUrl, '_blank')}
+                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-8 rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300 font-semibold mr-4"
+                    >
+                      <ExternalLink className="w-4 h-4 inline mr-2" />
+                      Open Payment Link
+                    </button>
+                  )}
                   <button
                     onClick={handleNewBooking}
                     className="bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 px-8 rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300 font-semibold"

@@ -24,6 +24,8 @@ import AboutUs from "./Components/AboutUsSection/AboutUs";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import RouteGuard from "./Components/RouteGuard";
 import PaymentCallback from "./Components/PaymentCallback";
+import PaymentSuccess from "./Components/PaymentSuccess";
+import PaymentRecoveryBanner from "./Components/PaymentRecoveryBanner";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -33,6 +35,7 @@ const App = () => {
       <BrowserRouter>
         <RouteGuard>
           <Navbar />
+          <PaymentRecoveryBanner />
           <ScrollToTop />
           <Routes>
             {/* Public routes */}
@@ -49,8 +52,7 @@ const App = () => {
 
             {/* Payment callback and thank you routes */}
             <Route path="/payment-callback" element={<PaymentCallback />} />
-            <Route path="/payment-success" element={<PaymentCallback />} />
-            <Route path="/thank-you" element={<ThankYouPage />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/thank-you" element={<ThankYouPage />} />
 
             {/* Protected booking workflow routes with search params */}
