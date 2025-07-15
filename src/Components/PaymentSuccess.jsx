@@ -51,7 +51,7 @@ const PaymentSuccess = () => {
     try {
       console.log(`🔍 Verifying payment link: ${paymentLinkId} (attempt ${retryCount + 1})`);
       
-      const response = await fetch(`https://birthday-backend-tau.vercel.app/payment-status/${paymentLinkId}`);
+      const response = await fetch(`https://birthday-ui.vercel.app/payment-status/${paymentLinkId}`);
       const result = await response.json();
       
       if (result.status === 'paid') {
