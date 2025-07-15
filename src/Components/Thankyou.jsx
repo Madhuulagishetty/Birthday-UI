@@ -85,13 +85,13 @@ const ThankYouPage = () => {
       };
 
       // Save to SheetDB
-      const sheetPromise = fetch('https://sheetdb.io/api/v1/s6a0t5omac7jg', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(sheetData)
-      });
+      // const sheetPromise = fetch('https://sheetdb.io/api/v1/s6a0t5omac7jg', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(sheetData)
+      // });
 
       // Execute both API calls simultaneously
       const [backendResponse, sheetResponse] = await Promise.allSettled([backendPromise, sheetPromise]);
