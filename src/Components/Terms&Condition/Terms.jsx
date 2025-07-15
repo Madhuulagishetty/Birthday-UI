@@ -14,7 +14,7 @@ import {
   ArrowRight
 } from "lucide-react";
 
-const serverUrl =  'http://localhost:3001';
+const serverUrl =  'https://birthday-backend-tau.vercel.app';
 
 const TermsMain = () => {
   const navigate = useNavigate();
