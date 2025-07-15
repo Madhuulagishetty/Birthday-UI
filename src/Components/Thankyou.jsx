@@ -25,10 +25,47 @@ const ThankYouPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [animateIn, setAnimateIn] = useState(false);
+  const [backupSaved, setBackupSaved] = useState(false);
 
   // Get payment details from URL params
   const paymentId = searchParams.get('payment_id');
   const orderId = searchParams.get('order_id');
+
+  // Backup data save function
+  const saveBackupData = async (data) => {
+    try {
+      const backupData = {
+        ...data,
+        paymentId: paymentId,
+        orderId: orderId,
+        backupSavedAt: new Date().toISOString(),
+        source: 'thankyou_page_backup'
+      };
+
+      console.log('🔄 Saving backup data to prevent data loss...');
+      
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:3001'}/save-backup-data`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          bookingData: backupData,
+          paymentId: paymentId,
+          orderId: orderId
+        })
+      });
+
+      if (response.ok) {
+        console.log('✅ Backup data saved successfully');
+        setBackupSaved(true);
+      } else {
+        console.error('❌ Failed to save backup data:', response.statusText);
+      }
+    } catch (error) {
+      console.error('❌ Error saving backup data:', error);
+    }
+  };
 
   useEffect(() => {
     // Check for completed booking data
@@ -40,6 +77,8 @@ const ThankYouPage = () => {
         const parsedData = JSON.parse(completedData);
         setBookingData(parsedData);
         setLoading(false);
+        // Save backup data
+        saveBackupData(parsedData);
       } catch (err) {
         console.error("Error parsing completed booking data:", err);
         setError("Error loading booking data");
@@ -53,6 +92,8 @@ const ThankYouPage = () => {
           const parsedData = JSON.parse(originalBookingData);
           setBookingData(parsedData);
           setLoading(false);
+          // Save backup data
+          saveBackupData(parsedData);
         } catch (err) {
           console.error("Error parsing booking data:", err);
           setError("Error loading booking data");
@@ -399,6 +440,10 @@ Thank you for choosing Akkay Studio!
                   </h4>
                   <ul className="space-y-2 text-sm text-yellow-700">
                     <li>• <strong>Data Saved:</strong> Your booking has been automatically saved to our database and Google Sheets</li>
+                    <li>• <strong>Backup Protection:</strong> {backupSaved ? 
+                      <span className="text-green-600">✅ Additional backup saved successfully</span> : 
+                      <span className="text-orange-600">🔄 Creating backup...</span>
+                    }</li>
                     <li>• <strong>WhatsApp Confirmation:</strong> You'll receive a detailed confirmation message shortly</li>
                     <li>• <strong>Arrival Time:</strong> Please arrive 15 minutes early with your AADHAAR card</li>
                     <li>• <strong>Remaining Payment:</strong> The balance amount will be collected before your event</li>
