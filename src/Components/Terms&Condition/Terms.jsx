@@ -9,15 +9,14 @@ import {
   CreditCard,
   Loader,
   Clock,
+  Zap,
   ExternalLink,
-  ArrowRight,
-  RefreshCw,
-  Database
+  ArrowRight
 } from "lucide-react";
 
-const serverUrl = 'https://birthday-backend-tau.vercel.app';
+const serverUrl =  'http://localhost:3001';
 
-const Terms = () => {
+const TermsMain = () => {
   const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState(false);
   const [bookingData, setBookingData] = useState(null);
@@ -28,18 +27,15 @@ const Terms = () => {
   const [currentPaymentLinkId, setCurrentPaymentLinkId] = useState(null);
   const [verificationStatus, setVerificationStatus] = useState(null);
   const [paymentLinkUrl, setPaymentLinkUrl] = useState(null);
-  const [buttonState, setButtonState] = useState('ready');
-  const [dataStorageStatus, setDataStorageStatus] = useState(null);
+  const [countdown, setCountdown] = useState(null);
+  const [buttonState, setButtonState] = useState('ready'); // ready, creating, redirecting, success
 
-  const addNotification = (type, message, autoRemove = true) => {
-    const id = Date.now() + Math.random();
+  const addNotification = (type, message) => {
+    const id = Date.now();
     setNotifications(prev => [...prev, { id, type, message }]);
-    
-    if (autoRemove) {
-      setTimeout(() => {
-        setNotifications(prev => prev.filter(n => n.id !== id));
-      }, type === 'error' ? 8000 : 5000);
-    }
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== id));
+    }, 5000);
   };
 
   useEffect(() => {
@@ -56,257 +52,121 @@ const Terms = () => {
       setAnimateIn(true);
     }, 100);
 
-    // Check for incomplete payments
+    // Check for incomplete payments on page load
+    checkForIncompletePayments();
+    
+    // Check for payment link ID in localStorage
     const storedPaymentLinkId = localStorage.getItem('currentPaymentLinkId');
     if (storedPaymentLinkId) {
-      console.log('🔍 Found incomplete payment, checking status...');
       setCurrentPaymentLinkId(storedPaymentLinkId);
       checkPaymentStatus(storedPaymentLinkId);
     }
   }, [navigate]);
 
-  // Check payment status
-  const checkPaymentStatus = async (paymentLinkId) => {
+  // Check for incomplete payments from previous sessions
+  const checkForIncompletePayments = () => {
+    const incompletePaymentLinkId = localStorage.getItem('currentPaymentLinkId');
+    const incompleteBookingData = localStorage.getItem('bookingData');
+    
+    if (incompletePaymentLinkId && incompleteBookingData) {
+      addNotification("info", "Found incomplete payment. Checking status...");
+      checkPaymentStatus(incompletePaymentLinkId);
+    }
+  };
+
+  // Enhanced payment status check with retry logic
+  const checkPaymentStatus = async (paymentLinkId, retryCount = 0) => {
     try {
-      console.log(`🔍 Checking payment status for: ${paymentLinkId}`);
-      setIsProcessingPayment(true);
-      setButtonState('checking');
+      console.log(`🔍 Checking payment status for: ${paymentLinkId} (Attempt ${retryCount + 1})`);
       
-      const response = await fetch(`${serverUrl}/payment-status/${paymentLinkId}`);
+      const response = await fetch(`${serverUrl}/payment-status/${paymentLinkId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       
       const result = await response.json();
       console.log(`📊 Payment status result:`, result);
       
       if (result.status === 'paid') {
-        await handlePaymentSuccess(result, paymentLinkId);
+        // Payment was completed
+        setVerificationStatus('success');
+        setButtonState('success');
+        setIsProcessingPayment(false);
+        
+        const completedBooking = {
+          ...bookingData,
+          paymentId: result.paymentDetails?.id,
+          paymentLinkId: paymentLinkId,
+          advancePaid: 10,
+          remainingAmount: bookingData.totalAmount - 10,
+          paymentStatus: 'advance_paid',
+          bookingConfirmed: true,
+          savedBooking: result.bookingData
+        };
+        
+        localStorage.setItem('completedBookingData', JSON.stringify(completedBooking));
+        localStorage.removeItem('currentPaymentLinkId');
+        
+        addNotification("success", "Payment completed! Data saved successfully. Redirecting...");
+        setTimeout(() => navigate('/thank-you'), 2000);
+      } else if (result.needsRecovery) {
+        // Payment was made but data wasn't saved - recover it
+        addNotification("warning", "Payment completed but data needs recovery. Processing...");
+        await recoverPayment(paymentLinkId);
       } else if (result.status === 'created' || result.status === 'issued') {
-        addNotification("info", `Payment link is active. Please complete payment.`);
-        setButtonState('ready');
-        setIsProcessingPayment(false);
-      } else {
-        addNotification("warning", `Payment status: ${result.status}`);
-        setButtonState('ready');
-        setIsProcessingPayment(false);
+        // Payment link exists but not paid yet
+        console.log(`⏳ Payment link status: ${result.status}`);
+        addNotification("info", "Payment link is active. Complete payment to proceed.");
       }
     } catch (error) {
       console.error('Payment status check failed:', error);
-      addNotification("error", "Unable to verify payment status. Please try again.");
-      setButtonState('ready');
-      setIsProcessingPayment(false);
+      
+      // Retry logic for network issues
+      if (retryCount < 3) {
+        console.log(`🔄 Retrying payment status check in 2 seconds...`);
+        setTimeout(() => {
+          checkPaymentStatus(paymentLinkId, retryCount + 1);
+        }, 2000);
+      } else {
+        addNotification("error", "Unable to check payment status. Please refresh the page.");
+      }
     }
   };
 
-  // Handle successful payment
-  const handlePaymentSuccess = async (result, paymentLinkId) => {
+  // Enhanced payment recovery with better error handling
+  const recoverPayment = async (paymentLinkId) => {
     try {
-      console.log(`✅ Payment successful, processing data...`);
-      
-      setVerificationStatus('success');
-      setButtonState('success');
-      setIsProcessingPayment(false);
-      
-      // Create completed booking data
-      const completedBooking = {
-        ...bookingData,
-        paymentId: result.paymentDetails?.id || result.paymentId,
-        paymentLinkId: paymentLinkId,
-        advancePaid: 10,
-        remainingAmount: bookingData.totalAmount - 10,
-        paymentStatus: 'advance_paid',
-        bookingConfirmed: true,
-        dataStored: result.dataStored,
-        completedAt: new Date().toISOString()
-      };
-      
-      // Store completed booking
-      localStorage.setItem('completedBookingData', JSON.stringify(completedBooking));
-      localStorage.removeItem('currentPaymentLinkId');
-      
-      // Update data storage status
-      setDataStorageStatus(result.dataStored);
-      
-      // Show success notification
-      const storageMsg = result.dataStored ? 
-        `Data saved: Firebase(${result.dataStored.firebase ? '✅' : '❌'}), Sheets(${result.dataStored.sheets ? '✅' : '❌'})` :
-        "Data storage completed";
-      
-      addNotification("success", `Payment completed! ${storageMsg}`);
-      
-      // Navigate to thank you page
-      setTimeout(() => {
-        navigate('/thank-you');
-      }, 2000);
-      
-    } catch (error) {
-      console.error('Error handling payment success:', error);
-      addNotification("error", "Payment successful but data processing failed. Please contact support.");
-    }
-  };
-
-  // Initialize payment
-  const initializePayment = async () => {
-    if (!isChecked) {
-      addNotification("error", "Please accept the terms and conditions");
-      return;
-    }
-    
-    if (!bookingData) {
-      addNotification("error", "Booking data not found");
-      return;
-    }
-
-    setIsProcessingPayment(true);
-    setButtonState('creating');
-    setVerificationStatus(null);
-    setPaymentLinkUrl(null);
-
-    try {
-      console.log("🔗 Creating payment link...");
-      addNotification("info", "Creating secure payment link...");
-      
-      const enhancedBookingData = {
-        ...bookingData,
-        totalAmount: amountWithTax,
-        advanceAmount: 10,
-        remainingAmount: amountWithTax - 10,
-        createdAt: new Date().toISOString(),
-        sessionId: Date.now().toString()
-      };
-      
-      const response = await fetch(`${serverUrl}/create-payment-link`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: 10, // Advance amount ₹10
-          bookingData: enhancedBookingData
-        }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Server error: ${response.status} - ${errorText}`);
-      }
-
-      const result = await response.json();
-      console.log("✅ Payment link created:", result);
-      
-      if (!result.paymentLink || !result.paymentLink.short_url) {
-        throw new Error('Invalid payment link response');
-      }
-      
-      const paymentLink = result.paymentLink;
-      
-      // Store payment link data
-      setCurrentPaymentLinkId(paymentLink.id);
-      setPaymentLinkUrl(paymentLink.short_url);
-      localStorage.setItem('currentPaymentLinkId', paymentLink.id);
-      
-      setButtonState('redirecting');
-      addNotification("success", "Payment link created! Opening in new tab...");
-      
-      // Open payment link
-      setTimeout(() => {
-        window.open(paymentLink.short_url, '_blank');
-        startPaymentMonitoring(paymentLink.id);
-      }, 1000);
-
-    } catch (error) {
-      console.error('Payment link creation error:', error);
-      addNotification("error", `Failed to create payment link: ${error.message}`);
-      setIsProcessingPayment(false);
-      setButtonState('ready');
-      setVerificationStatus(null);
-      setPaymentLinkUrl(null);
-    }
-  };
-
-  // Start payment monitoring
-  const startPaymentMonitoring = (paymentLinkId) => {
-    console.log(`🔍 Starting payment monitoring for: ${paymentLinkId}`);
-    setButtonState('monitoring');
-    addNotification("info", "Monitoring payment status. Complete payment in the new tab.");
-    
-    let checkCount = 0;
-    const maxChecks = 60; // 5 minutes total
-    
-    const checkInterval = setInterval(async () => {
-      checkCount++;
-      
-      try {
-        console.log(`🔍 Payment monitor check ${checkCount}/${maxChecks}`);
-        
-        const response = await fetch(`${serverUrl}/payment-status/${paymentLinkId}`);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-        
-        const result = await response.json();
-        console.log(`📊 Monitor result (${checkCount}):`, result);
-        
-        if (result.status === 'paid') {
-          clearInterval(checkInterval);
-          await handlePaymentSuccess(result, paymentLinkId);
-        }
-        
-        // Update UI with monitoring status
-        if (checkCount % 10 === 0) {
-          addNotification("info", `Payment monitoring active (${checkCount}/${maxChecks})...`);
-        }
-        
-      } catch (error) {
-        console.error(`❌ Monitor check ${checkCount} failed:`, error);
-      }
-      
-      // Stop monitoring after max checks
-      if (checkCount >= maxChecks) {
-        clearInterval(checkInterval);
-        if (verificationStatus !== 'success') {
-          console.log(`⏰ Payment monitoring stopped after ${maxChecks} checks`);
-          addNotification("warning", "Payment monitoring timeout. You can return later to check status.");
-          setButtonState('ready');
-          setIsProcessingPayment(false);
-        }
-      }
-    }, 5000); // Check every 5 seconds
-  };
-
-  // Manual recovery function for testing
-  const handleManualRecovery = async () => {
-    if (!currentPaymentLinkId) {
-      addNotification("error", "No payment link ID found");
-      return;
-    }
-
-    try {
-      addNotification("info", "Starting manual recovery...");
+      console.log(`🔄 Starting payment recovery for: ${paymentLinkId}`);
       
       const response = await fetch(`${serverUrl}/recover-payment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          paymentLinkId: currentPaymentLinkId, 
-          bookingData 
-        })
+        body: JSON.stringify({ paymentLinkId, bookingData })
       });
       
+      if (!response.ok) {
+        throw new Error(`Recovery failed: ${response.status}`);
+      }
+      
       const result = await response.json();
+      console.log(`✅ Recovery result:`, result);
       
       if (result.status === 'recovered') {
-        addNotification("success", "Payment recovered successfully!");
+        addNotification("success", "Payment recovered successfully! Data saved.");
         setVerificationStatus('success');
         setButtonState('success');
+        localStorage.removeItem('currentPaymentLinkId');
         
         const completedBooking = {
           ...bookingData,
           paymentId: result.paymentId,
-          paymentLinkId: currentPaymentLinkId,
+          paymentLinkId: paymentLinkId,
           advancePaid: 10,
           remainingAmount: bookingData.totalAmount - 10,
           paymentStatus: 'advance_paid',
@@ -315,73 +175,14 @@ const Terms = () => {
         };
         
         localStorage.setItem('completedBookingData', JSON.stringify(completedBooking));
-        localStorage.removeItem('currentPaymentLinkId');
-        
         setTimeout(() => navigate('/thank-you'), 1500);
       } else {
-        addNotification("error", `Recovery failed: ${result.message || 'Unknown error'}`);
+        addNotification("error", "Payment recovery failed. Please contact support.");
       }
     } catch (error) {
-      console.error('Manual recovery failed:', error);
-      addNotification("error", "Manual recovery failed. Please contact support.");
+      console.error('Payment recovery failed:', error);
+      addNotification("error", "Payment recovery failed. Please contact support.");
     }
-  };
-
-  // Manual save function for testing
-  const handleManualSave = async () => {
-    if (!bookingData) {
-      addNotification("error", "No booking data found");
-      return;
-    }
-
-    try {
-      addNotification("info", "Testing manual save...");
-      
-      const testBookingData = {
-        ...bookingData,
-        paymentId: "test_payment_" + Date.now(),
-        orderId: "test_order_" + Date.now(),
-        paymentLinkId: currentPaymentLinkId || "test_link_" + Date.now(),
-        advanceAmount: 10,
-        remainingAmount: bookingData.totalAmount - 10,
-        totalAmount: bookingData.totalAmount,
-        source: 'manual_test'
-      };
-
-      const testPaymentDetails = {
-        razorpay_payment_id: testBookingData.paymentId,
-        razorpay_order_id: testBookingData.orderId,
-        payment_link_id: testBookingData.paymentLinkId,
-      };
-      
-      const response = await fetch(`${serverUrl}/manual-save`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          bookingData: testBookingData, 
-          paymentDetails: testPaymentDetails 
-        })
-      });
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        const storageMsg = `Firebase: ${result.dataStored.firebase ? '✅' : '❌'}, Sheets: ${result.dataStored.sheets ? '✅' : '❌'}`;
-        addNotification("success", `Manual save completed! ${storageMsg}`);
-      } else {
-        addNotification("error", "Manual save failed");
-      }
-    } catch (error) {
-      console.error('Manual save failed:', error);
-      addNotification("error", "Manual save failed. Please contact support.");
-    }
-  };
-
-  const handleNewBooking = () => {
-    localStorage.removeItem("bookingData");
-    localStorage.removeItem("completedBookingData");
-    localStorage.removeItem("currentPaymentLinkId");
-    navigate("/");
   };
 
   const termsItems = [
@@ -400,6 +201,180 @@ const Terms = () => {
   const refundPolicy = [
     "Refund Policy: If Slot Is Cancelled Advance Amount Non-Refundable. Then You Get The Chance To Reschedule Your Slot.",
   ];
+
+  // Enhanced payment initialization with better error handling
+  const initializePayment = async () => {
+    if (!isChecked) {
+      addNotification("error", "Please accept the terms and conditions");
+      return;
+    } 
+    if (!bookingData) {
+      addNotification("error", "Booking data not found");
+      return;
+    }
+
+    setIsProcessingPayment(true);
+    setButtonState('creating');
+    setVerificationStatus(null);
+    setPaymentLinkUrl(null);
+    setCountdown(null);
+
+    try {
+      console.log("🔗 Creating payment link...");
+      addNotification("info", "Creating secure payment link...");
+      
+      // Enhanced booking data with additional fields
+      const enhancedBookingData = {
+        ...bookingData,
+        totalAmount: amountWithTax,
+        advanceAmount: 10,
+        remainingAmount: amountWithTax - 10,
+        paymentMethod: 'razorpay_payment_link',
+        createdAt: new Date().toISOString(),
+        source: 'web_app'
+      };
+      
+      const response = await fetch(`${serverUrl}/create-payment-link`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: 1, // Advance amount ₹10
+          bookingData: enhancedBookingData
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server error: ${response.status} - ${errorText}`);
+      }
+
+      const result = await response.json();
+      console.log("✅ Payment link created successfully:", result);
+      
+      if (!result.paymentLink || !result.paymentLink.short_url) {
+        throw new Error('Invalid payment link response');
+      }
+      
+      const paymentLink = result.paymentLink;
+      
+      // Store payment link data
+      setCurrentPaymentLinkId(paymentLink.id);
+      setPaymentLinkUrl(paymentLink.short_url);
+      localStorage.setItem('currentPaymentLinkId', paymentLink.id);
+      
+      setButtonState('redirecting');
+      addNotification("success", "Payment link created! Redirecting in 3 seconds...");
+      
+      // Countdown before redirect
+      let countdownValue = 3;
+      setCountdown(countdownValue);
+      
+      const countdownInterval = setInterval(() => {
+        countdownValue--;
+        setCountdown(countdownValue);
+        
+        if (countdownValue <= 0) {
+          clearInterval(countdownInterval);
+          setCountdown(null);
+          
+          // Open payment link
+          window.open(paymentLink.short_url, '_blank');
+          
+          // Start enhanced monitoring
+          startEnhancedPaymentMonitoring(paymentLink.id);
+        }
+      }, 1000);
+
+    } catch (error) {
+      console.error('Payment link creation error:', error);
+      addNotification("error", `Failed to create payment link: ${error.message}`);
+      setIsProcessingPayment(false);
+      setButtonState('ready');
+      setVerificationStatus(null);
+      setPaymentLinkUrl(null);
+      setCountdown(null);
+    }
+  };
+
+  // Enhanced payment monitoring with better intervals and error handling
+  const startEnhancedPaymentMonitoring = (paymentLinkId) => {
+    console.log(`🔍 Starting enhanced payment monitoring for: ${paymentLinkId}`);
+    addNotification("info", "Payment monitoring started. Complete payment in the new tab.");
+    
+    let checkCount = 0;
+    const maxChecks = 200; // 200 checks over 10 minutes
+    
+    const checkInterval = setInterval(async () => {
+      checkCount++;
+      
+      try {
+        console.log(`🔍 Payment check ${checkCount}/${maxChecks} for ${paymentLinkId}`);
+        
+        const response = await fetch(`${serverUrl}/payment-status/${paymentLinkId}`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const result = await response.json();
+        console.log(`📊 Payment status (${checkCount}):`, result);
+        
+        if (result.status === 'paid') {
+          clearInterval(checkInterval);
+          
+          console.log(`✅ Payment completed! Processing data...`);
+          setVerificationStatus('success');
+          setButtonState('success');
+          setIsProcessingPayment(false);
+          
+          const completedBooking = {
+            ...bookingData,
+            paymentId: result.paymentDetails?.id,
+            paymentLinkId: paymentLinkId,
+            advancePaid: 10,
+            remainingAmount: bookingData.totalAmount - 10,
+            paymentStatus: 'advance_paid',
+            bookingConfirmed: true,
+            savedBooking: result.bookingData,
+            dataStored: result.dataStored
+          };
+          
+          localStorage.setItem('completedBookingData', JSON.stringify(completedBooking));
+          localStorage.removeItem('currentPaymentLinkId');
+          
+          addNotification("success", "Payment completed! Data saved automatically. Redirecting...");
+          setTimeout(() => navigate('/thank-you'), 2000);
+        }
+      } catch (error) {
+        console.error(`❌ Payment status check ${checkCount} failed:`, error);
+        
+        // Don't show error notification for every failed check
+        if (checkCount % 10 === 0) {
+          addNotification("warning", `Payment monitoring active (${checkCount}/${maxChecks})...`);
+        }
+      }
+      
+      // Stop monitoring after max checks
+      if (checkCount >= maxChecks) {
+        clearInterval(checkInterval);
+        if (verificationStatus !== 'success') {
+          console.log(`⏰ Payment monitoring stopped after ${maxChecks} checks`);
+          addNotification("warning", "Payment monitoring stopped. Return anytime to check status.");
+          setIsProcessingPayment(false);
+          setButtonState('ready');
+        }
+      }
+    }, 3000); // Check every 3 seconds
+  };
+
+  const handleNewBooking = () => {
+    localStorage.removeItem("bookingData");
+    localStorage.removeItem("completedBookingData");
+    localStorage.removeItem("currentPaymentLinkId");
+    navigate("/");
+  };
 
   const NotificationToast = ({ notification, onClose }) => {
     const icons = {
@@ -587,12 +562,27 @@ const Terms = () => {
                           </span>
                         </div>
 
+                        <div className="bg-blue-50 p-4 rounded-xl border border-blue-200">
+                          <h4 className="font-semibold text-blue-800 mb-2 flex items-center">
+                            <Zap className="w-4 h-4 mr-2" />
+                            Enhanced Payment System:
+                          </h4>
+                          <ul className="text-sm text-blue-700 space-y-1">
+                            <li>• 100% server-side webhook processing</li>
+                            <li>• Automatic data saving to Firebase & Sheets</li>
+                            <li>• Enhanced payment monitoring system</li>
+                            <li>• Works even if you close the app</li>
+                            <li>• Automatic payment recovery system</li>
+                            <li>• Real-time status updates</li>
+                          </ul>
+                        </div>
+
                         {/* Payment Status */}
-                        {(verificationStatus || buttonState !== 'ready') && (
+                        {(verificationStatus || countdown !== null) && (
                           <div className={`p-4 rounded-xl border ${
                             buttonState === "creating" 
                               ? "bg-blue-50 border-blue-200"
-                              : buttonState === "checking" || buttonState === "monitoring"
+                              : buttonState === "redirecting"
                               ? "bg-yellow-50 border-yellow-200"
                               : verificationStatus === "success"
                               ? "bg-green-50 border-green-200"
@@ -607,19 +597,11 @@ const Terms = () => {
                                   </span>
                                 </>
                               )}
-                              {buttonState === "checking" && (
-                                <>
-                                  <RefreshCw className="w-5 h-5 text-yellow-600 animate-spin" />
-                                  <span className="text-yellow-800 font-medium">
-                                    🔍 Checking payment status...
-                                  </span>
-                                </>
-                              )}
-                              {buttonState === "monitoring" && (
+                              {buttonState === "redirecting" && countdown !== null && (
                                 <>
                                   <Clock className="w-5 h-5 text-yellow-600" />
                                   <span className="text-yellow-800 font-medium">
-                                    👀 Monitoring payment status...
+                                    🚀 Redirecting to payment in {countdown} seconds...
                                   </span>
                                 </>
                               )}
@@ -627,28 +609,18 @@ const Terms = () => {
                                 <>
                                   <CheckCircle className="w-5 h-5 text-green-600" />
                                   <span className="text-green-800 font-medium">
-                                    ✅ Payment completed! Data saved successfully.
+                                    ✅ Payment completed! Data saved automatically.
                                   </span>
                                 </>
                               )}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Data Storage Status */}
-                        {dataStorageStatus && (
-                          <div className="bg-green-50 p-4 rounded-xl border border-green-200">
-                            <h4 className="font-semibold text-green-800 mb-2 flex items-center">
-                              <Database className="w-4 h-4 mr-2" />
-                              Data Storage Status:
-                            </h4>
-                            <div className="grid grid-cols-2 gap-2 text-sm">
-                              <div className={`flex items-center ${dataStorageStatus.firebase ? 'text-green-700' : 'text-red-700'}`}>
-                                {dataStorageStatus.firebase ? '✅' : '❌'} Firebase Database
-                              </div>
-                              <div className={`flex items-center ${dataStorageStatus.sheets ? 'text-green-700' : 'text-red-700'}`}>
-                                {dataStorageStatus.sheets ? '✅' : '❌'} Google Sheets
-                              </div>
+                              {verificationStatus === "failed" && (
+                                <>
+                                  <XCircle className="w-5 h-5 text-red-600" />
+                                  <span className="text-red-800 font-medium">
+                                    ❌ Payment failed. Please try again.
+                                  </span>
+                                </>
+                              )}
                             </div>
                           </div>
                         )}
@@ -658,10 +630,10 @@ const Terms = () => {
                           <div className="bg-purple-50 p-4 rounded-xl border border-purple-200">
                             <h4 className="font-semibold text-purple-800 mb-2 flex items-center">
                               <ExternalLink className="w-4 h-4 mr-2" />
-                              Payment Link:
+                              Payment Link Created:
                             </h4>
                             <div className="flex items-center space-x-2">
-                              <span className="text-sm text-purple-700 font-mono bg-white px-2 py-1 rounded border flex-1 truncate">
+                              <span className="text-sm text-purple-700 font-mono bg-white px-2 py-1 rounded border">
                                 {paymentLinkUrl}
                               </span>
                               <button
@@ -671,6 +643,9 @@ const Terms = () => {
                                 Open Link
                               </button>
                             </div>
+                            <p className="text-xs text-purple-600 mt-2">
+                              💡 Complete payment and your data will be saved automatically
+                            </p>
                           </div>
                         )}
                       </div>
@@ -695,16 +670,10 @@ const Terms = () => {
                             <span>Creating Payment Link...</span>
                           </>
                         )}
-                        {buttonState === 'checking' && (
-                          <>
-                            <RefreshCw className="w-6 h-6 animate-spin" />
-                            <span>Checking Payment...</span>
-                          </>
-                        )}
-                        {buttonState === 'monitoring' && (
+                        {buttonState === 'redirecting' && countdown !== null && (
                           <>
                             <Clock className="w-6 h-6" />
-                            <span>Monitoring Payment...</span>
+                            <span>Redirecting in {countdown}...</span>
                           </>
                         )}
                         {buttonState === 'success' && (
@@ -725,7 +694,7 @@ const Terms = () => {
                     </button>
                     
                     <p className="text-center text-sm text-gray-500 mt-4">
-                      🔒 Secure payment via Razorpay • 💾 Auto-save to Firebase & Sheets
+                      🔗 Enhanced payment system • Auto-saves data • Real-time monitoring
                     </p>
                   </div>
                 )}
@@ -741,36 +710,6 @@ const Terms = () => {
                       Open Payment Link
                     </button>
                   )}
-                  
-                  {/* Debug buttons for testing */}
-                  {currentPaymentLinkId && (
-                    <>
-                      <button
-                        onClick={handleManualRecovery}
-                        className="bg-gradient-to-r from-orange-600 to-orange-700 text-white py-3 px-8 rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300 font-semibold mr-4"
-                      >
-                        Manual Recovery
-                      </button>
-                      <button
-                        onClick={handleManualSave}
-                        className="bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-8 rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300 font-semibold mr-4"
-                      >
-                        Test Save
-                      </button>
-                    </>
-                  )}
-                  
-                  
-                  {currentPaymentLinkId && (
-                    <button
-                      onClick={() => checkPaymentStatus(currentPaymentLinkId)}
-                      className="bg-gradient-to-r from-orange-600 to-orange-700 text-white py-3 px-8 rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300 font-semibold mr-4"
-                    >
-                      <RefreshCw className="w-4 h-4 inline mr-2" />
-                      Check Payment Status
-                    </button>
-                  )}
-
                   <button
                     onClick={handleNewBooking}
                     className="bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 px-8 rounded-xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300 font-semibold"
@@ -787,4 +726,4 @@ const Terms = () => {
   );
 };
 
-export default Terms;
+export default TermsMain;
