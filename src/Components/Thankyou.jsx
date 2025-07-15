@@ -31,20 +31,24 @@ const ThankYouPage = () => {
   const paymentId = searchParams.get('payment_id');
   const orderId = searchParams.get('order_id');
 
-  // Backup data save function
-  const saveBackupData = async (data) => {
+  // Automatic data save function after payment
+  const saveDataAutomatically = async (data) => {
     try {
+      const currentTime = new Date().toISOString();
+      
+      // Prepare data for backend
       const backupData = {
         ...data,
         paymentId: paymentId,
         orderId: orderId,
-        backupSavedAt: new Date().toISOString(),
-        source: 'thankyou_page_backup'
+        backupSavedAt: currentTime,
+        source: 'post_payment_automatic'
       };
 
-      console.log('🔄 Saving backup data to prevent data loss...');
+      console.log('🔄 Automatically saving data after payment completion...');
       
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:3001'}/save-backup-data`, {
+      // Save to backend
+      const backendPromise = fetch(`https://birthday-backend-tau.vercel.app/save-backup-data`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -56,14 +60,58 @@ const ThankYouPage = () => {
         })
       });
 
-      if (response.ok) {
-        console.log('✅ Backup data saved successfully');
+      // Prepare data for SheetDB
+      const sheetData = {
+        name: data.bookingName || data.NameUser || 'N/A',
+        email: data.email || 'N/A',
+        whatsapp: data.whatsapp || 'N/A',
+        address: data.address || 'N/A',
+        date: data.date || 'N/A',
+        time: data.lastItem ? `${data.lastItem.start} - ${data.lastItem.end}` : 'N/A',
+        people: data.people || 'N/A',
+        slotType: data.slotType || 'N/A',
+        occasion: data.occasion || 'N/A',
+        wantDecoration: data.wantDecoration ? 'Yes' : 'No',
+        extraDecorations: data.extraDecorations || 'N/A',
+        totalAmount: data.totalAmount || 'N/A',
+        advancePaid: data.advancePaid || 'N/A',
+        remainingAmount: data.remainingAmount || 'N/A',
+        paymentId: paymentId || 'N/A',
+        orderId: orderId || 'N/A',
+        bookingId: data.id || 'N/A',
+        savedAt: currentTime,
+        paymentStatus: 'Completed',
+        source: 'post_payment_automatic'
+      };
+
+      // Save to SheetDB
+      const sheetPromise = fetch('https://sheetdb.io/api/v1/s6a0t5omac7jg', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(sheetData)
+      });
+
+      // Execute both API calls simultaneously
+      const [backendResponse, sheetResponse] = await Promise.allSettled([backendPromise, sheetPromise]);
+
+      // Check results
+      const backendSuccess = backendResponse.status === 'fulfilled' && backendResponse.value.ok;
+      const sheetSuccess = sheetResponse.status === 'fulfilled' && sheetResponse.value.ok;
+
+      if (backendSuccess || sheetSuccess) {
+        console.log('✅ Data saved automatically after payment');
+        if (backendSuccess) console.log('✅ Backend save successful');
+        if (sheetSuccess) console.log('✅ SheetDB save successful');
         setBackupSaved(true);
       } else {
-        console.error('❌ Failed to save backup data:', response.statusText);
+        console.error('❌ Failed to save data automatically');
+        if (backendResponse.status === 'rejected') console.error('Backend error:', backendResponse.reason);
+        if (sheetResponse.status === 'rejected') console.error('SheetDB error:', sheetResponse.reason);
       }
     } catch (error) {
-      console.error('❌ Error saving backup data:', error);
+      console.error('❌ Error in automatic data save:', error);
     }
   };
 
@@ -77,8 +125,8 @@ const ThankYouPage = () => {
         const parsedData = JSON.parse(completedData);
         setBookingData(parsedData);
         setLoading(false);
-        // Save backup data
-        saveBackupData(parsedData);
+        // Automatically save data after payment
+        saveDataAutomatically(parsedData);
       } catch (err) {
         console.error("Error parsing completed booking data:", err);
         setError("Error loading booking data");
@@ -92,8 +140,8 @@ const ThankYouPage = () => {
           const parsedData = JSON.parse(originalBookingData);
           setBookingData(parsedData);
           setLoading(false);
-          // Save backup data
-          saveBackupData(parsedData);
+          // Automatically save data after payment
+          saveDataAutomatically(parsedData);
         } catch (err) {
           console.error("Error parsing booking data:", err);
           setError("Error loading booking data");
