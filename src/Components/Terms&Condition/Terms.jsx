@@ -288,7 +288,7 @@ const TermsMain = () => {
       }, 1000);
 
     } catch (error) {
-      console.error('Payment link creation error:', error);
+      // console.error('Payment link creation error:', error) ; 
       addNotification("error", `Failed to create payment link: ${error.message}`);
       setIsProcessingPayment(false);
       setButtonState('ready');
@@ -310,7 +310,7 @@ const TermsMain = () => {
       checkCount++;
       
       try {
-        console.log(`🔍 Payment check ${checkCount}/${maxChecks} for ${paymentLinkId}`);
+        // console.log(`🔍 Payment check ${checkCount}/${maxChecks} for ${paymentLinkId}`); 
         
         const response = await fetch(`${serverUrl}/payment-status/${paymentLinkId}`);
         

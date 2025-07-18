@@ -34,84 +34,17 @@ const ThankYouPage = () => {
   // Automatic data save function after payment
   const saveDataAutomatically = async (data) => {
     try {
-      const currentTime = new Date().toISOString();
+      console.log('📝 Data saving is handled by webhook only - no action needed');
+      console.log('✅ Payment completed - webhook will save all data automatically');
       
-      // Prepare data for backend
-      const backupData = {
-        ...data,
-        paymentId: paymentId,
-        orderId: orderId,
-        backupSavedAt: currentTime,
-        source: 'post_payment_automatic'
-      };
-
-      console.log('🔄 Automatically saving data after payment completion...');
+      // Mark backup as "saved" since webhook handles it
+      setBackupSaved(true);
       
-      // Save to backend
-      const backendPromise = fetch(`https://birthday-backend-tau.vercel.app/save-backup-data`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          bookingData: backupData,
-          paymentId: paymentId,
-          orderId: orderId
-        })
-      });
-
-      // Prepare data for SheetDB
-      const sheetData = {
-        name: data.bookingName || data.NameUser || 'N/A',
-        email: data.email || 'N/A',
-        whatsapp: data.whatsapp || 'N/A',
-        address: data.address || 'N/A',
-        date: data.date || 'N/A',
-        time: data.lastItem ? `${data.lastItem.start} - ${data.lastItem.end}` : 'N/A',
-        people: data.people || 'N/A',
-        slotType: data.slotType || 'N/A',
-        occasion: data.occasion || 'N/A',
-        wantDecoration: data.wantDecoration ? 'Yes' : 'No',
-        extraDecorations: data.extraDecorations || 'N/A',
-        totalAmount: data.totalAmount || 'N/A',
-        advancePaid: data.advancePaid || 'N/A',
-        remainingAmount: data.remainingAmount || 'N/A',
-        paymentId: paymentId || 'N/A',
-        orderId: orderId || 'N/A',
-        bookingId: data.id || 'N/A',
-        savedAt: currentTime,
-        paymentStatus: 'Completed',
-        source: 'post_payment_automatic'
-      };
-
-      // Save to SheetDB
-      // const sheetPromise = fetch('https://sheetdb.io/api/v1/s6a0t5omac7jg', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(sheetData)
-      // });
-
-      // Execute both API calls simultaneously
-      const [backendResponse, sheetResponse] = await Promise.allSettled([backendPromise, sheetPromise]);
-
-      // Check results
-      const backendSuccess = backendResponse.status === 'fulfilled' && backendResponse.value.ok;
-      const sheetSuccess = sheetResponse.status === 'fulfilled' && sheetResponse.value.ok;
-
-      if (backendSuccess || sheetSuccess) {
-        console.log('✅ Data saved automatically after payment');
-        if (backendSuccess) console.log('✅ Backend save successful');
-        if (sheetSuccess) console.log('✅ SheetDB save successful');
-        setBackupSaved(true);
-      } else {
-        console.error('❌ Failed to save data automatically');
-        if (backendResponse.status === 'rejected') console.error('Backend error:', backendResponse.reason);
-        if (sheetResponse.status === 'rejected') console.error('SheetDB error:', sheetResponse.reason);
-      }
+      // Note: All data saving is now handled by the webhook system
+      // No need to save data here as it's done automatically after payment
+      
     } catch (error) {
-      console.error('❌ Error in automatic data save:', error);
+      console.error('❌ Error in data save check:', error);
     }
   };
 
