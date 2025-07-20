@@ -14,7 +14,7 @@ import {
   ArrowRight
 } from "lucide-react";
 
-const serverUrl =  'https://birthday-backend-tau.vercel.app';
+const serverUrl = 'https://birthday-backend-tau.vercel.app';
 
 const TermsMain = () => {
   const navigate = useNavigate();
@@ -107,7 +107,8 @@ const TermsMain = () => {
           remainingAmount: bookingData.totalAmount - 10,
           paymentStatus: 'advance_paid',
           bookingConfirmed: true,
-          savedBooking: result.bookingData
+          savedBooking: result.bookingData,
+          dataStored: result.dataStored
         };
         
         localStorage.setItem('completedBookingData', JSON.stringify(completedBooking));
@@ -568,12 +569,12 @@ const TermsMain = () => {
                             Enhanced Payment System:
                           </h4>
                           <ul className="text-sm text-blue-700 space-y-1">
-                            <li>• 100% server-side webhook processing</li>
-                            <li>• Automatic data saving to Firebase & Sheets</li>
-                            <li>• Enhanced payment monitoring system</li>
-                            <li>• Works even if you close the app</li>
+                            <li>• Webhook-only data saving (prevents duplicates)</li>
+                            <li>• Single-time data storage guarantee</li>
+                            <li>• Enhanced duplicate prevention system</li>
+                            <li>• Real-time payment monitoring</li>
                             <li>• Automatic payment recovery system</li>
-                            <li>• Real-time status updates</li>
+                            <li>• No backup saves after webhook success</li>
                           </ul>
                         </div>
 
@@ -609,7 +610,7 @@ const TermsMain = () => {
                                 <>
                                   <CheckCircle className="w-5 h-5 text-green-600" />
                                   <span className="text-green-800 font-medium">
-                                    ✅ Payment completed! Data saved automatically.
+                                    ✅ Payment completed! Data saved (single time only).
                                   </span>
                                 </>
                               )}
@@ -644,7 +645,7 @@ const TermsMain = () => {
                               </button>
                             </div>
                             <p className="text-xs text-purple-600 mt-2">
-                              💡 Complete payment and your data will be saved automatically
+                              💡 Complete payment and data will be saved exactly once via webhook
                             </p>
                           </div>
                         )}
@@ -694,7 +695,7 @@ const TermsMain = () => {
                     </button>
                     
                     <p className="text-center text-sm text-gray-500 mt-4">
-                      🔗 Enhanced payment system • Auto-saves data • Real-time monitoring
+                      🔗 Enhanced payment system • Single-time save • Duplicate prevention
                     </p>
                   </div>
                 )}
