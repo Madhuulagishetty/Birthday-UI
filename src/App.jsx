@@ -2,14 +2,15 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./Components/Home";
 import BookingCard from "./Components/BookingCard";
-import BookingForm from "./Components/BookingForm/BookingForm";
+import QuantityBirthday from "./Components/Quantity";
 import ThankYouPage from "./Components/Thankyou";
 import Context from "./Components/ContextApi/Context";
 import Menu from "./Components/Menu";
 import Packages from "./Components/Package/Package";
 import Package from "./Components/Package/PackDum";
 import Footer from "./Components/Footer";
-import TheaterSelection from "./Components/TheaterSelection/TheaterSelection";
+import Rolexe from "./Components/Rolexe/Rolexe";
+import Deluxe from "./Components/Deluxe/Deluxe";
 import Navbar from "./Components/Navbar";
 import ServicesMain from "./Components/Services/ServicesMain";
 import ContactUs from "./Components/ContactUs/Contact";
@@ -25,22 +26,18 @@ import RouteGuard from "./Components/RouteGuard";
 import PaymentCallback from "./Components/PaymentCallback";
 import PaymentSuccess from "./Components/PaymentSuccess";
 import PaymentRecoveryBanner from "./Components/PaymentRecoveryBanner";
-import { ErrorBoundary } from "./Components/ErrorHandling/ErrorHandling";
-import { NotificationProvider } from "./Components/NotificationSystem/NotificationSystem";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   return (
-    <ErrorBoundary>
-      <Context>
-        <NotificationProvider>
-          <BrowserRouter>
-            <RouteGuard>
-              <Navbar />
-              <PaymentRecoveryBanner />
-              <ScrollToTop />
-              <Routes>
+    <Context>
+      <BrowserRouter>
+        <RouteGuard>
+          <Navbar />
+          <PaymentRecoveryBanner />
+          <ScrollToTop />
+          <Routes>
             {/* Public routes */}
             <Route path="/" element={<Home />} />
             <Route path="/menu" element={<Menu />} />
@@ -72,7 +69,7 @@ const App = () => {
               path="/theater/:theaterType" 
               element={
                 <ProtectedRoute requiredStep="theater-selection">
-                  <TheaterSelectionRoute />
+                  <TheaterSelection />
                 </ProtectedRoute>
               } 
             />
@@ -81,7 +78,7 @@ const App = () => {
               path="/rolexe-package" 
               element={
                 <ProtectedRoute requiredStep="rolexe-package">
-                  <TheaterSelection theaterType="rolexe" />
+                  <Rolexe />
                 </ProtectedRoute>
               } 
             />
@@ -90,7 +87,7 @@ const App = () => {
               path="/delux-package" 
               element={
                 <ProtectedRoute requiredStep="delux-package">
-                  <TheaterSelection theaterType="deluxe" />
+                  <Deluxe />
                 </ProtectedRoute>
               } 
             />
@@ -99,7 +96,7 @@ const App = () => {
               path="/user-details" 
               element={
                 <ProtectedRoute requiredStep="user-details">
-                  <BookingForm />
+                  <QuantityBirthday />
                 </ProtectedRoute>
               } 
             />
@@ -134,21 +131,19 @@ const App = () => {
           }}
         />
       </BrowserRouter>
-    </NotificationProvider>
-  </Context>
-</ErrorBoundary>
+    </Context>
   );
 };
 
 // Theater Selection Component with dynamic routing
-const TheaterSelectionRoute = () => {
+const TheaterSelection = () => {
   const { useParams } = require('react-router-dom');
   const { theaterType } = useParams();
   
   if (theaterType === 'rolexe') {
-    return <TheaterSelection theaterType="rolexe" />;
+    return <Rolexe />;
   } else if (theaterType === 'deluxe') {
-    return <TheaterSelection theaterType="deluxe" />;
+    return <Deluxe />;
   } else {
     return <Packages />;
   }
