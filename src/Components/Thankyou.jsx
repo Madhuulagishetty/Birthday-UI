@@ -170,7 +170,7 @@ const ThankYouPage = () => {
     if (!bookingData) return;
 
     const bookingDetails = `
-🎬 AKKAY STUDIO - BOOKING CONFIRMATION 🎬
+🎬 AKAAY STUDIO - BOOKING CONFIRMATION 🎬
 ==========================================
 
 Booking Details:
