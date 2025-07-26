@@ -429,16 +429,16 @@ const TermsMain = () => {
         >
           <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-purple-100">
             {/* Header */}
-            <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 py-6 px-8">
+            <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 py-4 md:py-6 md:px-6 px-4">
               <div className="flex items-center justify-center space-x-3">
                 <Shield className="w-8 h-8 text-white" />
-                <h1 className="text-3xl md:text-4xl font-bold text-white text-center">
+                <h1 className=" text-[19px] md:text-4xl font-bold text-white text-center">
                   Terms & Conditions
                 </h1>
-              </div>
+               </div>
             </div>
 
-            <div className="p-8 md:p-12">
+            <div className="p-2 md:p-12">
               <div
                 className={`space-y-6 transition-all duration-700 delay-300 ${
                   animateIn
@@ -447,11 +447,11 @@ const TermsMain = () => {
                 }`}
               >
                 <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-2xl border border-purple-100">
-                  <h2 className="text-2xl font-bold mb-6 text-purple-800 flex items-center">
+                  <h2 className="md:text-xl text-md font-bold mb-6 text-purple-800 flex items-center">
                     <AlertCircle className="w-6 h-6 mr-3 text-purple-600" />
                     Important Terms
                   </h2>
-                  <ol className="list-decimal pl-6 space-y-4">
+                  <ol className="list-decimal pl-6 md:space-y-4">
                     {termsItems.map((item, index) => (
                       <li
                         key={index}
@@ -513,7 +513,7 @@ const TermsMain = () => {
                         )}
                       </div>
                     </div>
-                    <span className="text-gray-700 font-medium text-lg">
+                    <span className="text-gray-700 font-medium text leading-tight md:text-lg">
                       I have read and agree to the terms and conditions
                     </span>
                   </label>
@@ -530,32 +530,32 @@ const TermsMain = () => {
                     }}
                   >
                     <div className="bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50 p-6 rounded-2xl shadow-inner mb-6 border border-purple-100">
-                      <h3 className="font-bold text-2xl mb-6 text-purple-800 flex items-center">
+                      <h3 className="font-bold md:text-2xl text-md mb-6 text-purple-800 flex items-center">
                         <Info className="w-6 h-6 mr-3 text-purple-600" />
                         Booking Summary
                       </h3>
 
-                      <div className="space-y-4">
+                      <div className="">
                         <div className="flex justify-between items-center py-3 border-b border-purple-100">
-                          <span className="text-gray-800 font-medium text-lg">
+                          <span className="text-gray-800 font-medium md:text-lg ">
                             Total Amount:
                           </span>
-                          <span className="text-2xl font-bold text-purple-600">
+                          <span className=" text-md md:text-2xl font-bold text-purple-600">
                             ₹{amountWithTax.toFixed(2)}
                           </span>
                         </div>
 
                         <div className="flex justify-between items-center py-3 border-b border-purple-100">
-                          <span className="text-gray-800 font-medium text-lg">
+                          <span className="text-gray-800 font-medium  text-md md:text-xl">
                             Advance Payment:
                           </span>
-                          <span className="text-xl font-bold text-green-600">
+                          <span className=" text-md md:text-2xl font-bold text-green-600">
                             ₹10.00
                           </span>
                         </div>
 
                         <div className="flex justify-between items-center py-3">
-                          <span className="text-gray-800 font-medium text-lg">
+                          <span className="text-gray-800 font-medium  text-md md:text-xl">
                             Remaining Amount:
                           </span>
                           <span className="text-xl font-bold text-orange-600">
@@ -563,20 +563,7 @@ const TermsMain = () => {
                           </span>
                         </div>
 
-                        <div className="bg-blue-50 p-4 rounded-xl border border-blue-200">
-                          <h4 className="font-semibold text-blue-800 mb-2 flex items-center">
-                            <Zap className="w-4 h-4 mr-2" />
-                            Enhanced Payment System:
-                          </h4>
-                          <ul className="text-sm text-blue-700 space-y-1">
-                            <li>• Webhook-only data saving (prevents duplicates)</li>
-                            <li>• Single-time data storage guarantee</li>
-                            <li>• Enhanced duplicate prevention system</li>
-                            <li>• Real-time payment monitoring</li>
-                            <li>• Automatic payment recovery system</li>
-                            <li>• No backup saves after webhook success</li>
-                          </ul>
-                        </div>
+                        
 
                         {/* Payment Status */}
                         {(verificationStatus || countdown !== null) && (
@@ -628,12 +615,12 @@ const TermsMain = () => {
                         
                         {/* Payment Link URL */}
                         {paymentLinkUrl && buttonState !== 'success' && (
-                          <div className="bg-purple-50 p-4 rounded-xl border border-purple-200">
-                            <h4 className="font-semibold text-purple-800 mb-2 flex items-center">
-                              <ExternalLink className="w-4 h-4 mr-2" />
+                          <div className="bg-purple-50 md:p-4 p-2 rounded-xl border border-purple-200">
+                            <h4 className="font-semibold text-purple-800 mb-2 flex items-center text-md md:text-lg">
+                              {/* <ExternalLink className="w-4 h-4 mr-2" /> */}
                               Payment Link Created:
                             </h4>
-                            <div className="flex items-center space-x-2">
+                            <div className=" flex flex-col md:flex-row justify-start gap-3 md:items-center space-x-2">
                               <span className="text-sm text-purple-700 font-mono bg-white px-2 py-1 rounded border">
                                 {paymentLinkUrl}
                               </span>
@@ -685,18 +672,15 @@ const TermsMain = () => {
                         )}
                         {buttonState === 'ready' && (
                           <>
-                            <CreditCard className="w-6 h-6" />
+                            {/* <CreditCard className="w-6 h-6" /> */}
                             <ExternalLink className="w-5 h-5" />
-                            <span>Pay ₹10 via Secure Link</span>
-                            <ArrowRight className="w-5 h-5" />
+                            <span className="text-[16px] md:text-lg">Pay ₹10 via Secure Link</span>
+                            {/* <ArrowRight className="w-5 h-5" /> */}
                           </>
                         )}
                       </span>
                     </button>
-                    
-                    <p className="text-center text-sm text-gray-500 mt-4">
-                      🔗 Enhanced payment system • Single-time save • Duplicate prevention
-                    </p>
+                  
                   </div>
                 )}
 
