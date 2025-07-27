@@ -241,7 +241,7 @@ const TermsMain = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount: 1, // Advance amount ₹10
+          amount: 1026,
           bookingData: enhancedBookingData
         }),
       });
@@ -550,16 +550,24 @@ const TermsMain = () => {
                             Advance Payment:
                           </span>
                           <span className=" text-md md:text-2xl font-bold text-green-600">
-                            ₹10.00
+                            ₹1000.00
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center py-3">
+                          <span className="text-gray-800 font-medium">
+                            Convenience Fee:
+                          </span>
+                          <span className=" font-bold text-green-600">
+                            ₹26.00
                           </span>
                         </div>
 
                         <div className="flex justify-between items-center py-3">
                           <span className="text-gray-800 font-medium  text-md md:text-xl">
-                            Remaining Amount:
+                            Remaining (After Event):
                           </span>
                           <span className="text-xl font-bold text-orange-600">
-                            ₹{(amountWithTax - 10).toFixed(2)}
+                            ₹{(amountWithTax - 1026).toFixed(2)}
                           </span>
                         </div>
 
@@ -672,10 +680,10 @@ const TermsMain = () => {
                         )}
                         {buttonState === 'ready' && (
                           <>
-                            {/* <CreditCard className="w-6 h-6" /> */}
+                        
                             <ExternalLink className="w-5 h-5" />
-                            <span className="text-[16px] md:text-lg">Pay ₹10 via Secure Link</span>
-                            {/* <ArrowRight className="w-5 h-5" /> */}
+                            <span className="text-[16px] md:text-lg">Pay ₹1026 via Secure Link</span>
+                        
                           </>
                         )}
                       </span>
