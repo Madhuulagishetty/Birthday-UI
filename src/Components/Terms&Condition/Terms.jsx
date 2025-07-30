@@ -109,8 +109,8 @@ const TermsMain = () => {
           ...bookingData,
           paymentId: result.paymentDetails?.id,
           paymentLinkId: paymentLinkId,
-          advancePaid: 10,
-          remainingAmount: bookingData.totalAmount - 10,
+          advancePaid: 1026,
+          remainingAmount: bookingData.totalAmount - 1026,
           paymentStatus: "advance_paid",
           bookingConfirmed: true,
           savedBooking: result.bookingData,
@@ -642,7 +642,7 @@ const TermsMain = () => {
                             Remaining (After Event):
                           </span>
                           <span className="text-xl font-bold text-orange-600">
-                            ₹{(amountWithTax - 1026).toFixed(2)}
+                            ₹{(amountWithTax - 1000).toFixed(2)}
                           </span>
                         </div>
 
