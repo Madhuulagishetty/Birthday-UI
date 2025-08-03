@@ -90,7 +90,10 @@ const Packages = () => {
         <h2 className="fontCursive text-white text-3xl md:text-5xl text-center mb-2">
           Our Packages
         </h2>
-        <div className="w-24 h-1 bg-yellow-300 rounded-full mb-10"></div>
+        <div className="w-24 h-1 bg-yellow-300 rounded-full mb-5"></div>
+        <div className="text-white fontCursive text-3xl p-4">Note :
+Our Decore Will Be Changes In Every 15 to 20 Days
+</div>
       </div>
       
       <div className="flex flex-col md:flex-row justify-center gap-8 md:gap-12 items-center w-full md:w-[90%]">

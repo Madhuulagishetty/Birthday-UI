@@ -35,15 +35,29 @@ const QuantityBirthday = () => {
     setSearchParams(newSearchParams);
   }, [date, slotType, people, occasion, setSearchParams]);
 
-  // Get package-specific limits
+  // Get package-specific limits - FIXED: Added proper package configuration
   const packageLimits = {
     deluxe: { baseLimit: 10, maxLimit: 25, basePrice: 2500 },
     rolexe: { baseLimit: 6, maxLimit: 12, basePrice: 2000 },
     default: { baseLimit: 6, maxLimit: 12, basePrice: 2000 }
   };
 
-  const currentPackage = packageLimits[slotType] || packageLimits.default;
+  const currentPackage = packageLimits[slotType?.toLowerCase()] || packageLimits.default;
   const { baseLimit, maxLimit, basePrice } = currentPackage;
+
+  // FIXED: Define decoration items with consistent data structure
+  const decorationItems = [
+    { id: "fog-01", name: "Fog Entry (02 Pots)", price: 750, icon: "🌫️" },
+    { id: "fog-02", name: "Fog Entry (04 Pots)", price: 1000, icon: "🌫️" },
+    { id: "candle_light", name: "Candle Light Dinner", price: 500, icon: "🕯️" },
+    { id: "photo_clipping", name: "Photo Clipping", price: 150, icon: "📸" },
+    { id: "led_numbers", name: "LED Numbers", price: 99, icon: "🔢" },
+    { id: "led_hbd", name: "LED HBD", price: 99, icon: "✨" },
+    { id: "candle_pathway", name: "Candle Pathway", price: 250, icon: "🕯️" },
+    { id: "cold_piros", name: "Cold Piros (02 pcs)", price: 500, icon: "❄️" },
+    { id: "reel", name: "Reel", price: 1000, icon: "📹" },
+    { id: "photography", name: "Photography (1 hour Unlimited)", price: 1500, icon: "📷" }
+  ];
 
   // Add a session identifier to track if this is a fresh page load or refresh
   useEffect(() => {
@@ -83,40 +97,42 @@ const QuantityBirthday = () => {
     occasion, extraDecorations, date, cartData, slotType, NameUser
   ]);
   
-  const decorationPrice = 0;
-  const lastItem = cartData.length > 0 ? cartData[cartData.length - 1] : null;
+  const lastItem = cartData?.length > 0 ? cartData[cartData.length - 1] : null;
 
+  // FIXED: Improved calculation function with better logic
   const calculateTotal = () => {
     let total = basePrice;
 
-    if (wantDecoration === "Yes") {
-      total += decorationPrice;
-    }
+    // Standard decoration is included in base price (no additional cost)
+    // Only premium add-ons cost extra
 
-    // Handle all decoration types with their proper prices
-    const decorationPrices = {
-      "fog-01": 500,
-      "fog-02": 800,
-      "candle_light": 300,
-      "photo_clipping": 200,
-      "led_numbers": 400,
-      "led_hbd": 350,
-      "candle_pathway": 250,
-      "cold_piros": 600,
-      "reel": 1000,
-      "photography": 1500
-    };
-
-    extraDecorations.forEach(decoration => {
-      total += decorationPrices[decoration] || 0;
+    // Add premium decoration costs
+    extraDecorations.forEach(decorationId => {
+      const decorationItem = decorationItems.find(item => item.id === decorationId);
+      if (decorationItem) {
+        total += decorationItem.price;
+      }
     });
     
-    // Apply different logic based on package type
+    // Add extra people cost (beyond base limit)
     if (people > baseLimit) {
       total += (people - baseLimit) * 150;
     }
 
-    return total;
+    return Math.round(total); // Ensure we return a rounded number
+  };
+
+  // FIXED: Get extra people cost for display
+  const getExtraPeopleCost = () => {
+    return people > baseLimit ? (people - baseLimit) * 150 : 0;
+  };
+
+  // FIXED: Get premium decorations cost for display
+  const getPremiumDecorationsCost = () => {
+    return extraDecorations.reduce((total, decorationId) => {
+      const decorationItem = decorationItems.find(item => item.id === decorationId);
+      return total + (decorationItem ? decorationItem.price : 0);
+    }, 0);
   };
 
   const increment = () => {
@@ -143,37 +159,49 @@ const QuantityBirthday = () => {
     }, 150);
   };
 
-  const handleProceed = () => {
+  // FIXED: Improved validation function
+  const validateForm = () => {
     if (!bookingName.trim()) {
       toast.error("Please enter your booking name.");
-      return;
+      return false;
     }
     if (!NameUser.trim()) {
       toast.error("Please enter the celebration person's name.");
-      return;
+      return false;
     }
     if (!email.trim()) {
       toast.error("Please enter your email address.");
-      return;
+      return false;
+    }
+    if (!email.includes('@') || !email.includes('.')) {
+      toast.error("Please enter a valid email address.");
+      return false;
     }
     if (!address.trim()) {
       toast.error("Please enter your address.");
-      return;
+      return false;
     }
     if (!date || !whatsapp.trim()) {
-      toast.error("Please Select the Date and Enter WhatsApp Number.");
-      return;
+      toast.error("Please select the date and enter WhatsApp number.");
+      return false;
     }
     if (!lastItem || !lastItem.start || !lastItem.end) {
       toast.error("Please select a time slot before proceeding.");
-      return;
+      return false;
     }
     if (whatsapp.length !== 10) {
       toast.error("Please enter a valid 10-digit WhatsApp number");
-      return;
+      return false;
     }
     if (!/^[6-9]\d{9}$/.test(whatsapp)) {
       toast.error("Enter a valid WhatsApp number starting with 6-9");
+      return false;
+    }
+    return true;
+  };
+
+  const handleProceed = () => {
+    if (!validateForm()) {
       return;
     }
 
@@ -189,10 +217,13 @@ const QuantityBirthday = () => {
       occasion,
       extraDecorations,
       totalAmount: calculateTotal(),
+      extraPeopleCost: getExtraPeopleCost(),
+      premiumDecorationsCost: getPremiumDecorationsCost(),
       cartData,
       slotType,
       lastItem,
-      NameUser
+      NameUser,
+      packageDetails: currentPackage
     };
     
     localStorage.setItem('bookingData', JSON.stringify(bookingData));
@@ -292,7 +323,7 @@ const QuantityBirthday = () => {
               transition={{ delay: 0.3 }}
             >
               <Star className="w-5 h-5 mr-2 fill-amber-300 text-amber-200" />
-              <span className="text-lg capitalize font-semibold">{slotType} Package</span>
+              <span className="text-lg capitalize font-semibold">{slotType || 'Standard'} Package</span>
             </motion.div>
             <motion.span 
               className="text-white/90 font-medium text-lg"
@@ -433,7 +464,7 @@ const QuantityBirthday = () => {
                       </svg>
                       <div>
                         <p className="font-medium">Additional charges apply</p>
-                        <p>₹150 per person beyond {baseLimit} people = ₹{(people - baseLimit) * 150}</p>
+                        <p>₹150 per person beyond {baseLimit} people = ₹{getExtraPeopleCost().toLocaleString()}</p>
                       </div>
                     </motion.div>
                   )}
@@ -595,18 +626,7 @@ const QuantityBirthday = () => {
                   </div>
                   
                   <div className="space-y-3">
-                    {[
-                      { id: "fog-01", name: "Fog Entry (02 Pots)", price: 500, icon: "🌫️" },
-                      { id: "fog-02", name: "Fog Entry (04 Pots)", price: 800, icon: "🌫️" },
-                      { id: "candle_light", name: "Candle Light Dinner", price: 300, icon: "🕯️" },
-                      { id: "photo_clipping", name: "Photo Clipping", price: 200, icon: "📸" },
-                      { id: "led_numbers", name: "LED Numbers", price: 400, icon: "🔢" },
-                      { id: "led_hbd", name: "LED HBD", price: 350, icon: "✨" },
-                      { id: "candle_pathway", name: "Candle Pathway", price: 250, icon: "🕯️" },
-                      { id: "cold_piros", name: "Cold Piros (02 pcs)", price: 600, icon: "❄️" },
-                      { id: "reel", name: "Reel", price: 1000, icon: "📹" },
-                      { id: "photography", name: "Photography (1 hour Unlimited)", price: 1500, icon: "📷" }
-                    ].map((item, index) => (
+                    {decorationItems.map((item, index) => (
                       <motion.label 
                         key={item.id} 
                         className={`flex items-center justify-between p-4 border-2 rounded-xl cursor-pointer transition-all duration-300 ${
@@ -625,7 +645,7 @@ const QuantityBirthday = () => {
                         </div>
                         
                         <div className="flex items-center">
-                          <span className="text-lg font-bold text-gray-700 mr-4">₹{item.price}</span>
+                          <span className="text-lg font-bold text-gray-700 mr-4">₹{item.price.toLocaleString()}</span>
                           <input 
                             type="checkbox"
                             className="w-6 h-6 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
@@ -653,7 +673,7 @@ const QuantityBirthday = () => {
                     
                     <div className="space-y-3">
                       <div className="flex justify-between items-center py-2">
-                        <span className="font-medium">{slotType.charAt(0).toUpperCase() + slotType.slice(1)} Package</span>
+                        <span className="font-medium">{slotType?.charAt(0).toUpperCase() + slotType?.slice(1) || 'Standard'} Package</span>
                         <span className="font-bold">₹{basePrice.toLocaleString()}</span>
                       </div>
                       
@@ -668,23 +688,12 @@ const QuantityBirthday = () => {
                         <div className="pt-3 border-t border-purple-200">
                           <div className="text-sm font-semibold text-purple-800 mb-2">Premium Add-ons</div>
                           {extraDecorations.map(decorationId => {
-                            const decoration = [
-                              { id: "fog-01", name: "Fog Entry (02 Pots)", price: 500 },
-                              { id: "fog-02", name: "Fog Entry (04 Pots)", price: 800 },
-                              { id: "candle_light", name: "Candle Light Dinner", price: 300 },
-                              { id: "photo_clipping", name: "Photo Clipping", price: 200 },
-                              { id: "led_numbers", name: "LED Numbers", price: 400 },
-                              { id: "led_hbd", name: "LED HBD", price: 350 },
-                              { id: "candle_pathway", name: "Candle Pathway", price: 250 },
-                              { id: "cold_piros", name: "Cold Piros", price: 600 },
-                              { id: "reel", name: "Reel", price: 1000 },
-                              { id: "photography", name: "Photography (1 hr)", price: 1500 }
-                            ].find(d => d.id === decorationId);
+                            const decorationItem = decorationItems.find(item => item.id === decorationId);
                             
-                            return decoration ? (
+                            return decorationItem ? (
                               <div key={decorationId} className="flex justify-between text-sm py-1">
-                                <span>{decoration.name}</span>
-                                <span className="font-semibold">₹{decoration.price}</span>
+                                <span>{decorationItem.name}</span>
+                                <span className="font-semibold">₹{decorationItem.price.toLocaleString()}</span>
                               </div>
                             ) : null;
                           })}
@@ -694,7 +703,7 @@ const QuantityBirthday = () => {
                       {people > baseLimit && (
                         <div className="flex justify-between items-center py-2 text-amber-700">
                           <span className="font-medium">Extra People ({people - baseLimit} × ₹150)</span>
-                          <span className="font-bold">₹{((people - baseLimit) * 150).toLocaleString()}</span>
+                          <span className="font-bold">₹{getExtraPeopleCost().toLocaleString()}</span>
                         </div>
                       )}
                       
