@@ -54,7 +54,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="font-semibold">Address</p>
-                  <p className="text-gray-600">Office No.5, Pipeline, Behind Shree Krupa Hospital, Temghar Naka, Kalyan Road, Bhiwandi, Dist: Thane, Maharashtra. </p>
+                  <p className="text-gray-600">Gala no. 5 Behind  Wellness Hospital , Temghar Pipeline, Bhiwandi </p>
                 </div>
               </div>
               
