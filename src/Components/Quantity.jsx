@@ -50,11 +50,11 @@ const QuantityBirthday = () => {
     { id: "fog-01", name: "Fog Entry (02 Pots)", price: 750, icon: "🌫️" },
     { id: "fog-02", name: "Fog Entry (04 Pots)", price: 1000, icon: "🌫️" },
     { id: "candle_light", name: "Candle Light Dinner", price: 500, icon: "🕯️" },
-    { id: "photo_clipping", name: "Photo Clipping", price: 150, icon: "📸" },
+   
     { id: "led_numbers", name: "LED Numbers", price: 99, icon: "🔢" },
     { id: "led_hbd", name: "LED HBD", price: 99, icon: "✨" },
     { id: "candle_pathway", name: "Candle Pathway", price: 250, icon: "🕯️" },
-    { id: "cold_piros", name: "Cold Piros (02 pcs)", price: 500, icon: "❄️" },
+    
     { id: "reel", name: "Reel", price: 1000, icon: "📹" },
     { id: "photography", name: "Photography (1 hour Unlimited)", price: 1500, icon: "📷" }
   ];
